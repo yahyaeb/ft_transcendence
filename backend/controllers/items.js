@@ -1,4 +1,5 @@
-const items = require('../Items')
+import items from '../Items.js'
+
 
 const getItems = (req, reply) => {
     reply.send(items)
@@ -10,7 +11,4 @@ const getItem = (req, reply) => {
     reply.send(item)
 }
 
-module.exports = {
-    getItems,
-    getItem
-}
+export {getItem, getItems}

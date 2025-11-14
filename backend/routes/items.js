@@ -1,4 +1,5 @@
-const {getItems, getItem} = require('../controllers/items')
+import { getItem, getItems } from '../controllers/items.js'
+
 //item schema 
 
 const Item = {
@@ -41,4 +42,4 @@ function itemRoutes (fastify, options, done)
     done()
 }
 
-module.exports = itemRoutes
+export { itemRoutes }

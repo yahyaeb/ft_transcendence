@@ -1,10 +1,11 @@
 // server.js  (ESM version)
-
+import { itemRoutes } from './routes/items.js'
 import fastifyFactory from 'fastify'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
 
-const fastify = fastifyFactory({ logger: true })
+
+const fastify = fastifyFactory({logger: true })
 const PORT = 5000
 
 fastify.register(swagger, {
@@ -16,11 +17,7 @@ fastify.register(swagger, {
 fastify.register(swaggerUI, {
   routePrefix: '/docs'
 })
-
-// example route
-fastify.get('/items', async (req, reply) => {
-  return { test: 'Hello' }
-})
+fastify.register(itemRoutes)
 
 const start = async () => {
   try {

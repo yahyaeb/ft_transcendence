@@ -4,4 +4,4 @@ let items = [
     {id: '3', name: 'Item three'}
 ]
 
-module.exports = items
+export default items
