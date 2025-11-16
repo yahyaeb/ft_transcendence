@@ -8,7 +8,7 @@ import { open } from 'sqlite'
 
 
 const fastify = fastifyFactory({logger: true })
-const PORT = 5000
+const PORT = 4999
 
 const database = await open({
       filename: './database.db',
@@ -16,10 +16,20 @@ const database = await open({
 })
 console.log("DB READY!")
 
-const user = await database.get("SELECT * FROM users;")
+const users = await database.all("SELECT * FROM users;")
 
-fastify.get('/items', (req, reply) => {
-	reply.send({user})
+fastify.get('/users', (req, reply) => {
+	reply.send({users})
+})
+
+fastify.get('/users/:id', async (req, reply) => {
+  const {id } = req.params
+  const user = await database.get("Select * FROM users WHERE id = ?", [id])
+
+  if(!user){
+    return reply.code(404).send({error: 'User not found'})
+  }
+  return user
 })
 
 // fastify.get('/items', (req, reply) => {

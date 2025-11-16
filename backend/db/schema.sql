@@ -16,5 +16,11 @@ CREATE TABLE IF NOT EXISTS matches(
     FOREIGN KEY(player2_id) REFERENCES users(id) 
 );
 
-INSERT INTO users (id, username, password, created_at)
-VALUES(1, 'Yahya', 'Yahyaeb', 123456);
+INSERT INTO users (username, password)
+VALUES
+  ('Yahya',  123456),
+  ('yassine',    123456),
+  ('mehdi',   123456),
+  ('nisar', 123456),
+  ('iheb',  123456),
+  ('hicham', 123456);
