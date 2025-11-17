@@ -1,7 +1,13 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+// db/database.js
+import sqlite3 from 'sqlite3'
+import { open } from 'sqlite'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export const db = await open({
-    filename: "../database.db",
-    driver: sqlite3.Database
+  filename: path.join(__dirname, '../database.db'),
+  driver: sqlite3.Database
 })
