@@ -1,11 +1,11 @@
 ### Get ALL Users
-# GET http://localhost:4999/users HTTP/1.1
+GET http://localhost:4999/users HTTP/1.1
 
 
-POST http://localhost:4999/users HTTP/1.1
-content-type: application/json
+# POST http://localhost:4999/users HTTP/1.1
+# content-type: application/json
 
-{
-  "username": "Ti",
-  "password": "tiestoample.com"
-}
+# {
+#   "username": "Ti",
+#   "password": "tiestoample.com"
+# }
