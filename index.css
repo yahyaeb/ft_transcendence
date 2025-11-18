@@ -1,0 +1,20 @@
+#gameContainer{
+    text-align: center;
+}
+
+#resetButton{
+    font-family: consolas, monospace;
+    font-size: 22px;
+    cursor: pointer;
+    margin: 20px;
+}
+
+#gameBoard{
+    border: 3px solid black;
+    offset: 200px;
+}
+
+#scoreText{
+    font-family: consolas, monospace;
+    font-size: 100px;
+}
