@@ -25,12 +25,26 @@ export async function postSingleUserController(req, reply) {
     if(!username || !password){
         return reply.code(404).send({error: 'Username and password are required'})
     }
-    try
-    {   
+    try {   
         const result = await db.run(
             "INSERT INTO users (username, password) VALUES (?, ?)",
             [username, password]
         );
+
+        console.log("Inserted user:", {
+            username,
+            lastID: result?.lastID,
+            changes: result?.changes
+        });
+
+        return reply
+            .code(201)
+            .send({
+                message: 'User created',
+                id: result?.lastID,
+                username,
+         });
+
     } catch (error)
     {
         console.error("DB Error:", error);
