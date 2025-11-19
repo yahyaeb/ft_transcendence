@@ -1,5 +1,13 @@
-### Get ALL Users
-# GET http://localhost:4999/users/9 HTTP/1.1
+# ## Get ALL Users
+# GET http://localhost:4999/users/7 HTTP/1.1
+
+# #PATCH to update avata
+# PATCH http://localhost:4999/users/7/avatar
+# content-type: application/json
+
+# {
+#     "avatar": "path/../.."
+# }
 
 ## POST to signup
 # POST http://localhost:4999/auth/signup HTTP/1.1
