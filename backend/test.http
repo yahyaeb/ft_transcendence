@@ -1,12 +1,43 @@
 ### Get ALL Users
-# GET http://localhost:4999/users HTTP/1.1
+# GET http://localhost:4999/users/9 HTTP/1.1
+
+## POST to signup
+# POST http://localhost:4999/auth/signup HTTP/1.1
+# content-type: application/json
+
+# {
+#   "username": "Yasmine",
+#   "password": "123456789"
+# }
+
+## POST to login
+
+# POST http://localhost:4999/auth/login HTTP/1.1
+# content-type: application/json
+
+# {
+#   "username": "Yasmine",
+#   "password": "123456789"
+# }
+
+# GET http://localhost:4999/healthz HTTP/1.1
 
 
-POST http://localhost:4999/auth/signup HTTP/1.1
-content-type: application/json
+#POST starting a match
+# POST http://localhost:4999/matches HTTP/1.1
+# content-type: application/json
 
-{
-  "username": "test_avatar",
-  "password": "test_v12",
-  "avatar": "Path../.../"
-}
+# {
+#   "player1_id": "1",
+#   "player2_id": "3",
+#   "mode": "classic"
+
+# }
+
+# #GET pull all matches
+
+# GET http://localhost:4999/matches
+
+# # #GET pulling a match
+
+# GET http://localhost:4999/matches/3

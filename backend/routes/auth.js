@@ -1,4 +1,4 @@
-import { signupController } from '../controllers/authController.js';
+import { signupController, loginController } from '../controllers/authController.js';
 
 export async function authRoutes(fastify, options){
     fastify.post('/signup', {
@@ -26,5 +26,6 @@ export async function authRoutes(fastify, options){
                 },
             }   
         }, signupController
-        )
+        ),
+    fastify.post('/login', loginController)
 }

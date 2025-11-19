@@ -6,6 +6,7 @@ import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { usersRoutes } from './routes/users.js'
 import { authRoutes } from './routes/auth.js'
+import { startedMatch } from './routes/matches.js'
 
 
 
@@ -24,8 +25,12 @@ fastify.register(swagger, {
 fastify.register(swaggerUI, {
   routePrefix: '/docs'
 })
+fastify.get('/healthz', async(req, reply) =>{
+  return { status: "ok"}
+})
 fastify.register(usersRoutes, { prefix: '/users' })
 fastify.register(authRoutes, { prefix: '/auth'})
+fastify.register(startedMatch, { prefix: '/matches'})
 
 const start = async () => {
   try {
