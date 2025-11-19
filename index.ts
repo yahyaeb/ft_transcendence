@@ -1,15 +1,16 @@
 const gameBoard = document.querySelector('#gameBoard') as HTMLCanvasElement;
 const ctx = gameBoard.getContext("2d")!;
-const scoreText = document.querySelector('#scoreText')!;
+const leftScoreElement = document.querySelector('#leftScore')!;
+const rightScoreElement = document.querySelector('#rightScore')!;
 const resetButton = document.querySelector('#resetButton')!;
 const gameWidth = gameBoard.width;
 const gameHeight = gameBoard.height;
-const boardBackground = "green"
-const paddle1Color = "lightblue"
-const paddle2Color = "red"
-const paddleBorder = "black"
-const ballColor = "yellow"
-const ballBorder = "black"
+const boardBackground = "#0f172a"
+const paddle1Color = "#a78bfa"
+const paddle2Color = "#22d3ee"
+const paddleBorder = "transparent"
+const ballColor = "#f8fafc"
+const ballBorderColor = "rgba(248, 250, 252, 0.25)"
 const ballRadius = 12.5
 const paddleSpeed = 5
 let intervalID: number;
@@ -29,16 +30,16 @@ let keys = {
 };
 
 let paddle1 = {
-    width:  25,
-    height: 100,
-    x: 0,
+    width:  14,
+    height: 95,
+    x: 25,
     y: 0
 }
 
 let paddle2 = {
-    width: 25,
-    height: 100,
-    x: gameWidth - 25,
+    width: 14,
+    height: 95,
+    x: gameWidth - 39,
     y: 0
 }
 
@@ -59,6 +60,7 @@ function gameStart(){
 function nextTick(){
     intervalID = setTimeout(() => {
         clearBoard()
+        drawCenterLine()
         drawPaddles()
         moveBall()
         movePaddles()
@@ -73,15 +75,28 @@ function clearBoard(){
     ctx.fillRect(0, 0, gameWidth, gameHeight)
 }
 
-function drawPaddles(){
-    ctx.strokeStyle = paddleBorder;
+function drawCenterLine(){
+    ctx.strokeStyle = "rgba(100, 116, 139, 0.25)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([12, 12]);
+    ctx.beginPath();
+    ctx.moveTo(gameWidth / 2, 0);
+    ctx.lineTo(gameWidth / 2, gameHeight);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
 
+function drawPaddles(){
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = paddle1Color;
     ctx.fillStyle = paddle1Color;
-    ctx.fillRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height)
-    ctx.strokeRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height)
-    ctx.fillStyle = paddle2Color
-    ctx.fillRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height)
-    ctx.strokeRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height)
+    ctx.fillRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height);
+    
+    ctx.shadowColor = paddle2Color;
+    ctx.fillStyle = paddle2Color;
+    ctx.fillRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height);
+    
+    ctx.shadowBlur = 0;
 }
 function createBall(){
     ballSpeed = 2;
@@ -103,12 +118,18 @@ function createBall(){
 }
 
 function drawBall(ballX: number, ballY: number){
-    ctx.fillStyle = ballColor
-    ctx.strokeStyle = ballBorder
-    ctx.beginPath()
-    ctx.arc(ballX, ballY, ballRadius, 0, 2 * Math.PI)
-    ctx.stroke()
-    ctx.fill()
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = ballColor;
+    
+    ctx.fillStyle = ballColor;
+    ctx.strokeStyle = ballBorderColor;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballRadius, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.shadowBlur = 0;
 }
 
 function moveBall(){
@@ -135,16 +156,16 @@ function checkCollision(){
     }
     if (ballX <= (paddle1.x + paddle1.width + ballRadius)){
         if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
-                ballX = (paddle1.x + paddle1.width) + ballRadius //if ball gets stuck under the paddle
+                ballX = (paddle1.x + paddle1.width) + ballRadius
                 ballXDirection *= -1
-                ballSpeed += 1
+                ballSpeed += 0.4
         }
     }
     if (ballX >= (paddle2.x - ballRadius)){
         if (ballY > paddle2.y && ballY < paddle2.y + paddle2.height){
-                ballX = paddle2.x - ballRadius //if ball gets stuck under the paddle
+                ballX = paddle2.x - ballRadius
                 ballXDirection *= -1
-                ballSpeed += 1
+                ballSpeed += 0.4
         }
     }
 }
@@ -203,7 +224,8 @@ function movePaddles(){
 }
 
 function updateScore(){
-    scoreText.textContent = `${player1Score} : ${player2Score}`; 
+    leftScoreElement.textContent = `${player1Score}`; 
+    rightScoreElement.textContent = `${player2Score}`; 
 }
 
 function resetGame(){
@@ -211,15 +233,15 @@ function resetGame(){
     player2Score = 0
 
     paddle1 = {
-        width:  25,
-        height: 100,
-        x: 0,
+        width:  14,
+        height: 95,
+        x: 25,
         y: 0
     };
     paddle2 = {
-        width: 25,
-        height: 100,
-        x: gameWidth - 25,
+        width: 14,
+        height: 95,
+        x: gameWidth - 39,
         y: 0
     };
     paddle1.y = (gameHeight / 2) - (paddle1.height / 2)

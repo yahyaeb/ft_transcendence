@@ -3,14 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pong - Transcendence</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <div id="gameContainer">
-        <div id="scoreText">0 : 0</div>
-        <div id="buttonContainer"> <button id="resetButton">reset</button></div>
+        <div id="topBar">
+            <div class="playerSection left">
+                <div class="label">Player</div>
+                <div class="name">● Player 1</div>
+                <div id="leftScore" class="scoreDisplay">0</div>
+            </div>
+            <div class="centerIcon">🏆</div>
+            <div class="playerSection right">
+                <div class="label">Player</div>
+                <div class="name">● Player 2</div>
+                <div id="rightScore" class="scoreDisplay">0</div>
+            </div>
+        </div>
         <canvas id="gameBoard" width="1000" height="500"></canvas>
+        <button id="resetButton">Reset Game</button>
     </div>
     <script type="module" src="index.ts"></script>
 </body>
