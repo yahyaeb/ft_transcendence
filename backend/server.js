@@ -5,6 +5,7 @@ import swaggerUI from '@fastify/swagger-ui'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { usersRoutes } from './routes/users.js'
+import { authRoutes } from './routes/auth.js'
 
 
 
@@ -24,6 +25,7 @@ fastify.register(swaggerUI, {
   routePrefix: '/docs'
 })
 fastify.register(usersRoutes, { prefix: '/users' })
+fastify.register(authRoutes, { prefix: '/auth'})
 
 const start = async () => {
   try {
