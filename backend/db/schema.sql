@@ -11,11 +11,19 @@ CREATE TABLE IF NOT EXISTS matches(
     player1_id INTEGER NOT NULL,
     player2_id INTEGER NOT NULL,
     mode TEXT NOT NULL,
+    status TEXT DEFAULT 'pending',
+    winner_id INTEGER NULL,
+    score_p1 INTEGER DEFAULT 0,
+    score_p2 INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
 
     FOREIGN KEY(player1_id) REFERENCES users(id),
     FOREIGN KEY(player2_id) REFERENCES users(id) 
 );
+
+
+
 
 INSERT INTO users (username, password)
 VALUES

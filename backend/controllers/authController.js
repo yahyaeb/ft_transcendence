@@ -1,5 +1,8 @@
 import { db } from '../db/database.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+
+
 
 export async function signupController(req, reply) {
     const { username, password, avatar } = req.body || {}
@@ -49,26 +52,34 @@ export async function loginController(req, reply) {
         return reply.code(401).send({ error: "Unauthorized"})
     }
 
-    const validUsername = await db.get(
-        "SELECT username FROM users where username = ?;",
-        [req.body.username]
+    
+    const user = await db.get(
+        "SELECT id, username, password, avatar FROM users WHERE username = ?;",
+        [username]
     )
-    if(!validUsername)
-    {
-        return reply.code(401).send({ error: "Unauthorized: Invalid username or password"})
+
+    if (!user) {
+        return reply.code(401).send({ error: "Unauthorized: Invalid username or password" })
     }
 
     try
     {
-        const hashedPassword = await db.get("SELECT password FROM users where username = ?;",
-        [username])
-
-        const ok = await bcrypt.compare(password, hashedPassword.password)
-        
+        const ok = await bcrypt.compare(password, user.password)
+        const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret'
         if(ok)
         {
-            return reply.code(201).send({
-            message: 'Succesful login!'
+            const payload = { id: user.id, username: user.username }
+
+            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h'})
+
+            return reply.code(200).send({
+                message: 'Login successful',
+                token,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    avatar: user.avatar
+                }
             })
         }
         else

@@ -36,7 +36,7 @@
 # content-type: application/json
 
 # {
-#   "player1_id": "1",
+#   "player1_id": "2",
 #   "player2_id": "3",
 #   "mode": "classic"
 
@@ -46,6 +46,24 @@
 
 # GET http://localhost:4999/matches
 
-# # #GET pulling a match
+# # # #GET pulling a match
 
-# GET http://localhost:4999/matches/3
+# GET http://localhost:4999/matches/1
+
+
+#PATCH to match status
+# PATCH http://localhost:4999/matches/1
+# content-type: application/json
+
+# {
+#     "status": "ongoing"
+# }
+
+PATCH http://localhost:4999/matches/1/finish
+Content-Type: application/json
+
+{
+  "score_p1": 5,
+  "score_p2": 0,
+  "winner_id": 3
+}
