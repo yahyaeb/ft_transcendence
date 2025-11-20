@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#0a0f24] to-[#0f172a] relative">
+
+  <!-- Halo violet -->
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(124,58,237,0.4),transparent_60%)]"></div>
+
+  <!-- Halo bleu -->
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.35),transparent_60%)]"></div>
+
+  <!-- Logo + titre -->
+  <div class="relative z-10 flex flex-col items-center mb-10">
+    <div class="text-5xl mb-4">🎮</div>
+    <h1 class="text-white text-2xl font-semibold">Transcendence</h1>
+    <p class="text-gray-300 text-sm">Create your account</p>
+  </div>
+
+  <!-- Carte Sign Up -->
+  <div class="relative z-10 w-[350px] p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 shadow-lg flex flex-col gap-4">
+
+    <div>
+      <h2 class="text-white text-xl font-semibold">Sign Up</h2>
+      <p class="text-gray-400 text-sm">Create your account to get started</p>
+    </div>
+
+    <!-- Username -->
+    <div class="flex flex-col gap-1">
+      <label class="text-gray-300 text-sm">Username</label>
+      <input id="username" type="text"
+        class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white placeholder-gray-400"
+        placeholder="Choose a username">
+    </div>
+
+    <!-- Email -->
+    <div class="flex flex-col gap-1">
+      <label class="text-gray-300 text-sm">Email</label>
+      <input id="email" type="email"
+        class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white placeholder-gray-400"
+        placeholder="Enter your email">
+    </div>
+
+    <!-- Password -->
+    <div class="flex flex-col gap-1">
+      <label class="text-gray-300 text-sm">Password</label>
+      <input id="password" type="password"
+        class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white placeholder-gray-400"
+        placeholder="Create a password">
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="flex flex-col gap-1">
+      <label class="text-gray-300 text-sm">Confirm Password</label>
+      <input id="confirm" type="password"
+        class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white placeholder-gray-400"
+        placeholder="Re-enter your password">
+    </div>
+
+    <!-- Button -->
+    <button id="signup-btn"
+      class="w-full py-3 rounded-lg text-white font-semibold bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition shadow-lg">
+      Create Account
+    </button>
+
+    <p class="text-center text-gray-300 text-sm">
+      Already have an account?
+      <a href="/login.html" class="text-purple-400 hover:underline">Login</a>
+    </p>
+
+    <a href="/index.html" class="text-center text-gray-400 text-sm hover:underline">← Back to Home</a>
+
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

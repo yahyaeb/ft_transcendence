@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Transcendence - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-[#0a0f24] to-[#0f172a] flex flex-col relative">
+
+  <!-- Halo violet -->
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(124,58,237,0.4),transparent_60%)]"></div>
+
+  <!-- Halo bleu -->
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.35),transparent_60%)]"></div>
+
+  <!-- HEADER -->
+  <header class="relative z-10 w-full flex justify-end items-center p-6 gap-4">
+
+    <!-- Sélecteur de langue -->
+    <select id="lang-select"
+      class="px-4 py-2 text-sm text-white bg-white/10 rounded-lg backdrop-blur-md border border-white/10 hover:bg-white/20 transition cursor-pointer">
+      <option value="fr">🇫🇷 Français</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="es">🇪🇸 Español</option>
+    </select>
+
+    <!-- Bouton Profile -->
+    <a href="/login.html"
+      class="px-4 py-2 text-sm text-white bg-white/10 rounded-lg backdrop-blur-md border border-white/10 hover:bg-white/20 transition">
+      👤 Profile
+    </a>
+
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="relative z-10 flex flex-col items-center text-center px-6 mt-20">
+
+    <!-- Titre -->
+    <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+      Transcendence
+    </h1>
+
+    <!-- Sous-titre -->
+    <p class="text-gray-300 max-w-xl text-lg mb-12 text-left text-justify">
+      Un projet Full-Stack moderne où vous jouez au Pong revisité, affrontez vos amis,
+      grimpez dans le classement et explorez une expérience immersive.
+    </p>
+
+    <!-- 3 Boutons principaux -->
+    <div class="flex flex-col md:flex-row gap-6 mt-4">
+
+      <!-- Bouton 1 : Games / Pong -->
+      <button
+        class="px-12 py-6 text-xl text-white rounded-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition shadow-xl">
+        🎮 Play
+      </button>
+
+      <!-- Bouton 2 : Future Feature -->
+      <button
+        class="px-12 py-6 text-xl text-white rounded-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition shadow-xl">
+        ⭐ Feature
+      </button>
+
+      <!-- Bouton 3 : Settings -->
+      <button
+        class="px-12 py-6 text-xl text-white rounded-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition shadow-xl">
+        ⚙️ Settings
+      </button>
+    </div>
+
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
