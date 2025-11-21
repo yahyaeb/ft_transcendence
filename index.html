@@ -6,23 +6,31 @@
     <title>Pong - Transcendence</title>
     <link rel="stylesheet" href="index.css">
 </head>
-<body>
-    <div id="gameContainer">
-        <div id="topBar">
-            <div class="playerSection left">
-                <div class="label">Player</div>
-                <div class="name">● Player 1</div>
-                <div id="leftScore" class="scoreDisplay">0</div>
+<body class="bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 min-h-screen flex justify-center items-center p-5">
+    <div id="gameContainer" class="text-center max-w-[1100px] w-full mx-auto">
+        <div id="topBar" class="flex justify-between items-center mb-6 px-10 py-[18px] bg-slate-800/40 rounded-xl backdrop-blur-xl border border-slate-400/10">
+            <div class="playerSection flex flex-col gap-1.5">
+                <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
+                <div class="text-lg font-semibold text-purple-400">● Player 1</div>
+                <div id="leftScore" class="text-[44px] font-extrabold tracking-tight gradient-purple">0</div>
             </div>
-            <div class="centerIcon">🏆</div>
-            <div class="playerSection right">
-                <div class="label">Player</div>
-                <div class="name">● Player 2</div>
-                <div id="rightScore" class="scoreDisplay">0</div>
+            <div class="text-4xl" style="filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))">🏆</div>
+            <div class="playerSection flex flex-col gap-1.5">
+                <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
+                <div class="text-lg font-semibold text-cyan-400">● Player 2</div>
+                <div id="rightScore" class="text-[44px] font-extrabold tracking-tight gradient-cyan">0</div>
             </div>
         </div>
-        <canvas id="gameBoard" width="1000" height="500"></canvas>
-        <button id="resetButton">Reset Game</button>
+        <div class="flex justify-center">
+            <canvas id="gameBoard" width="1000" height="500" 
+                    class="border-2 border-slate-600/30 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800"
+                    style="box-shadow: 0 0 40px rgba(79, 70, 229, 0.15), inset 0 0 60px rgba(0, 0, 0, 0.4)"></canvas>
+        </div>
+        <button id="resetButton" 
+                class="font-semibold text-[15px] cursor-pointer mt-[18px] px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
+                style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
+            Reset Game
+        </button>
     </div>
     <script type="module" src="index.ts"></script>
 </body>
