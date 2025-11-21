@@ -50,6 +50,7 @@ window.addEventListener("keydown", keyDown);
 window.addEventListener("keyup", keyUp);
 resetButton.addEventListener("click", resetGame);
 
+
 gameStart();
 
 function gameStart(){
@@ -137,6 +138,7 @@ function moveBall(){
     ballY += (ballSpeed * ballYDirection)
 }
 
+
 function checkCollision(){
     if (ballY <= 0 + ballRadius)
             ballYDirection *= -1
@@ -145,12 +147,22 @@ function checkCollision(){
     if (ballX <= 0){
             player2Score += 1
             updateScore()
+            if (player2Score === 5 ){
+                clearInterval(intervalID);
+                window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}`;
+                return;
+            }
             createBall()
             return;
     }
     if (ballX >= gameWidth){
         player1Score += 1
         updateScore()
+        if (player1Score === 5){
+            clearInterval(intervalID)
+            window.location.href = `./Winner.html?winner=1&score1=${player1Score}&score2=${player2Score}`
+            return ;
+        }
         createBall()
         return;
     }
@@ -158,14 +170,14 @@ function checkCollision(){
         if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
                 ballX = (paddle1.x + paddle1.width) + ballRadius
                 ballXDirection *= -1
-                ballSpeed += 0.4
+                ballSpeed += 1
         }
     }
     if (ballX >= (paddle2.x - ballRadius)){
         if (ballY > paddle2.y && ballY < paddle2.y + paddle2.height){
                 ballX = paddle2.x - ballRadius
                 ballXDirection *= -1
-                ballSpeed += 0.4
+                ballSpeed += 1
         }
     }
 }
