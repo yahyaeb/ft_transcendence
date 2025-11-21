@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "moduleResolution": "bundler"
   },
-  "include": ["index.ts"]
+  "include": ["gameplay/gameplayIndex.ts"]
 }
