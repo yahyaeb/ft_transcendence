@@ -1,6 +1,7 @@
 import { db } from '../db/database.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import 'dotenv/config' //importing the secret .env
 
 
 
@@ -66,6 +67,10 @@ export async function loginController(req, reply) {
     {
         const ok = await bcrypt.compare(password, user.password)
         const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret'
+        if(!JWT_SECRET)
+        {
+            throw new Error("JWT_SECRET is missing in environment variables");
+        }
         if(ok)
         {
             const payload = { id: user.id, username: user.username }

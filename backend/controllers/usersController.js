@@ -46,3 +46,18 @@ export async function updateAvatar(req, reply){
         avatar
     })
 }
+
+export async function getMeProfile(req, reply){
+    const userId = req.user.id
+
+    const user = await db.get(
+        "SELECT id, username, avatar, created_at FROM users WHERE id = ?",
+        [userId]
+    )
+
+    if(!user){
+        return reply.code(404).send({ error: "User not found" })
+    }
+
+    return reply.code(200).send(user)
+}
