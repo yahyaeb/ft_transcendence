@@ -6,7 +6,7 @@ import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { usersRoutes } from './routes/users.js'
 import { authRoutes } from './routes/auth.js'
-import { startedMatch } from './routes/matches.js'
+import { matchesRoutes } from './routes/matches.js'
 
 
 
@@ -30,7 +30,7 @@ fastify.get('/healthz', async(req, reply) =>{
 })
 fastify.register(usersRoutes, { prefix: '/users' })
 fastify.register(authRoutes, { prefix: '/auth'})
-fastify.register(startedMatch, { prefix: '/matches'})
+fastify.register(matchesRoutes, { prefix: '/matches'})
 
 const start = async () => {
   try {

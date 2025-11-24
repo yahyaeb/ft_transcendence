@@ -1,23 +1,31 @@
-import { getMatch, getMatches, startMatch, updateMatchStatus, finishedMatch } from "../controllers/matchesController.js"
+import { 
+  getMatch, 
+  getMatches, 
+  startMatch, 
+  updateMatchStatus, 
+  finishedMatch 
+} from "../controllers/matchesController.js"
+
 import { authMiddleware } from "../middleware/auth.js"
 
-export async function startedMatch(fastify, options) {
+export async function matchesRoutes(fastify, options) {
+    fastify.addHook('preHandler', authMiddleware)
 
-	fastify.addHook('preHandler', authMiddleware)
-	
     fastify.post('/', startMatch)
-    fastify.get('/:id', getMatch)
     fastify.get('/', getMatches)
+    fastify.get('/:id', getMatch)
+
     fastify.patch('/:id', updateMatchStatus)
-    fastify.patch('/:id/finish',{
+
+    fastify.patch('/:id/finish', {
         schema: {
             body: {
                 type: 'object',
                 required: ['score_p1', 'score_p2', 'winner_id'],
                 properties: {
-                    score_p1: {type: 'integer'},
-                    score_p2: {type: 'integer'},
-                    winner_id: {type: 'integer'}
+                    score_p1: { type: 'integer' },
+                    score_p2: { type: 'integer' },
+                    winner_id: { type: 'integer' }
                 },
                 additionalProperties: false,
             },
@@ -26,14 +34,13 @@ export async function startedMatch(fastify, options) {
                     type: 'object',
                     properties: {
                         message: { type: 'string'},
-                        id: { type: 'string'},
-                        score_p1: {type: 'integer'},
-                        score_p2: {type: 'integer'},
-                        winner_id: {type: 'integer'}
+                        id: { type: 'number'},
+                        score_p1: { type: 'integer'},
+                        score_p2: { type: 'integer'},
+                        winner_id: { type: 'integer'}
                     }
                 }
             }
         }
     }, finishedMatch)
-    
 }

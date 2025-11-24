@@ -8,12 +8,15 @@ import { getAllUsersController,
 import { authMiddleware } from "../middleware/auth.js";
 
 export async function usersRoutes(fastify, options) {
-    fastify.get('/', getAllUsersController)
-    fastify.get('/:id', getSingleUserController)
-    fastify.patch('/me/avatar', {
-        preHandler: authMiddleware,
-    }, updateAvatar)
+
     fastify.get('/me', {
         preHandler: authMiddleware,
     }, getMeProfile)
+
+    fastify.patch('/me/avatar', {
+        preHandler: authMiddleware,
+    }, updateAvatar)
+
+    fastify.get('/', getAllUsersController)
+    fastify.get('/:id', getSingleUserController)
 }

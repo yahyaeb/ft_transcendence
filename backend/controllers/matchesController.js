@@ -50,22 +50,26 @@ export async function getMatch(req, reply) {
     const match = await db.get(
         "SELECT * FROM matches WHERE id = ?", [id]
     );
-
     if(!match)
     {
         return reply.code(404).send({error: 'Match not found'})
     }
+	if(match.player1_id !== req.user.id && match.player2_id !== req.user.id){
+		return reply.code(403).send({ error: "Forbidden" })
+	}
     return reply.code(200).send(match)
 }
 
 export async function getMatches(req, reply) {
 
     const matches = await db.all(
-        "SELECT * FROM matches"
-    );
+        "SELECT * FROM matches WHERE player1_id = ? OR player2_id = ?",
+    [req.user.id, req.user.id]
+	);
     if (matches.length === 0) {
         return reply.code(404).send({ error: 'No available matches' })
     }
+
     return reply.code(200).send(matches)
 }
 
@@ -109,6 +113,7 @@ export async function updateMatchStatus(req, reply) {
 export async function finishedMatch(req, reply){
     const { id } = req.params
     const {winner_id, score_p1, score_p2} = req.body
+	const userId = Number(req.user.id)
 
     const match = await db.get(
         "SELECT player1_id, player2_id FROM matches where id = ?",
@@ -120,7 +125,10 @@ export async function finishedMatch(req, reply){
 
     if(!match)
         return reply.code(404).send({ error: "Match not found" })
-    if(winner_id !== match.player1_id && winner_id !== match.player2_id)
+    if(userId !== match.player1_id && userId !== match.player2_id)
+        return reply.code(403).send({ error: "Forbidden"})
+	
+	if(winner_id !== match.player1_id && winner_id !== match.player2_id)
         return reply.code(400).send({ error: "Winner ID does not match player"})
     
     await db.run(

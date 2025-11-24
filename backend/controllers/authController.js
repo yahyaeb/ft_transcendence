@@ -7,7 +7,7 @@ import 'dotenv/config' //importing the secret .env
 
 export async function signupController(req, reply) {
     const { username, password, avatar } = req.body || {}
-
+	console.log('SIGNUP body:', req.body)
     // validate input
     if (!username || !password) {
         return reply.code(400).send({ error: 'Username and password are required' })
