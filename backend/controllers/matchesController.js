@@ -1,26 +1,36 @@
 import { db } from '../db/database.js'
 
 export async function startMatch(req, reply) {
-    const { player1_id , player2_id, mode} = req.body || {}
+
+	const player1_id = Number(req.user.id)
+    const { player2_id, mode} = req.body || {}
 
     if(mode !== "bot" && mode !== "classic")
         return reply.code(400).send({ error: 'Invalid mode' })
-    if ( player1_id == null || player2_id == null )
-        return reply.code(400).send({ error: 'Invalid player id' })
-    try {
+    if (player2_id == null )
+        return reply.code(400).send({ error: 'Invalid Xplayer id' })
+    const p2 = Number(player2_id)
+	if(Number.isNaN(player1_id) || Number.isNaN(p2)){
+		return reply.code(400).send({ error: "Invalid X3player id"})
+	}
+	if (mode === "classic" && player1_id === p2)
+	{
+		return reply.code(400).send({ error: "Cannot start a classic match against yourself"})
+	}
+	try {
         const valid1_id = await db.get(
         "SELECT id FROM users WHERE id = ?",
         [player1_id]
         )
         const valid2_id = await db.get(
             "SELECT id FROM users WHERE id = ?",
-            [player2_id]
+            [p2]
         )
         if(!valid1_id || !valid2_id)
             return reply.code(400).send({ error: 'Invalid player id' })
         const startedMatch = await db.run(
             "INSERT INTO matches (player1_id, player2_id, mode) VALUES (?, ?, ?)",
-            [player1_id, player2_id, mode]
+            [player1_id, p2, mode]
         )
         return reply.code(201).send({
             message: 'Match started',
@@ -60,31 +70,38 @@ export async function getMatches(req, reply) {
 }
 
 export async function updateMatchStatus(req, reply) {
-    const { id } = req.params
-    const { status } = req.body
+
+	const matchId = Number(req.params.id)
+    const userId = Number(req.user.id)
+    const { status } = req.body || {}
     const allowedStatus = ["pending", "ongoing", "finished"]
 
     if(!status)
         return reply.code(400).send({error: "Status is required"})
     if (!allowedStatus.includes(status))
         return reply.code(400).send({ error: "Invalid status value" })
-    const currentStatus = await db.get(
-    "SELECT status FROM matches WHERE id = ?",
-    [id]
+
+	const currentStatus = await db.get(
+    "SELECT id, player1_id, player2_id, status FROM matches WHERE id = ?",
+    [matchId]
     )
+	if(!currentStatus || Number.isNaN(matchId)){
+		return reply.code(404).send({ error: "Match not found" })
+	}
+	if(currentStatus.player1_id !== userId && currentStatus.player2_id !== userId){
+		return reply.code(403).send({ error: "Forbidden"})
+	}
+
     if (currentStatus.status === "finished")
-        return reply.code(400).send({ error: "Game is already has already ended" })
-    await db.run(
+        return reply.code(400).send({ error: "Game has already ended" })
+    
+	await db.run(
     "UPDATE matches SET status = ? WHERE id = ?",
-    [status, id]
+    [status, matchId]
     )
-
-    if(!currentStatus)
-        return reply.code(400).send({error: "Invalid match id"}) 
-
     return reply.code(200).send({
         message: "Status updated",
-        id,
+        id: matchId,
         status
     })
 }

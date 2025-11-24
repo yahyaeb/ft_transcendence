@@ -1,6 +1,10 @@
 import { getMatch, getMatches, startMatch, updateMatchStatus, finishedMatch } from "../controllers/matchesController.js"
+import { authMiddleware } from "../middleware/auth.js"
 
 export async function startedMatch(fastify, options) {
+
+	fastify.addHook('preHandler', authMiddleware)
+	
     fastify.post('/', startMatch)
     fastify.get('/:id', getMatch)
     fastify.get('/', getMatches)
