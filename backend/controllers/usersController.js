@@ -21,26 +21,24 @@ export async function getSingleUserController(req, reply){
 }
 
 export async function updateAvatar(req, reply){
-    const {id} = req.params
+    const id = req.user.id
     const {avatar} = req.body || {}
 
     if(!avatar) {
         return reply.code(400).send({error: "Avatar is required"})
     }
 
-	if(Number(id) !== Number(req.user.id)){
-		return reply.code(403).send({ error: 'Forbidden' })
-	}
-
+	if(typeof avatar !== 'string') {
+        return reply.code(400).send({error: "Path is not a valid string"})
+    }
     const user = await db.get(
         "SELECT id from users where id = ? ",
         [id]
     )
-    if(!user)
-    {
+    if(!user){
         return reply.code(404).send({error: "User not found"})
     }
-    const avatarUpdate = await db.run(
+    await db.run(
         "UPDATE users SET avatar = ? WHERE id = ?;",
         [avatar, id]
     )
