@@ -80,7 +80,6 @@ function drawCenterLine(){
     ctx.strokeStyle = "rgba(100, 116, 139, 0.25)";
     ctx.lineWidth = 2;
     ctx.setLineDash([12, 12]);
-    ctx.beginPath();
     ctx.moveTo(gameWidth / 2, 0);
     ctx.lineTo(gameWidth / 2, gameHeight);
     ctx.stroke();
@@ -170,14 +169,14 @@ function checkCollision(){
         if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
                 ballX = (paddle1.x + paddle1.width) + ballRadius
                 ballXDirection *= -1
-                ballSpeed += 1
+                ballSpeed += 0.65
         }
     }
     if (ballX >= (paddle2.x - ballRadius)){
         if (ballY > paddle2.y && ballY < paddle2.y + paddle2.height){
                 ballX = paddle2.x - ballRadius
                 ballXDirection *= -1
-                ballSpeed += 1
+                ballSpeed += 0.65
         }
     }
 }
