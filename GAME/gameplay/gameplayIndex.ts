@@ -12,9 +12,10 @@ const paddleBorder = "transparent"
 const ballColor = "#f8fafc"
 const ballBorderColor = "rgba(248, 250, 252, 0.25)"
 const ballRadius = 12.5
+const maxBallSpeed = 8
 const paddleSpeed = 5
 let intervalID: number;
-let ballSpeed = 1
+let ballSpeed = 5
 let ballX = gameWidth / 2
 let ballY = gameHeight / 2
 let ballXDirection = 0
@@ -133,6 +134,8 @@ function drawBall(ballX: number, ballY: number){
 }
 
 function moveBall(){
+    if (ballSpeed > maxBallSpeed)
+            ballSpeed = maxBallSpeed
     ballX += (ballSpeed * ballXDirection)
     ballY += (ballSpeed * ballYDirection)
 }
@@ -169,14 +172,22 @@ function checkCollision(){
         if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
                 ballX = (paddle1.x + paddle1.width) + ballRadius
                 ballXDirection *= -1
-                ballSpeed += 0.65
+                ballSpeed += 0.8
+            let collidePoint = ballY - (paddle1.y + paddle1.height / 2)
+            collidePoint = collidePoint / (paddle1.height / 2)
+            let angleRad = (Math.PI / 3) * collidePoint
+            ballYDirection = Math.sin(angleRad) * 1.5
         }
     }
     if (ballX >= (paddle2.x - ballRadius)){
         if (ballY > paddle2.y && ballY < paddle2.y + paddle2.height){
                 ballX = paddle2.x - ballRadius
                 ballXDirection *= -1
-                ballSpeed += 0.65
+                ballSpeed += 0.8
+            let collidePoint = ballY - (paddle2.y + paddle2.height / 2)
+            collidePoint = collidePoint / (paddle2.height / 2)
+            let angleRad = (Math.PI / 3) * collidePoint
+            ballYDirection = Math.sin(angleRad) * 1.5
         }
     }
 }
