@@ -31,14 +31,14 @@ let keys = {
 };
 
 let paddle1 = {
-    width:  14,
+    width:  10,
     height: 95,
     x: 25,
     y: 0
 }
 
 let paddle2 = {
-    width: 14,
+    width: 10,
     height: 95,
     x: gameWidth - 39,
     y: 0
@@ -84,7 +84,12 @@ function drawCenterLine(){
     ctx.moveTo(gameWidth / 2, 0);
     ctx.lineTo(gameWidth / 2, gameHeight);
     ctx.stroke();
-    ctx.setLineDash([]);
+
+    ctx.strokeStyle = "rgba(100, 116, 139, 0.25)"
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.arc(gameWidth / 2, gameHeight / 2, 150, 0 ,10 * Math.PI)
+    ctx.stroke()
 }
 
 function drawPaddles(){
@@ -100,7 +105,7 @@ function drawPaddles(){
     ctx.shadowBlur = 0;
 }
 function createBall(){
-    ballSpeed = 2;
+    ballSpeed = 1;
     if (Math.round(Math.random()) == 1){
         ballXDirection = 1;
     }
@@ -135,7 +140,8 @@ function drawBall(ballX: number, ballY: number){
 
 function moveBall(){
     if (ballSpeed > maxBallSpeed)
-            ballSpeed = maxBallSpeed
+        ballSpeed = maxBallSpeed
+    console.log(ballSpeed)
     ballX += (ballSpeed * ballXDirection)
     ballY += (ballSpeed * ballYDirection)
 }
@@ -172,7 +178,7 @@ function checkCollision(){
         if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
                 ballX = (paddle1.x + paddle1.width) + ballRadius
                 ballXDirection *= -1
-                ballSpeed += 0.8
+                ballSpeed += 0.35
             let collidePoint = ballY - (paddle1.y + paddle1.height / 2)
             collidePoint = collidePoint / (paddle1.height / 2)
             let angleRad = (Math.PI / 3) * collidePoint
@@ -183,7 +189,7 @@ function checkCollision(){
         if (ballY > paddle2.y && ballY < paddle2.y + paddle2.height){
                 ballX = paddle2.x - ballRadius
                 ballXDirection *= -1
-                ballSpeed += 0.8
+                ballSpeed += 0.35
             let collidePoint = ballY - (paddle2.y + paddle2.height / 2)
             collidePoint = collidePoint / (paddle2.height / 2)
             let angleRad = (Math.PI / 3) * collidePoint
