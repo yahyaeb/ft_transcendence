@@ -2,6 +2,7 @@
 // controllers/usersController.js
 
 import { db } from '../db/database.js'
+import bcrypt from 'bcrypt'
 
 export async function getAllUsersController(req, reply){
     // const users = await db.all("SELECT * FROM users;");
@@ -62,4 +63,48 @@ export async function getMeProfile(req, reply){
     }
 
     return reply.code(200).send(user)
+}
+
+
+export async function updatePassword(req, reply){
+
+    const userId = req.user.id
+    const {oldpwd, newpwd, secnewpwd} = req.body || {}
+
+    if(!oldpwd || !newpwd || !secnewpwd) {
+        return reply.code(400).send({error: "All password fields are required!"})
+    }
+
+    if(newpwd !== secnewpwd)
+        return reply.code(400).send({ error: 'New passwords do not match' })
+
+    if(newpwd.length < 8)
+        return reply.code(400).send({ error: 'New password must be at least 8 characters long' })
+
+    const user = await db.get(
+        "SELECT id, password FROM users WHERE id = ?;",
+        [userId]
+    )
+
+    const oldOk = await bcrypt.compare(oldpwd, user.password)
+    if (!oldOk) {
+        return reply.code(401).send({ error: 'Current password is incorrect' })
+    }
+
+    const sameAsOld = await bcrypt.compare(newpwd, user.password)
+    if (sameAsOld) {
+        return reply.code(400).send({ error: 'New password must be different from the old password' })
+    }
+
+    const hashed = await bcrypt.hash(newpwd, 10)
+
+    await db.run(
+        "UPDATE users SET password = ? WHERE id = ?;",
+        [hashed, userId]
+        )
+
+    return reply.code(200).send({
+        message: 'Password updated successfully'
+    })
+
 }
