@@ -3,12 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PvP - Choix joueurs</title>
+    <title>Tournoi - Nombre de Joueurs</title>
     <link rel="stylesheet" href="./gameplayIndex.css">
 </head>
 <body class="bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 min-h-screen flex justify-center items-center p-5">
-    <div>
+    <div class="text-center max-w-[600px] w-full mx-auto">
+        <div class="mb-10">
+            <button onclick="window.location.href='./gameModeSelection.html'" 
+                    class="mb-6 text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 mx-auto">
+                <span>←</span>
+                <span>Retour</span>
+            </button>
+            <h1 class="text-5xl font-extrabold mb-3 gradient-purple" style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
+                Mode Tournoi
+            </h1>
+            <p class="text-slate-400 text-base tracking-wide">Choisissez le nombre de participants</p>
+        </div>
         
+        <div class="flex flex-col gap-6 px-8">
+            <button onclick="alert('Tournoi 4 joueurs - À implémenter')" 
+                    class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer"
+                    style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative">
+                    <h2 class="text-3xl font-bold mb-2 gradient-purple">Tournoi 4 Joueurs</h2>
+                    <div class="mt-4 text-sm text-slate-500">
+                        <span>Format: 2 matchs éliminatoires</span>
+                    </div>
+                </div>
+            </button>
+            <button onclick="alert('Tournoi 8 joueurs - À implémenter')" 
+                    class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer"
+                    style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative">
+                    <h2 class="text-3xl font-bold mb-2 gradient-purple">Tournoi 8 Joueurs</h2>
+                    <div class="mt-4 text-sm text-slate-500">
+                        <span>Format: 7 matchs éliminatoires</span>
+                    </div>
+                </div>
+            </button>
+            <button onclick="alert('Tournoi 16 joueurs - À implémenter')" 
+                    class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer"
+                    style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative">
+                    <h2 class="text-3xl font-bold mb-2 gradient-purple">Tournoi 16 Joueurs</h2>
+                    <div class="mt-4 text-sm text-slate-500">
+                        <span>Format: 15 matchs éliminatoires</span>
+                    </div>
+                </div>
+            </button>
+        </div>
+
+        <div class="mt-8 text-slate-500 text-sm">
+            <p>Chaque match se joue au meilleur des 5 points</p>
+        </div>
     </div>
 </body>
-</html>
+</html> 
