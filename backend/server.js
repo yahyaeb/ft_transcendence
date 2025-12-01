@@ -2,17 +2,20 @@
 import fastifyFactory from 'fastify'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
 import { usersRoutes } from './routes/users.js'
 import { authRoutes } from './routes/auth.js'
 import { matchesRoutes } from './routes/matches.js'
-
+import cors from "@fastify/cors";
 
 
 const fastify = fastifyFactory({logger: true })
 const PORT = 4999
 
+
+await fastify.register(cors,{
+  origin: ["http://localhost:5173"],
+  credentials: true
+})
 
 
 // API documentation: http://localhost:4999/docs/

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     avatar TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -25,11 +26,11 @@ CREATE TABLE IF NOT EXISTS matches(
 
 
 
-INSERT INTO users (username, password)
+INSERT INTO users (username, email, password)
 VALUES
-  ('Yahya',  '123456'),
-  ('yassine', '123456'),
-  ('mehdi',   '123456'),
-  ('nisar', '123456'),
-  ('iheb',  '123456'),
-  ('hicham', '123456');
+  ('Yahya', 'test1@test.com', '123456'),
+  ('yassine', 'test21@test.com', '123456'),
+  ('mehdi', 'test3@test.com', '123456'),
+  ('nisar', 'test4@test.com', '123456'),
+  ('iheb', 'test5@test.com', '123456'),
+  ('hicham', 'test6@test.com', '123456');
