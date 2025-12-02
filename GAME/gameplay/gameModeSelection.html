@@ -7,6 +7,48 @@
     <link rel="stylesheet" href="./gameplayIndex.css">
 </head>
 <body class="bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 min-h-screen flex justify-center items-center p-5">
+    <div id="modal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-center p-5 z-50 hidden">
+        <div class="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-slate-400/20 rounded-3xl max-w-[550px] w-full mx-auto shadow-2xl p-10">
+            <div class="mb-8 text-center">
+                <h2 class="text-4xl font-extrabold mb-2 gradient-purple" style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+                    Configuration Tournoi
+                </h2>
+                <p class="text-slate-400 text-sm">Entrez les pseudos des 4 joueurs</p>
+            </div>
+
+            <div class="space-y-4 mb-8">
+                <div class="relative">
+                    <input id="player1" type="text" placeholder="Pseudo joueur 1" 
+                           class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-purple-400 font-bold">1</div>
+                </div>
+                
+                <div class="relative">
+                    <input id="player2" type="text" placeholder="Pseudo joueur 2" 
+                           class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200" />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-cyan-400 font-bold">2</div>
+                </div>
+                
+                <div class="relative">
+                    <input id="player3" type="text" placeholder="Pseudo joueur 3" 
+                           class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-purple-400 font-bold">3</div>
+                </div>
+                
+                <div class="relative">
+                    <input id="player4" type="text" placeholder="Pseudo joueur 4" 
+                           class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200" />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-cyan-400 font-bold">4</div>
+                </div>
+            </div>
+
+            <button id="closeModal" 
+                    class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                    style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+                Valider
+            </button>
+        </div>
+    </div>
     <div class="text-center max-w-[600px] w-full mx-auto">
         <div class="mb-10">
             <button onclick="window.location.href='../index.html'" 
@@ -34,7 +76,7 @@
                 </div>
             </button>
             <div class="flex flex-col gap-6 px-8">
-            <button 
+            <button id="openModal"
                     class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer"
                     style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
                 <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -46,5 +88,6 @@
                     </div>             
                 </div>
             </div>
+        <script type="module" src="./tournament.ts"></script>
 </body>
 </html>
