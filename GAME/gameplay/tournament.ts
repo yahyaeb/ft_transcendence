@@ -10,6 +10,15 @@ openbtn.addEventListener("click", ()=>{
     modal.classList.remove("hidden")
 })
 
+document.addEventListener("keydown", (e : KeyboardEvent)=>{
+    if (e.key === "Escape"){
+        player1Input.value = ""
+        player2Input.value = ""
+        player3Input.value = ""
+        player4Input.value = ""
+        modal.classList.add("hidden")
+    }
+})
 closebtn.addEventListener("click", ()=>{
     const pseudo1 = player1Input.value.trim() || 'Player 1'
     const pseudo2 = player2Input.value.trim() || 'Player 2'

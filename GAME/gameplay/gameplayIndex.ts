@@ -193,7 +193,7 @@ function checkCollision(){
                     }
                 }
                 else
-                    window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}`;
+                    window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`;
                 return;
             }
             createBall()
@@ -232,7 +232,7 @@ function checkCollision(){
                 }
             }
             else
-                window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}`;
+                window.location.href = `./Winner.html?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`;
             return ;
         }
         createBall()
