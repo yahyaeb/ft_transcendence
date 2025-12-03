@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victoire - Pong</title>
+    <link rel="stylesheet" href="./gameplayIndex.css">
+</head>
+<body class="bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 min-h-screen flex justify-center items-center p-5">
+    <div class="text-center max-w-[700px] w-full mx-auto">
+        <div class="text-9xl mb-8 animate-bounce" style="filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.8))">
+            🏆
+        </div>
+        <div class="mb-8">
+            <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple" style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))">
+                Player 1 Wins!
+            </h1>
+            <p class="text-2xl text-slate-400 tracking-wide">Félicitations pour cette victoire éclatante!</p>
+        </div>
+        <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 mb-8">
+            <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">Score Final</div>
+            <div class="flex justify-center items-center gap-8">
+                <div>
+                    <div class="text-lg text-purple-400 mb-2">Player 1</div>
+                    <div id="finalScore1" class="text-5xl font-extrabold gradient-purple">5</div>
+                </div>
+                <div class="text-3xl text-slate-600">-</div>
+                <div>
+                    <div class="text-lg text-cyan-400 mb-2">Player 2</div>
+                    <div id="finalScore2" class="text-5xl font-extrabold gradient-cyan">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 px-8">
+            <button id="nextMatchBtn"
+                    class="font-semibold text-lg cursor-pointer px-8 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.5)]"
+                    style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+                Prochain Match
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const winner = urlParams.get('winner') || '1';
+        const score1 = urlParams.get('score1') || '5';
+        const score2 = urlParams.get('score2') || '0';
+        const player1 = urlParams.get('player1') || 'Player 1';
+        const player2 = urlParams.get('player2') || 'Player 2';
+        
+        document.getElementById('winnerTitle').textContent = `${winner === '1' ? player1 : player2} Wins!`;
+        document.getElementById('winnerTitle').className = winner === '1' 
+            ? 'text-6xl font-extrabold mb-4 gradient-purple' 
+            : 'text-6xl font-extrabold mb-4 gradient-cyan';
+        document.getElementById('winnerTitle').style.filter = winner === '1'
+            ? 'drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))'
+            : 'drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))';
+        
+        document.getElementById('finalScore1').textContent = score1;
+        document.getElementById('finalScore2').textContent = score2;
+        
+        const nextMatchBtn = document.getElementById('nextMatchBtn');
+        nextMatchBtn.addEventListener('click', () => {
+            const tournamentPlayers = JSON.parse(sessionStorage.getItem('tournamentPlayers') || '{}');
+            const currentMatch = sessionStorage.getItem('currentMatch') || '1';
+            
+            if (currentMatch === '1') {
+                sessionStorage.setItem('currentMatch', '2');
+                window.location.href = `./Gameplay.html?player1=${encodeURIComponent(tournamentPlayers.player3)}&player2=${encodeURIComponent(tournamentPlayers.player4)}&tournamentMatch=2`;
+            } else {
+                const match1Winner = sessionStorage.getItem('match1Winner');
+                const match2Winner = sessionStorage.getItem('match2Winner');
+                window.location.href = `./Gameplay.html?player1=${encodeURIComponent(match1Winner)}&player2=${encodeURIComponent(match2Winner)}&tournamentMatch=final`;
+            }
+        });
+    </script>
+</body>
+</html>

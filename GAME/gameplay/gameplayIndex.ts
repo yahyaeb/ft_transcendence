@@ -8,6 +8,8 @@ const player2NameElement = document.querySelector('#player2Name')!;
 const urlParams = new URLSearchParams(window.location.search);
 const player1Name = urlParams.get('player1') || 'Player 1';
 const player2Name = urlParams.get('player2') || 'Player 2';
+const player3Name = "player3"
+const player4Name = "player4"
 player1NameElement.textContent = `${player1Name}`;
 player2NameElement.textContent = `${player2Name}`;
 const gameWidth = gameBoard.width;
@@ -148,7 +150,6 @@ function drawBall(ballX: number, ballY: number){
 function moveBall(){
     if (ballSpeed > maxBallSpeed)
         ballSpeed = maxBallSpeed
-    console.log(ballSpeed)
     ballX += (ballSpeed * ballXDirection)
     ballY += (ballSpeed * ballYDirection)
 }
@@ -164,7 +165,35 @@ function checkCollision(){
             updateScore()
             if (player2Score === 5 ){
                 clearInterval(intervalID);
-                window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}`;
+                const urlParams2 = new URLSearchParams(window.location.search)
+                const tournamentMatch = urlParams2.get('tournamentMatch')
+
+                if (tournamentMatch){
+                    if (tournamentMatch === '1'){
+                        sessionStorage.setItem('match1Winner', player2Name)
+                        sessionStorage.setItem('match1Score', JSON.stringify({
+                            player1: player1Score,
+                            player2: player2Score
+                        }));
+                        window.location.href = `./tournamentMatchWinner.html?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`
+                        return;
+                    }
+                    else if (tournamentMatch === '2'){
+                        sessionStorage.setItem('match2Winner', player2Name)
+                        sessionStorage.setItem('match2Score', JSON.stringify({
+                            player1: player1Score,
+                            player2: player2Score
+                        }));
+                        window.location.href = `./tournamentMatchWinner.html?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`
+                        return;
+                    }
+                    else if (tournamentMatch === 'final'){
+                        window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`
+                        return;
+                    }
+                }
+                else
+                    window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}`;
                 return;
             }
             createBall()
@@ -175,7 +204,35 @@ function checkCollision(){
         updateScore()
         if (player1Score === 5){
             clearInterval(intervalID)
-            window.location.href = `./Winner.html?winner=1&score1=${player1Score}&score2=${player2Score}`
+            const urlParams3 = new URLSearchParams(window.location.search)
+            const tournamentMatch1 = urlParams3.get('tournamentMatch')
+
+            if (tournamentMatch1){
+                if (tournamentMatch1 === '1'){
+                    sessionStorage.setItem('match1Winner', player1Name)
+                    sessionStorage.setItem('match1Score', JSON.stringify({
+                        player1: player1Score,
+                        player2: player2Score
+                    }));
+                    window.location.href = `./tournamentMatchWinner.html?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`
+                    return;
+                }
+                else if (tournamentMatch1 === '2'){
+                    sessionStorage.setItem('match2Winner', player1Name)
+                    sessionStorage.setItem('match2Score', JSON.stringify({
+                        player1: player1Score,
+                        player2: player2Score
+                    }));
+                    window.location.href = `./tournamentMatchWinner.html?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`
+                    return;
+                }
+                else if (tournamentMatch1 === 'final'){
+                    window.location.href = `./Winner.html?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`
+                    return;
+                }
+            }
+            else
+                window.location.href = `./Winner.html?winner=2&score1=${player1Score}&score2=${player2Score}`;
             return ;
         }
         createBall()

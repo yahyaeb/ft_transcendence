@@ -28,6 +28,5 @@ startTournamentButton.addEventListener('click', () => {
     sessionStorage.setItem('match1Winner', '');
     sessionStorage.setItem('match2Winner', '');
     
-    window.location.href = `./Gameplay.html?player1=${encodeURIComponent(player1)}&player2=${encodeURIComponent(player2)}&tournamentMatch=1`;
-    
+    window.location.href = `./Gameplay.html?player1=${encodeURIComponent(player1)}&player2=${encodeURIComponent(player2)}&player3Name=${encodeURIComponent(player3)}&player4Name=${encodeURIComponent(player4)} &tournamentMatch=1`;
 });
