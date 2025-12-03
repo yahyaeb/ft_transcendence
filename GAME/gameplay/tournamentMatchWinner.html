@@ -31,6 +31,14 @@
                 </div>
             </div>
         </div>
+        <div id="nextMatchInfo" class="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border-2 border-yellow-500/30 rounded-2xl p-6 mb-8">
+            <div class="flex justify-center items-center gap-4">
+                <div id="nextPlayer1" class="text-xl font-bold text-purple-300"></div>
+                <div class="text-2xl text-yellow-400 font-bold">VS</div>
+                <div id="nextPlayer2" class="text-xl font-bold text-cyan-300"></div>
+            </div>
+        </div>
+        
         <div class="flex flex-col gap-4 px-8">
             <button id="nextMatchBtn"
                     class="font-semibold text-lg cursor-pointer px-8 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.5)]"
@@ -60,11 +68,22 @@
         document.getElementById('player2Name').textContent = player2;
         document.getElementById('finalScore1').textContent = score1;
         document.getElementById('finalScore2').textContent = score2;
+        const tournamentPlayers = JSON.parse(sessionStorage.getItem('tournamentPlayers') || '{}');
+        const currentMatch = sessionStorage.getItem('currentMatch') || '1';
+        const nextMatchInfo = document.getElementById('nextMatchInfo');
+        const nextPlayer1Element = document.getElementById('nextPlayer1');
+        const nextPlayer2Element = document.getElementById('nextPlayer2');
         
+        if (currentMatch === '1') {
+            nextPlayer1Element.textContent = tournamentPlayers.player3 || 'Player 3';
+            nextPlayer2Element.textContent = tournamentPlayers.player4 || 'Player 4';
+        } else if (currentMatch === '2') {
+            const match1Winner = sessionStorage.getItem('match1Winner') || 'Gagnant Match 1';
+            nextPlayer1Element.textContent = match1Winner;
+            nextPlayer2Element.textContent = winner === '1' ? player1 : player2;
+        }
         const nextMatchBtn = document.getElementById('nextMatchBtn');
         nextMatchBtn.addEventListener('click', () => {
-            const tournamentPlayers = JSON.parse(sessionStorage.getItem('tournamentPlayers') || '{}');
-            const currentMatch = sessionStorage.getItem('currentMatch') || '1';
             if (currentMatch === '1') {
                 sessionStorage.setItem('currentMatch', '2');
                 window.location.href = `./Gameplay.html?player1=${encodeURIComponent(tournamentPlayers.player3)}&player2=${encodeURIComponent(tournamentPlayers.player4)}&tournamentMatch=2`;
