@@ -13,7 +13,7 @@ export async function getAllUsersController(req, reply){
 export async function getSingleUserController(req, reply){
     const {id } = req.params
     // const user = await db.get("Select * FROM users WHERE id = ?", [id]);
-    const user = await db.get("Select id, email, username, avatar FROM users WHERE id = ?", [id]);
+    const user = await db.get("Select id, username, avatar FROM users WHERE id = ?", [id]);
 
     if(!user){
         return reply.code(404).send({error: 'User not found'})
@@ -54,15 +54,22 @@ export async function getMeProfile(req, reply){
     const userId = req.user.id
 
     const user = await db.get(
-        "SELECT id, email, username, avatar, created_at FROM users WHERE id = ?",
+        "SELECT id, email, username, avatar, two_factor_enabled, created_at FROM users WHERE id = ?",
         [userId]
     )
-
     if(!user){
         return reply.code(404).send({ error: "User not found" })
     }
 
-    return reply.code(200).send(user)
+    return reply.code(200).send({
+        user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        two_factor_authenticator: user.two_factor_enabled ? "enabled" : "disabled"
+      }
+    })
 }
 
 

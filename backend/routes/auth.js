@@ -37,7 +37,7 @@ export async function authRoutes(fastify, options) {
   fastify.post('/login', loginController)
   fastify.post('/2fa/enable', { preHandler: [authMiddleware] }, enableTwoFactor)
   fastify.post('/2fa/verify-setup', { preHandler: [authMiddleware] }, verifyTwoFactorSetup)
-  fastify.post('/2fa/disable2fa', { preHandler: [authMiddleware] }, disable2fa)
+  fastify.post('/2fa/disable', { preHandler: [authMiddleware] }, disable2fa)
 }
 
 //generate QR code for the authenticator: https://www.the-qrcode-generator.com/ 

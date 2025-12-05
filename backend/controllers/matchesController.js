@@ -7,7 +7,7 @@ export async function startMatch(req, reply) {
 
     if(mode !== "bot" && mode !== "classic")
         return reply.code(400).send({ error: 'Invalid mode' })
-    if (player2_id == null )
+    if (mode !== "bot"&& player2_id == null)
         return reply.code(400).send({ error: 'Invalid Xplayer id' })
     const p2 = Number(player2_id)
 	if(Number.isNaN(player1_id) || Number.isNaN(p2)){
@@ -67,7 +67,7 @@ export async function getMatches(req, reply) {
     [req.user.id, req.user.id]
 	);
     if (matches.length === 0) {
-        return reply.code(404).send({ error: 'No available matches' })
+        return reply.code(200).send({matches})
     }
 
     return reply.code(200).send(matches)
