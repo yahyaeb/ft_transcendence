@@ -8,6 +8,7 @@ import { getAllUsersController,
 }   from "../controllers/usersController.js";
 import { authMiddleware } from "../middleware/auth.js";
 
+
 export async function usersRoutes(fastify, options) {
 
     fastify.get('/me', {
@@ -24,4 +25,6 @@ export async function usersRoutes(fastify, options) {
 
     fastify.get('/', getAllUsersController)
     fastify.get('/:id', getSingleUserController)
+
 }
+

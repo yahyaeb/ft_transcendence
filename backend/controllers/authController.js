@@ -1,6 +1,7 @@
 import { db } from '../db/database.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { authenticator  } from 'otplib'
 import 'dotenv/config' //importing the secret .env
 
 
@@ -61,7 +62,7 @@ export async function signupController(req, reply) {
 }
 
 export async function loginController(req, reply) {
-  const { email, password } = req.body || {}
+  const { email, password, code } = req.body || {}
 
   if (!email || !password) {
     return reply.code(400).send({ error: 'Email and password are required' })
@@ -69,7 +70,8 @@ export async function loginController(req, reply) {
 
   try {
     const user = await db.get(
-      `SELECT id, username, email, password, avatar
+      `SELECT id, username, email, password, avatar,
+              two_factor_enabled, two_factor_secret
        FROM users
        WHERE email = ?`,
       [email]
@@ -78,9 +80,21 @@ export async function loginController(req, reply) {
     if (!user) {
       return reply.code(401).send({ error: 'Unauthorized: Invalid email or password' })
     }
+
     const ok = await bcrypt.compare(password, user.password)
     if (!ok) {
       return reply.code(401).send({ error: 'Unauthorized: Invalid email or password' })
+    }
+
+    if (user.two_factor_enabled) {
+      if (!code) {
+        return reply.code(401).send({ error: '2FA code required' })
+      }
+
+      const isValidCode = authenticator.check(code, user.two_factor_secret)
+      if (!isValidCode) {
+        return reply.code(401).send({ error: 'Invalid 2FA code' })
+      }
     }
 
     const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret'
@@ -107,4 +121,59 @@ export async function loginController(req, reply) {
     console.error('DB Error in /login:', error)
     return reply.code(500).send({ error: 'Internal Server Error' })
   }
+}
+
+
+export async function enableTwoFactor(req, reply){
+  const userId = req.user.id
+  const secret = authenticator.generateSecret();
+  const padded = secret.padEnd(secret.length + (8 - secret.length % 8) % 8, "=")
+
+
+  await db.run(
+    'UPDATE users SET two_factor_secret = ?, two_factor_enabled = 0 WHERE id = ?',
+    [padded, userId]
+  )
+
+  const optauthURL = authenticator.keyuri(
+    req.user.username,
+    'Ft_Transcendence',
+    padded
+  )
+  return reply.code(200).send({
+    message: '2FA secret generated',
+    padded,
+    optauthURL
+  })
+
+}
+
+export async function verifyTwoFactorSetup(req, reply){
+  const userId = req.user.id
+  const { code } = req.body || {}
+  if(!code){
+    return reply.code(400).send({ error: 'Code is required'})
+  }
+
+  const user = await db.get(
+    'SELECT two_factor_secret FROM users WHERE id = ?',
+    [userId]
+  )
+
+  if(!user || !user.two_factor_secret){
+      return reply.code(400).send({ error: '2FA is not initialized for this user'})
+  }
+
+  const isValid = authenticator.check(code, user.two_factor_secret)
+
+  if (!isValid){
+    return reply.code(401).send({ error: 'Invalid 2FA code' })
+  }
+
+  await db.run(
+    'UPDATE users SET two_factor_enabled = 1 WHERE id = ?',
+    [userId]
+  )
+  
+  return reply.code(200).send({ message: '2FA enabled successfully'})
 }

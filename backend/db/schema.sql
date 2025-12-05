@@ -4,7 +4,9 @@ CREATE TABLE IF NOT EXISTS users(
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     avatar TEXT,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    two_factor_enabled INTEGER NOT NULL DEFAULT 0,
+    two_factor_secret TEXT
 );
 
 CREATE TABLE IF NOT EXISTS matches(

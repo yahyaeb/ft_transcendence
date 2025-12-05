@@ -1,4 +1,5 @@
-import { signupController, loginController } from '../controllers/authController.js';
+import { signupController, loginController, verifyTwoFactorSetup, enableTwoFactor } from '../controllers/authController.js';
+import { authMiddleware } from "../middleware/auth.js";
 
 export async function authRoutes(fastify, options) {
   fastify.post(
@@ -34,4 +35,6 @@ export async function authRoutes(fastify, options) {
   )
 
   fastify.post('/login', loginController)
+  fastify.post('/2fa/enable', { preHandler: [authMiddleware] }, enableTwoFactor)
+  fastify.post('/2fa/verify-setup', { preHandler: [authMiddleware] }, verifyTwoFactorSetup)
 }
