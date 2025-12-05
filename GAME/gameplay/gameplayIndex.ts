@@ -20,11 +20,11 @@ const paddle2Color = "#22d3ee"
 const paddleBorder = "transparent"
 const ballColor = "#f8fafc"
 const ballBorderColor = "rgba(248, 250, 252, 0.25)"
-const ballRadius = 12.5
-const maxBallSpeed = 3
+const ballRadius = 8.5
+const maxBallSpeed = 4
 const paddleSpeed = 3.5
 let intervalID: number;
-let ballSpeed = 1
+let ballSpeed = 2
 let ballX = gameWidth / 2
 let ballY = gameHeight / 2
 let ballXDirection = 0
@@ -114,7 +114,7 @@ function drawPaddles(){
     ctx.shadowBlur = 0;
 }
 function createBall(){
-    ballSpeed = 1;
+    ballSpeed = 2;
     if (Math.round(Math.random()) == 1){
         ballXDirection = 1;
     }
