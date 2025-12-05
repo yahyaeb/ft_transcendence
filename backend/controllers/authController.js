@@ -114,7 +114,8 @@ export async function loginController(req, reply) {
         id: user.id,
         username: user.username,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar,
+        two_factor_enabled: user.two_factor_enabled ? "enabaled" : "disabled"
       }
     })
   } catch (error) {
@@ -176,4 +177,41 @@ export async function verifyTwoFactorSetup(req, reply){
   )
   
   return reply.code(200).send({ message: '2FA enabled successfully'})
+}
+
+export async function disable2fa(req, reply){
+  const userId = req.user.id
+  const { code } = req.body || {}
+
+  try {
+    const user = await db.get(
+      'SELECT id, two_factor_enabled, two_factor_secret FROM users WHERE id = ?',
+      [userId]
+    )
+
+    if(!user){
+      return reply.code(404).send({error : 'User not found'})
+    }
+
+    if(!user.two_factor_enabled){
+      return reply.code(400).send({error : '2FA is not enabled for this user'})
+    }
+    if (!code) {
+      return reply.code(400).send({ error: '2FA code required to disable 2FA' })
+    }
+
+    const isValid = authenticator.check(code, user.two_factor_secret)
+    if (!isValid){
+      return reply.code(401).send({ error: 'Invalid 2FA code' })
+    }
+    await db.run(
+      'UPDATE users SET two_factor_enabled = 0, two_factor_secret = NULL WHERE id = ?',
+      [userId]
+    )
+    return reply.code(200).send({ message: '2FA disabled  successfully'})
+  } catch (err)
+  {
+    console.error('Error disabling 2FA:', err)
+    return reply.code(500).send({ error: 'Internal Server Error'})
+  }
 }
