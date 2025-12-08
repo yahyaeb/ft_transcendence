@@ -1,48 +1,49 @@
 import { db } from '../db/database.js'
 
 export async function startMatch(req, reply) {
+    const player1_id = Number(req.user.id);
+    const { mode, guest_name } = req.body || {};
 
-	const player1_id = Number(req.user.id)
-    const { player2_id, mode} = req.body || {}
+    if (!["pvp", "pve"].includes(mode)) {
+        return reply.code(400).send({ error: "Invalid mode" });
+    }
+    let p2, player2_name;
 
-    if(mode !== "bot" && mode !== "classic")
-        return reply.code(400).send({ error: 'Invalid mode' })
-    if (mode !== "bot"&& player2_id == null)
-        return reply.code(400).send({ error: 'Invalid Xplayer id' })
-    const p2 = Number(player2_id)
-	if(Number.isNaN(player1_id) || Number.isNaN(p2)){
-		return reply.code(400).send({ error: "Invalid X3player id"})
-	}
-	if (mode === "classic" && player1_id === p2)
-	{
-		return reply.code(400).send({ error: "Cannot start a classic match against yourself"})
-	}
-	try {
-        const valid1_id = await db.get(
-        "SELECT id FROM users WHERE id = ?",
-        [player1_id]
-        )
-        const valid2_id = await db.get(
+    if (mode === "pve") {
+        p2 = 9999;
+        player2_name = "Bot";
+    } else {
+        p2 = 9998;
+        player2_name = (guest_name && guest_name.trim()) || "Guest";
+    }
+    if (Number.isNaN(player1_id)) {
+        return reply.code(400).send({ error: "Invalid player1_id" });
+    }
+
+    try {
+        const valid1 = await db.get(
             "SELECT id FROM users WHERE id = ?",
-            [p2]
-        )
-        if(!valid1_id || !valid2_id)
-            return reply.code(400).send({ error: 'Invalid player id' })
+            [player1_id]
+        );
+        if (!valid1) {
+            return reply.code(400).send({ error: "Invalid player1_id" });
+        }
+
         const startedMatch = await db.run(
-            "INSERT INTO matches (player1_id, player2_id, mode) VALUES (?, ?, ?)",
-            [player1_id, p2, mode]
-        )
+            "INSERT INTO matches (player1_id, player2_id, player2_name, mode, status) VALUES (?, ?, ?, ?, 'active')",
+            [player1_id, p2, player2_name, mode]
+        );
         return reply.code(201).send({
-            message: 'Match started',
+            message: "Match started",
             id: startedMatch?.lastID
-        })
+        });
+    } catch (err) {
+        console.error("DB Error:", err);
+        return reply.code(500).send({ error: "Internal Server Error" });
     }
-    catch (error)
-    {
-        console.error("DB Error:", error)
-        return reply.code(500).send({ error: "Internal Server Error" })
-    }
-} 
+}
+
+
 
 export async function getMatch(req, reply) {
     const { id } = req.params
