@@ -33,6 +33,7 @@ export async function startMatch(req, reply) {
             "INSERT INTO matches (player1_id, player2_id, player2_name, mode, status) VALUES (?, ?, ?, ?, 'active')",
             [player1_id, p2, player2_name, mode]
         );
+
         return reply.code(201).send({
             message: "Match started",
             id: startedMatch?.lastID
