@@ -106,4 +106,5 @@ export function onMount(): void {
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   });
+  
 }

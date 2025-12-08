@@ -35,7 +35,7 @@ export function render(): string {
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="relative">
-            <h2 class="text-3xl font-bold mb-2 gradient-purple">Tournoi</h2>
+            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">Tournoi</h2>
             <p class="text-slate-400">Organisez un tournoi avec 4 joueurs</p>
           </div>
         </button>
@@ -77,8 +77,11 @@ export function onMount(): void {
   const tournamentBtn = document.getElementById('tournamentBtn');
   const modal = document.getElementById('modal');
   const closeModalBtn = document.getElementById('closeModal');
-
-
+  const player1 = (document.getElementById('player1') as HTMLInputElement)
+  const player2 = (document.getElementById('player2') as HTMLInputElement)
+  const player3 = (document.getElementById('player3') as HTMLInputElement)
+  const player4 = (document.getElementById('player4') as HTMLInputElement)
+  
   tournamentBtn?.addEventListener('click', () => {
     modal?.classList.remove('hidden');
   });
@@ -100,4 +103,14 @@ export function onMount(): void {
     window.history.pushState({}, '', '/tournament-bracket');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
+
+  window.addEventListener('keydown', (e)=>{
+    if (e.key == "Escape"){
+        modal?.classList.add('hidden')
+        player1.value = ""
+        player2.value = ""
+        player3.value = ""
+        player4.value = ""
+    }
+  })
 }
