@@ -423,7 +423,7 @@ export function onMount(): void {
 
   menuButton.addEventListener("click", () => {
     cleanup();
-    window.history.pushState({}, '', '/');
+    window.history.pushState({}, '', '/game-mode');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
 }

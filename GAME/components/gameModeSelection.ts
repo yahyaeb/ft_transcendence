@@ -77,11 +77,11 @@ export function onMount(): void {
   const tournamentBtn = document.getElementById('tournamentBtn');
   const modal = document.getElementById('modal');
   const closeModalBtn = document.getElementById('closeModal');
-  const player1 = (document.getElementById('player1') as HTMLInputElement)
-  const player2 = (document.getElementById('player2') as HTMLInputElement)
-  const player3 = (document.getElementById('player3') as HTMLInputElement)
-  const player4 = (document.getElementById('player4') as HTMLInputElement)
-  
+  const player1 = (document.getElementById('player1') as HTMLInputElement) || 'Player 1'
+  const player2 = (document.getElementById('player2') as HTMLInputElement) || 'Player 2'
+  const player3 = (document.getElementById('player3') as HTMLInputElement) || 'Player 3'
+  const player4 = (document.getElementById('player4') as HTMLInputElement) || 'Player 4'
+
   tournamentBtn?.addEventListener('click', () => {
     modal?.classList.remove('hidden');
   });
@@ -96,9 +96,6 @@ export function onMount(): void {
     const tournamentData: TournamentData = { players };
     sessionStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     modal?.classList.add('hidden');
-
-    // const event = new CustomEvent('navigate', { detail: '/tournament-bracket' });
-    // window.dispatchEvent(event);
 
     window.history.pushState({}, '', '/tournament-bracket');
     window.dispatchEvent(new PopStateEvent('popstate'));
