@@ -33,8 +33,11 @@ export function render(): string {
     </div>
   `;
 }
-
+let cleanupFunction: (()=> void) | null = null
 export function onMount(): void {
+  if (cleanupFunction){
+    cleanupFunction()
+  }
   const gameBoard = document.querySelector('#gameBoard') as HTMLCanvasElement;
   const ctx = gameBoard.getContext("2d")!;
   const leftScoreElement = document.querySelector('#leftScore')!;
@@ -50,6 +53,8 @@ export function onMount(): void {
   let player2Name = 'Player 2';
   const player3Name = "player3";
   const player4Name = "player4";
+
+  const aiGame = localStorage.getItem('ai');
 
   if (tournamentMatch) {
     if (tournamentData) {
@@ -117,11 +122,11 @@ export function onMount(): void {
 
   function cleanup() {
     gameActive = false;
-    clearInterval(intervalID);
+    clearTimeout(intervalID);
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
   }
-
+  cleanupFunction = cleanup;
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
   resetButton.addEventListener("click", resetGame);
@@ -140,8 +145,8 @@ export function onMount(): void {
         clearBoard();
         drawCenterLine();
         drawPaddles();
-        moveBall();
         movePaddles();
+        moveBall();
         checkCollision();
         drawBall(ballX, ballY);
         nextTick();
@@ -380,11 +385,14 @@ export function onMount(): void {
     if(keys.s && paddle1.y < gameHeight - paddle1.height){
         paddle1.y += paddleSpeed;
     }
-    if(keys.ArrowUp && paddle2.y > 0){
-        paddle2.y -= paddleSpeed;
-    }
-    if(keys.ArrowDown && paddle2.y < gameHeight - paddle2.height){
-        paddle2.y += paddleSpeed;
+    if (aiGame !== 'isAi')
+    {
+      if(keys.ArrowUp && paddle2.y > 0){
+          paddle2.y -= paddleSpeed;
+      }
+      if(keys.ArrowDown && paddle2.y < gameHeight - paddle2.height){
+          paddle2.y += paddleSpeed;
+      }
     }
   }
 
@@ -417,13 +425,17 @@ export function onMount(): void {
     ballXDirection = 0;
     ballYDirection = 0;
     updateScore();
-    clearInterval(intervalID);
+    clearTimeout(intervalID);
     gameStart();
   }
 
-  menuButton.addEventListener("click", () => {
+
+  const menuClickHandler = () => {
+    localStorage.removeItem('ai');
     cleanup();
     window.history.pushState({}, '', '/game-mode');
     window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+  };
+  
+  menuButton.addEventListener("click", menuClickHandler);
 }

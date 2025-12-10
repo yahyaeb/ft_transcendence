@@ -17,7 +17,6 @@ function initApp(): void {
     onMount: MainPage.onMount      
   });
 
-
   router.addRoute({
     path: '/game-mode',
     component: GameModeSelection.render,
@@ -42,13 +41,12 @@ function initApp(): void {
     component: TournamentBracket.render,
     onMount: TournamentBracket.onMount
   });
-
+  
   router.addRoute({
     path: '/tournament-match-winner',
     component: TournamentMatchWinner.render,
     onMount: TournamentMatchWinner.onMount
   });
-
   router.init();
 }
 
