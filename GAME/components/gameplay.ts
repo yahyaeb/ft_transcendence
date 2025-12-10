@@ -394,8 +394,17 @@ export function onMount(): void {
           paddle2.y += paddleSpeed;
       }
     }
+    else{
+      if (ballY > paddle2.y)
+        paddle2.y += paddleSpeed
+      else if (ballY < paddle2.y)
+          paddle2.y -= paddleSpeed
+    }
   }
 
+  function randbetween(min: number, max: number){
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
   function updateScore(){
     leftScoreElement.textContent = `${player1Score}`; 
     rightScoreElement.textContent = `${player2Score}`; 
