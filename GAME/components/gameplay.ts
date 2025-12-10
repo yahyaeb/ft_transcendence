@@ -48,14 +48,16 @@ export function onMount(): void {
   const player2NameElement = document.querySelector('#player2Name')!;
   const tournamentData = sessionStorage.getItem('tournamentData');
   const tournamentMatch = sessionStorage.getItem('currentMatch');
-  
+
+  const aiGame = localStorage.getItem('ai');
+
   let player1Name = 'Player 1';
   let player2Name = 'Player 2';
   const player3Name = "player3";
   const player4Name = "player4";
 
-  const aiGame = localStorage.getItem('ai');
-
+  if (aiGame === 'isAi')
+      player2Name = 'AI'
   if (tournamentMatch) {
     if (tournamentData) {
       const data = JSON.parse(tournamentData);
