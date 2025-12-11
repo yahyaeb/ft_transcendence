@@ -50,7 +50,6 @@ export function onMount(): void {
   const tournamentMatch = sessionStorage.getItem('currentMatch');
 
   const aiGame = localStorage.getItem('ai');
-
   let player1Name = 'Player 1';
   let player2Name = 'Player 2';
   const player3Name = "player3";
@@ -58,6 +57,7 @@ export function onMount(): void {
 
   if (aiGame === 'isAi')
       player2Name = 'AI'
+  
   if (tournamentMatch) {
     if (tournamentData) {
       const data = JSON.parse(tournamentData);
@@ -95,6 +95,9 @@ export function onMount(): void {
   let ballYDirection = 0;
   let player1Score = 0;
   let player2Score = 0;
+  let aiTargetY = gameHeight / 2
+  let aiReactionTimer = Date.now()
+  const aiReactionDelay = 1000
 
   let keys = {
     w: false,
@@ -115,6 +118,14 @@ export function onMount(): void {
     height: 95,
     x: gameWidth - 39,
     y: 0
+  };
+
+  let ai = {
+    X: gameWidth / 2,
+    Y: gameHeight / 2,
+    XDirection: 0,
+    YDirection: 0,
+    Speed: 1.5
   };
 
   paddle1.y = (gameHeight / 2) - (paddle1.height / 2);
@@ -322,7 +333,7 @@ export function onMount(): void {
         if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
                 ballX = (paddle1.x + paddle1.width) + ballRadius;
                 ballXDirection *= -1;
-                ballSpeed += 0.1;
+                ballSpeed += 0.35;
             let collidePoint = ballY - (paddle1.y + paddle1.height / 2);
             collidePoint = collidePoint / (paddle1.height / 2);
             let angleRad = (Math.PI / 3) * collidePoint;
@@ -380,6 +391,61 @@ export function onMount(): void {
     }
   }
 
+  function snapshot(){
+    ai.X = ballX
+    ai.Y = ballY
+    ai.XDirection = ballXDirection
+    ai.YDirection = ballYDirection
+    ai.Speed = ballSpeed
+  }
+
+  function predictBallY(): number{
+    if (ai.XDirection < 0)
+      return gameHeight / 2
+
+    let simY = ai.Y
+    let simX = ai.X
+    let simYDirection = ai.YDirection
+    let simSpeed = ai.Speed
+
+    if (simSpeed > maxBallSpeed)
+      simSpeed = maxBallSpeed
+    const targetX = paddle2.x - ballRadius
+
+    while (simX < targetX){
+      simX += simSpeed * ai.XDirection
+      simY += simSpeed * simYDirection
+
+      if (simY <= ballRadius){
+        simY = ballRadius
+        simYDirection *= -1
+      }
+      if (simY >= gameHeight - ballRadius){
+        simY = gameHeight - ballRadius
+        simYDirection *= -1
+      }
+    }
+    return simY
+  }
+
+  function aiDecision(){
+    const predictedY = predictBallY()
+    const paddleCenter = paddle2.y + paddle2.height / 2
+    
+    if (predictedY > paddleCenter + 20){
+      keys.ArrowDown = true
+      keys.ArrowUp = false
+    }
+    else if (predictedY < paddleCenter - 20){
+      keys.ArrowUp = true
+      keys.ArrowDown = false
+    }
+    else{
+      keys.ArrowDown = false
+      keys.ArrowUp = false
+    }
+  }
+
   function movePaddles(){
     if(keys.w && paddle1.y > 0){
         paddle1.y -= paddleSpeed;
@@ -395,18 +461,24 @@ export function onMount(): void {
       if(keys.ArrowDown && paddle2.y < gameHeight - paddle2.height){
           paddle2.y += paddleSpeed;
       }
+
     }
     else{
-      if (ballY > paddle2.y)
+      let currentTime = Date.now()
+      if (currentTime - aiReactionTimer >= aiReactionDelay){
+        snapshot()
+        aiDecision()
+        aiReactionTimer = currentTime
+      }
+      if (keys.ArrowUp && paddle2.y > 0 && ballX >= gameWidth / 2){
+        paddle2.y -= paddleSpeed
+      }
+      if (keys.ArrowDown && paddle2.y < gameHeight - paddle2.height && ballX >= gameWidth / 2){
         paddle2.y += paddleSpeed
-      else if (ballY < paddle2.y)
-          paddle2.y -= paddleSpeed
+      }
     }
   }
 
-  function randbetween(min: number, max: number){
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
   function updateScore(){
     leftScoreElement.textContent = `${player1Score}`; 
     rightScoreElement.textContent = `${player2Score}`; 
@@ -444,7 +516,7 @@ export function onMount(): void {
   const menuClickHandler = () => {
     localStorage.removeItem('ai');
     cleanup();
-    window.history.pushState({}, '', '/game-mode');
+    window.history.pushState({}, '', '/mainPage');
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
   
