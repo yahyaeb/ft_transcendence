@@ -429,6 +429,7 @@ export function onMount(): void {
   }
 
   let aiPredictedY = gameHeight / 2
+  let aiErrorMargin = 0
 
   function movePaddles(){
     if(keys.w && paddle1.y > 0){
@@ -451,7 +452,13 @@ export function onMount(): void {
       let currentTime = Date.now()
       if (currentTime - aiReactionTimer >= aiReactionDelay){
         snapshot()
-        aiPredictedY = predictBallY()
+        const perfectPrediction = predictBallY()
+        aiErrorMargin = (Math.random() - 0.5) * 200
+        aiPredictedY = perfectPrediction + aiErrorMargin
+        if (aiPredictedY < 0)
+          aiPredictedY = 0
+        if (aiPredictedY > gameHeight)
+            aiPredictedY = gameHeight
         aiReactionTimer = currentTime
       }
       const paddleCenter = paddle2.y + paddle2.height / 2
