@@ -428,23 +428,7 @@ export function onMount(): void {
     return simY
   }
 
-  function aiDecision(){
-    const predictedY = predictBallY()
-    const paddleCenter = paddle2.y + paddle2.height / 2
-    
-    if (predictedY > paddleCenter + 20){
-      keys.ArrowDown = true
-      keys.ArrowUp = false
-    }
-    else if (predictedY < paddleCenter - 20){
-      keys.ArrowUp = true
-      keys.ArrowDown = false
-    }
-    else{
-      keys.ArrowDown = false
-      keys.ArrowUp = false
-    }
-  }
+  let aiPredictedY = gameHeight / 2
 
   function movePaddles(){
     if(keys.w && paddle1.y > 0){
@@ -467,9 +451,16 @@ export function onMount(): void {
       let currentTime = Date.now()
       if (currentTime - aiReactionTimer >= aiReactionDelay){
         snapshot()
-        aiDecision()
+        aiPredictedY = predictBallY()
         aiReactionTimer = currentTime
       }
+      const paddleCenter = paddle2.y + paddle2.height / 2
+      keys.ArrowUp = false
+      keys.ArrowDown = false
+      if (aiPredictedY > paddleCenter + 15)
+        keys.ArrowDown = true
+      else if (aiPredictedY < paddleCenter - 15)
+        keys.ArrowUp = true
       if (keys.ArrowUp && paddle2.y > 0 && ballX >= gameWidth / 2){
         paddle2.y -= paddleSpeed
       }
