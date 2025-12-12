@@ -58,6 +58,9 @@ export function onMount(): void {
   if (aiGame === 'isAi')
       player2Name = 'AI'
   
+  let matchId: string | null = null;
+  let matchFinished = false;
+
   if (tournamentMatch) {
     if (tournamentData) {
       const data = JSON.parse(tournamentData);
@@ -144,13 +147,51 @@ export function onMount(): void {
   window.addEventListener("keyup", keyUp);
   resetButton.addEventListener("click", resetGame);
 
-  gameStart();
+  // gameStart();
 
+  // Yahya's code
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NDk0NTgsImV4cCI6MTc2NTU1MzA1OH0.9P6wPlD_qy4DpyE3sA9-OjRdMyz9O9ER2mFz4v3lg1I";
+  fetch("http://localhost:4999/matches", {
+  method: "POST",
+  headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${TEST_TOKEN}`,
+    },
+  body: JSON.stringify({ mode: tournamentMatch ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp") }),
+})
+.then(async (r) => {
+  const txt = await r.text();
+  try {matchId = JSON.parse(txt).id; }
+  catch {}
+})
+.catch(err => console.error("start match failed", err))
+.finally(() => gameStart());
+
+
+
+  function endMatch() {
+  if (!matchId || matchFinished) return;
+  matchFinished = true;
+
+  fetch(`http://localhost:4999/matches/${matchId}/finish`, {
+    method: "PATCH",
+    keepalive: true,
+     headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${TEST_TOKEN}`,
+    },
+    body: JSON.stringify({
+      score_p1: player1Score,
+      score_p2: player2Score
+    }),
+  }).catch(err => console.error("finish match failed", err));
+}
+
+// yahya's code"
   function gameStart(){
     createBall();
     nextTick();
   }
-
   function nextTick(){
     if (!gameActive) return;
     intervalID = setTimeout(() => {
@@ -249,6 +290,8 @@ export function onMount(): void {
             player2Score += 1;
             updateScore();
             if (player2Score === 5 ){
+                console.log("GAME OVER. matchId =", matchId, "finished?", matchFinished);
+                endMatch();
                 cleanup();
 
                 if (tournamentMatch){
@@ -291,6 +334,7 @@ export function onMount(): void {
         player1Score += 1;
         updateScore();
         if (player1Score === 5){
+            endMatch();
             cleanup();
 
             if (tournamentMatch){

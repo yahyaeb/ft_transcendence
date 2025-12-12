@@ -1,0 +1,65 @@
+CREATE TABLE IF NOT EXISTS users(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    avatar TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    two_factor_enabled INTEGER NOT NULL DEFAULT 0,
+    two_factor_secret TEXT
+);
+
+CREATE TABLE IF NOT EXISTS matches(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player1_id INTEGER NOT NULL,
+    player2_id INTEGER,
+    player2_name TEXT,
+    mode TEXT NOT NULL CHECK (mode IN ('pvp', 'pve', 'tournament')),
+    status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'active', 'finished', 'cancelled')),
+    winner_id INTEGER,
+    score_p1 INTEGER DEFAULT 0,
+    score_p2 INTEGER DEFAULT 0,
+    tournament_id   INTEGER,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    
+
+    FOREIGN KEY(player1_id) REFERENCES users(id),
+    FOREIGN KEY(player2_id) REFERENCES users(id),
+    FOREIGN KEY(winner_id)  REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS tournament_players (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    tournament_id INTEGER NOT NULL,
+    user_id       INTEGER NOT NULL,
+    slot          INTEGER NOT NULL,
+
+    FOREIGN KEY (tournament_id) REFERENCES tournaments(id),
+    FOREIGN KEY (user_id)       REFERENCES users(id),
+
+    UNIQUE (tournament_id, user_id),
+    UNIQUE (tournament_id, slot)
+);
+
+CREATE TABLE IF NOT EXISTS tournaments (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT NOT NULL,
+    created_by  INTEGER NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    status      TEXT NOT NULL DEFAULT 'upcoming'
+                CHECK (status IN ('upcoming','running','finished')),
+    FOREIGN KEY(created_by) REFERENCES users(id)
+);
+
+
+
+
+INSERT INTO users (username, email, password)
+VALUES
+  ('Yahya', 'test1@test.com', '123456'),
+  ('yassine', 'test21@test.com', '123456'),
+  ('mehdi', 'test3@test.com', '123456'),
+  ('nisar', 'test4@test.com', '123456'),
+  ('iheb', 'test5@test.com', '123456'),
+  ('hicham', 'test6@test.com', '123456');

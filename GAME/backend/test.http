@@ -1,0 +1,77 @@
+# ## Get ALL Users
+# GET http://localhost:4999/users/6 HTTP/1.1
+
+# #PATCH to update avata
+# PATCH http://localhost:4999/users/7/avatar
+# content-type: application/json
+
+# {
+#     "avatar": "path/../.."
+# }
+
+# # POST to signup
+# POST http://localhost:4999/auth/signup HTTP/1.1
+# content-type: application/json
+
+# {
+#   "username": "Yasmine",
+#   "password": "123456789"
+# }
+
+# POST to login
+
+# POST http://localhost:4999/auth/login HTTP/1.1
+# content-type: application/json
+
+# {
+#   "username": "Yasmine",
+#   "password": "123456789"
+# }
+
+
+//testing the JWT authentication:
+
+# GET http://localhost:4999/healthz HTTP/1.1
+
+
+#POST starting a match
+# POST http://localhost:4999/matches HTTP/1.1
+# content-type: application/json
+
+# {
+#   "player1_id": "2",
+#   "player2_id": "3",
+#   "mode": "classic"
+
+# }
+
+# #GET pull all matches
+
+# GET http://localhost:4999/matches
+
+# # # #GET pulling a match
+
+# GET http://localhost:4999/matches/1
+
+
+#PATCH to match status
+# PATCH http://localhost:4999/matches/1
+# content-type: application/json
+
+# {
+#     "status": "ongoing"
+# }
+
+# PATCH http://localhost:4999/matches/1/finish
+# Content-Type: application/json
+
+# {
+#   "score_p1": 5,
+#   "score_p2": 3,
+#   "winner_id": 3
+# }
+
+
+# // test tokens:
+# curl -X GET http://localhost:3000/users/me \
+#   -H "Authorization: Bearer <input_token>"
