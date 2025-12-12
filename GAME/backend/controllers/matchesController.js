@@ -4,7 +4,7 @@ export async function startMatch(req, reply) {
     const player1_id = Number(req.user.id);
     const { mode, guest_name } = req.body || {};
 
-    if (!["pvp", "pve"].includes(mode)) {
+    if (!["pvp", "pve", "tournament"].includes(mode)) {
         return reply.code(400).send({ error: "Invalid mode" });
     }
     let p2, player2_name;
