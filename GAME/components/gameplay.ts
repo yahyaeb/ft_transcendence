@@ -73,6 +73,7 @@ export function onMount(): void {
       } else if (tournamentMatch === 'final') {
         player1Name = sessionStorage.getItem('match1Winner') || 'Winner 1';
         player2Name = sessionStorage.getItem('match2Winner') || 'Winner 2';
+
       }
     }
   }
@@ -150,24 +151,32 @@ export function onMount(): void {
   // gameStart();
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJpaGViX3Rlc3QiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzY1NTUzNDQ0LCJleHAiOjE3NjU1NTcwNDR9.uf8h_XPd6SURnPXnNE4JM2Hr8a7ATYA1hi6_n8OPZcA";
+const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTczNzYsImV4cCI6MTc2NTU2MDk3Nn0.qDRwpPVzsfFUIKeh-fenaAkUxxRncVK77mZ-SDB12T0";
+const isTournament = !!tournamentMatch;
+const isTournamentFinal = tournamentMatch === "final";
+
+const shouldCreateMatch = !isTournament || isTournamentFinal;
+
+const mode = isTournamentFinal ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp");
+
+if (!shouldCreateMatch) {
+  gameStart();
+} else {
   fetch("http://localhost:4999/matches", {
-  method: "POST",
-  headers: {
+    method: "POST",
+    headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${TEST_TOKEN}`,
     },
-  body: JSON.stringify({ mode: tournamentMatch ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp") }),
-})
-.then(async (r) => {
-  const txt = await r.text();
-  try {matchId = JSON.parse(txt).id; }
-  catch {}
-})
-.catch(err => console.error("start match failed", err))
-.finally(() => gameStart());
-
-
+    body: JSON.stringify({ mode }),
+  })
+    .then(async (r) => {
+      const txt = await r.text();
+      try { matchId = JSON.parse(txt).id; } catch {}
+    })
+    .catch((err) => console.error("start match failed", err))
+    .finally(() => gameStart());
+}
 
   function endMatch() {
   if (!matchId || matchFinished) return;
@@ -290,7 +299,6 @@ export function onMount(): void {
             player2Score += 1;
             updateScore();
             if (player2Score === 5 ){
-                console.log("GAME OVER. matchId =", matchId, "finished?", matchFinished);
                 endMatch();
                 cleanup();
 

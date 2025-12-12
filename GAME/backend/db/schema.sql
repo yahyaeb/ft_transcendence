@@ -29,30 +29,6 @@ CREATE TABLE IF NOT EXISTS matches(
     FOREIGN KEY(winner_id)  REFERENCES users(id)
 );
 
-CREATE TABLE IF NOT EXISTS tournament_players (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    tournament_id INTEGER NOT NULL,
-    user_id       INTEGER NOT NULL,
-    slot          INTEGER NOT NULL,
-
-    FOREIGN KEY (tournament_id) REFERENCES tournaments(id),
-    FOREIGN KEY (user_id)       REFERENCES users(id),
-
-    UNIQUE (tournament_id, user_id),
-    UNIQUE (tournament_id, slot)
-);
-
-CREATE TABLE IF NOT EXISTS tournaments (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    name        TEXT NOT NULL,
-    created_by  INTEGER NOT NULL,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    status      TEXT NOT NULL DEFAULT 'upcoming'
-                CHECK (status IN ('upcoming','running','finished')),
-    FOREIGN KEY(created_by) REFERENCES users(id)
-);
-
-
 
 
 INSERT INTO users (username, email, password)
