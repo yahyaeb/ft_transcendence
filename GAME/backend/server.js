@@ -14,7 +14,9 @@ const PORT = 4999
 
 await fastify.register(cors,{
   origin: ["http://localhost:5173"],
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 })
 
 

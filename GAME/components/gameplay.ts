@@ -150,7 +150,7 @@ export function onMount(): void {
   // gameStart();
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NDk0NTgsImV4cCI6MTc2NTU1MzA1OH0.9P6wPlD_qy4DpyE3sA9-OjRdMyz9O9ER2mFz4v3lg1I";
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTI0NTEsImV4cCI6MTc2NTU1NjA1MX0.3w0Q6HfgZ7D-c8nxD5fIN7XFt-V0hEYGoemwGNHNVkc";
   fetch("http://localhost:4999/matches", {
   method: "POST",
   headers: {
