@@ -92,39 +92,24 @@ export function onMount(): void {
   }
   closeModalBtn?.addEventListener('click', () => {
     const players = [
-      (document.getElementById('player1') as HTMLInputElement)?.value || 'Player 1',
-      (document.getElementById('player2') as HTMLInputElement)?.value || 'Player 2',
-      (document.getElementById('player3') as HTMLInputElement)?.value || 'Player 3',
-      (document.getElementById('player4') as HTMLInputElement)?.value || 'Player 4',
+      (document.getElementById('player1') as HTMLInputElement)?.value.trim() || '',
+      (document.getElementById('player2') as HTMLInputElement)?.value.trim() || '',
+      (document.getElementById('player3') as HTMLInputElement)?.value.trim() || '',
+      (document.getElementById('player4') as HTMLInputElement)?.value.trim() || '',
     ];
-
-    let flag = 0;
-
-    for (const player of players){
-      if (player === 'Player 2' || player === 'Player 3' || player === 'Player 4'){
-        alert("Veuillez inserer un pseudo pour chaque joueur")
-        flag = 1;
-        break
-      }
-      if (hasDuplicates(players)){
-        alert("veuillez inserer le pseudo une seule fois")
-        flag = 1
-        break
-      }
+    if (players.some(p => p === '')) {
+      alert("Veuillez inserer un pseudo pour chaque joueur");
+      return; 
     }
-
+    if (hasDuplicates(players)) {
+      alert("Veuillez inserer le pseudo une seule fois");
+      return; 
+    }
     const tournamentData: TournamentData = { players };
     sessionStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     modal?.classList.add('hidden');
-
-    if (flag === 0)
-    {
-      window.history.pushState({}, '', '/tournament-bracket');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    }
-    else{
-      modal?.classList.remove('hidden')
-    }
+    window.history.pushState({}, '', '/tournament-bracket');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
   window.addEventListener('keydown', (e)=>{

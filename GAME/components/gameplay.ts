@@ -53,63 +53,24 @@ export function onMount(): void {
   let matchFinished = false;
   let player1Score = 0;
   let player2Score = 0;
+
   // Yahya's code
-const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTczNzYsImV4cCI6MTc2NTU2MDk3Nn0.qDRwpPVzsfFUIKeh-fenaAkUxxRncVK77mZ-SDB12T0";
-const isTournament = !!tournamentMatch;
-const isTournamentFinal = tournamentMatch === "final";
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTczNzYsImV4cCI6MTc2NTU2MDk3Nn0.qDRwpPVzsfFUIKeh-fenaAkUxxRncVK77mZ-SDB12T0";
+  const isTournament = !!tournamentMatch;
+  const isTournamentFinal = tournamentMatch === "final";
+  const shouldCreateMatch = !isTournament || isTournamentFinal;
+  const mode = isTournamentFinal ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp");
 
-const shouldCreateMatch = !isTournament || isTournamentFinal;
-
-const mode = isTournamentFinal ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp");
-
-function getUsernameFromToken(): string{
-  const token = TEST_TOKEN
-  try{
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    return payload.username
+  function getUsernameFromToken(): string{
+    const token = TEST_TOKEN
+    try{
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      return payload.username
+    }
+    catch{
+      return '';
+    }
   }
-  catch{
-    return '';
-  }
-}
-if (!shouldCreateMatch) {
-  gameStart();
-} else {
-  fetch("http://localhost:4999/matches", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${TEST_TOKEN}`,
-    },
-    body: JSON.stringify({ mode }),
-  })
-    .then(async (r) => {
-      const txt = await r.text();
-      try { matchId = JSON.parse(txt).id; } catch {}
-    })
-    .catch((err) => console.error("start match failed", err))
-    .finally(() => gameStart());
-}
-
-  function endMatch() {
-  if (!matchId || matchFinished) return;
-  matchFinished = true;
-
-  fetch(`http://localhost:4999/matches/${matchId}/finish`, {
-    method: "PATCH",
-    keepalive: true,
-     headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${TEST_TOKEN}`,
-    },
-    body: JSON.stringify({
-      score_p1: player1Score,
-      score_p2: player2Score
-    }),
-  }).catch(err => console.error("finish match failed", err));
-}
-
-// yahya's code"
 
   let player1Name = getUsernameFromToken() || 'Player 1';
   localStorage.setItem("player1", player1Name)
@@ -119,7 +80,6 @@ if (!shouldCreateMatch) {
 
   if (aiGame === 'isAi')
       player2Name = 'AI'
-  
 
   if (tournamentMatch) {
     if (tournamentData) {
@@ -133,13 +93,13 @@ if (!shouldCreateMatch) {
       } else if (tournamentMatch === 'final') {
         player1Name = sessionStorage.getItem('match1Winner') || 'Winner 1';
         player2Name = sessionStorage.getItem('match2Winner') || 'Winner 2';
-
       }
     }
   }
 
   player1NameElement.textContent = `${player1Name}`;
   player2NameElement.textContent = `${player2Name}`;
+
   const gameWidth = gameBoard.width;
   const gameHeight = gameBoard.height;
   const boardBackground = "#0f172a";
@@ -194,6 +154,26 @@ if (!shouldCreateMatch) {
   paddle2.y = (gameHeight / 2) - (paddle1.height / 2);
 
   let gameActive = true;
+  let aiPredictedY = gameHeight / 2;
+  let aiErrorMargin = 0;
+
+  function endMatch() {
+    if (!matchId || matchFinished) return;
+    matchFinished = true;
+
+    fetch(`http://localhost:4999/matches/${matchId}/finish`, {
+      method: "PATCH",
+      keepalive: true,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${TEST_TOKEN}`,
+      },
+      body: JSON.stringify({
+        score_p1: player1Score,
+        score_p2: player2Score
+      }),
+    }).catch(err => console.error("finish match failed", err));
+  }
 
   function cleanup() {
     gameActive = false;
@@ -201,11 +181,30 @@ if (!shouldCreateMatch) {
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
   }
+  
   cleanupFunction = cleanup;
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
   resetButton.addEventListener("click", resetGame);
 
+  if (!shouldCreateMatch) {
+    gameStart();
+  } else {
+    fetch("http://localhost:4999/matches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${TEST_TOKEN}`,
+      },
+      body: JSON.stringify({ mode }),
+    })
+      .then(async (r) => {
+        const txt = await r.text();
+        try { matchId = JSON.parse(txt).id; } catch {}
+      })
+      .catch((err) => console.error("start match failed", err))
+      .finally(() => gameStart());
+  }
 
   function gameStart(){
     createBall();
@@ -489,9 +488,6 @@ if (!shouldCreateMatch) {
     }
     return simY
   }
-
-  let aiPredictedY = gameHeight / 2
-  let aiErrorMargin = 0
 
   function movePaddles(){
     if(keys.w && paddle1.y > 0){
