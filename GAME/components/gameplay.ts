@@ -511,7 +511,8 @@ export function onMount(): void {
       if (currentTime - aiReactionTimer >= aiReactionDelay){
         snapshot()
         const perfectPrediction = predictBallY()
-        aiErrorMargin = (Math.random() - 0.5) * 200
+        const aiDifficultyMargin = parseInt(localStorage.getItem('aiDifficulty') || '150')
+        aiErrorMargin = (Math.random() - 0.5) * aiDifficultyMargin
         aiPredictedY = perfectPrediction + aiErrorMargin
         if (aiPredictedY < 0)
           aiPredictedY = 0
