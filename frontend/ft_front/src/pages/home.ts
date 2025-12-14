@@ -44,17 +44,17 @@ export function renderHome() {
       <div class="flex flex-col md:flex-row gap-6">
         <a href="#game"
           class="px-12 py-6 text-xl text-white rounded-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 shadow-xl hover:opacity-90 transition">
-          🏓 Play
+          🏓 ${t.play}
         </a>
 
         <button
           class="px-12 py-6 text-xl text-white rounded-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 shadow-xl hover:opacity-90 transition">
-          ✨ Feature
+          ✨ ${t.feature}
         </button>
 
         <button
           class="px-12 py-6 text-xl text-white rounded-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 shadow-xl hover:opacity-90 transition">
-          ⚙️ Settings
+          ⚙️ ${t.settings}
         </button>
       </div>
     </main>

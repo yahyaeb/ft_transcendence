@@ -11,6 +11,9 @@ export const translations: Record<Language, Record<string, string>> = {
     age: "Âge",
     gender: "Genre",
     achievements: "Succès",
+    play: "Jouer",
+    feature: "Fonctionnalité",
+    settings: "Paramètres",
   },
   en: {
     home_title: "Transcendence",
@@ -22,5 +25,8 @@ export const translations: Record<Language, Record<string, string>> = {
     age: "Age",
     gender: "Gender",
     achievements: "Achievements",
+    play: "Play",
+    feature: "Feature",
+    settings: "Settings",
   },
 };
