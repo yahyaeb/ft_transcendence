@@ -48,24 +48,44 @@ export function onMount(): void {
   const player2NameElement = document.querySelector('#player2Name')!;
   const tournamentData = sessionStorage.getItem('tournamentData');
   const tournamentMatch = sessionStorage.getItem('currentMatch');
-
   const aiGame = localStorage.getItem('ai');
-  let player1Name = 'Player 1';
+  let matchId: string | null = null;
+  let matchFinished = false;
+  let player1Score = 0;
+  let player2Score = 0;
+
+  // Yahya's code
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTczNzYsImV4cCI6MTc2NTU2MDk3Nn0.qDRwpPVzsfFUIKeh-fenaAkUxxRncVK77mZ-SDB12T0";
+  const isTournament = !!tournamentMatch;
+  const isTournamentFinal = tournamentMatch === "final";
+  const shouldCreateMatch = !isTournament || isTournamentFinal;
+  const mode = isTournamentFinal ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp");
+
+  function getUsernameFromToken(): string{
+    const token = TEST_TOKEN
+    try{
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      return payload.username
+    }
+    catch{
+      return '';
+    }
+  }
+
+  let player1Name = getUsernameFromToken() || 'Player 1';
+  localStorage.setItem("player1", player1Name)
   let player2Name = 'Player 2';
   const player3Name = "player3";
   const player4Name = "player4";
 
   if (aiGame === 'isAi')
       player2Name = 'AI'
-  
-  let matchId: string | null = null;
-  let matchFinished = false;
 
   if (tournamentMatch) {
     if (tournamentData) {
       const data = JSON.parse(tournamentData);
       if (tournamentMatch === '1') {
-        player1Name = data.players[0];
+        player1Name = getUsernameFromToken();
         player2Name = data.players[1];
       } else if (tournamentMatch === '2') {
         player1Name = data.players[2];
@@ -73,13 +93,13 @@ export function onMount(): void {
       } else if (tournamentMatch === 'final') {
         player1Name = sessionStorage.getItem('match1Winner') || 'Winner 1';
         player2Name = sessionStorage.getItem('match2Winner') || 'Winner 2';
-
       }
     }
   }
 
   player1NameElement.textContent = `${player1Name}`;
   player2NameElement.textContent = `${player2Name}`;
+
   const gameWidth = gameBoard.width;
   const gameHeight = gameBoard.height;
   const boardBackground = "#0f172a";
@@ -97,8 +117,6 @@ export function onMount(): void {
   let ballY = gameHeight / 2;
   let ballXDirection = 0;
   let ballYDirection = 0;
-  let player1Score = 0;
-  let player2Score = 0;
   let aiTargetY = gameHeight / 2
   let aiReactionTimer = Date.now()
   const aiReactionDelay = 1000
@@ -136,6 +154,26 @@ export function onMount(): void {
   paddle2.y = (gameHeight / 2) - (paddle1.height / 2);
 
   let gameActive = true;
+  let aiPredictedY = gameHeight / 2;
+  let aiErrorMargin = 0;
+
+  function endMatch() {
+    if (!matchId || matchFinished) return;
+    matchFinished = true;
+
+    fetch(`http://localhost:4999/matches/${matchId}/finish`, {
+      method: "PATCH",
+      keepalive: true,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${TEST_TOKEN}`,
+      },
+      body: JSON.stringify({
+        score_p1: player1Score,
+        score_p2: player2Score
+      }),
+    }).catch(err => console.error("finish match failed", err));
+  }
 
   function cleanup() {
     gameActive = false;
@@ -143,60 +181,31 @@ export function onMount(): void {
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
   }
+  
   cleanupFunction = cleanup;
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
   resetButton.addEventListener("click", resetGame);
 
-  // gameStart();
-
-  // Yahya's code
-const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTczNzYsImV4cCI6MTc2NTU2MDk3Nn0.qDRwpPVzsfFUIKeh-fenaAkUxxRncVK77mZ-SDB12T0";
-const isTournament = !!tournamentMatch;
-const isTournamentFinal = tournamentMatch === "final";
-
-const shouldCreateMatch = !isTournament || isTournamentFinal;
-
-const mode = isTournamentFinal ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp");
-
-if (!shouldCreateMatch) {
-  gameStart();
-} else {
-  fetch("http://localhost:4999/matches", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${TEST_TOKEN}`,
-    },
-    body: JSON.stringify({ mode }),
-  })
-    .then(async (r) => {
-      const txt = await r.text();
-      try { matchId = JSON.parse(txt).id; } catch {}
+  if (!shouldCreateMatch) {
+    gameStart();
+  } else {
+    fetch("http://localhost:4999/matches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${TEST_TOKEN}`,
+      },
+      body: JSON.stringify({ mode }),
     })
-    .catch((err) => console.error("start match failed", err))
-    .finally(() => gameStart());
-}
+      .then(async (r) => {
+        const txt = await r.text();
+        try { matchId = JSON.parse(txt).id; } catch {}
+      })
+      .catch((err) => console.error("start match failed", err))
+      .finally(() => gameStart());
+  }
 
-  function endMatch() {
-  if (!matchId || matchFinished) return;
-  matchFinished = true;
-
-  fetch(`http://localhost:4999/matches/${matchId}/finish`, {
-    method: "PATCH",
-    keepalive: true,
-     headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${TEST_TOKEN}`,
-    },
-    body: JSON.stringify({
-      score_p1: player1Score,
-      score_p2: player2Score
-    }),
-  }).catch(err => console.error("finish match failed", err));
-}
-
-// yahya's code"
   function gameStart(){
     createBall();
     nextTick();
@@ -480,9 +489,6 @@ if (!shouldCreateMatch) {
     return simY
   }
 
-  let aiPredictedY = gameHeight / 2
-  let aiErrorMargin = 0
-
   function movePaddles(){
     if(keys.w && paddle1.y > 0){
         paddle1.y -= paddleSpeed;
@@ -505,7 +511,8 @@ if (!shouldCreateMatch) {
       if (currentTime - aiReactionTimer >= aiReactionDelay){
         snapshot()
         const perfectPrediction = predictBallY()
-        aiErrorMargin = (Math.random() - 0.5) * 200
+        const aiDifficultyMargin = parseInt(localStorage.getItem('aiDifficulty') || '150')
+        aiErrorMargin = (Math.random() - 0.5) * aiDifficultyMargin
         aiPredictedY = perfectPrediction + aiErrorMargin
         if (aiPredictedY < 0)
           aiPredictedY = 0

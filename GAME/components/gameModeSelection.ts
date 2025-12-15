@@ -82,21 +82,32 @@ export function onMount(): void {
   const player3 = (document.getElementById('player3') as HTMLInputElement) || 'Player 3'
   const player4 = (document.getElementById('player4') as HTMLInputElement) || 'Player 4'
 
+  player1.value = localStorage.getItem('player1') || ''
   tournamentBtn?.addEventListener('click', () => {
     modal?.classList.remove('hidden');
   });
 
+  function hasDuplicates(arr: string[]): boolean {
+  return new Set(arr).size !== arr.length;
+  }
   closeModalBtn?.addEventListener('click', () => {
     const players = [
-      (document.getElementById('player1') as HTMLInputElement)?.value || 'Player 1',
-      (document.getElementById('player2') as HTMLInputElement)?.value || 'Player 2',
-      (document.getElementById('player3') as HTMLInputElement)?.value || 'Player 3',
-      (document.getElementById('player4') as HTMLInputElement)?.value || 'Player 4',
+      (document.getElementById('player1') as HTMLInputElement)?.value.trim() || '',
+      (document.getElementById('player2') as HTMLInputElement)?.value.trim() || '',
+      (document.getElementById('player3') as HTMLInputElement)?.value.trim() || '',
+      (document.getElementById('player4') as HTMLInputElement)?.value.trim() || '',
     ];
+    if (players.some(p => p === '')) {
+      alert("Veuillez inserer un pseudo pour chaque joueur");
+      return; 
+    }
+    if (hasDuplicates(players)) {
+      alert("Veuillez inserer le pseudo une seule fois");
+      return; 
+    }
     const tournamentData: TournamentData = { players };
     sessionStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     modal?.classList.add('hidden');
-
     window.history.pushState({}, '', '/tournament-bracket');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
@@ -104,7 +115,6 @@ export function onMount(): void {
   window.addEventListener('keydown', (e)=>{
     if (e.key == "Escape"){
         modal?.classList.add('hidden')
-        player1.value = ""
         player2.value = ""
         player3.value = ""
         player4.value = ""
