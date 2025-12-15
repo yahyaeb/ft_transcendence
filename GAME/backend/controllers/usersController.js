@@ -156,12 +156,9 @@ export async function updateUsername(req, reply) {
 }
 
 export async function getUserStats(req, reply) {
-  const userId = Number(req.params.id);
-  if (!Number.isInteger(userId)) {
-    return reply.code(400).send({ error: "Invalid user id" });
-  }
+  const userId = req.user.id;
 
-  const totalRow = await db.get(
+  const totalFinishedRow = await db.get(
     `SELECT COUNT(*) AS total
      FROM matches
      WHERE winner_id IS NOT NULL
@@ -169,22 +166,66 @@ export async function getUserStats(req, reply) {
     [userId, userId]
   );
 
-  const winsRow = await db.get(
+  const totalWinsRow = await db.get(
     `SELECT COUNT(*) AS wins
      FROM matches
-     WHERE winner_id = ?`,
-    [userId]
+     WHERE winner_id = ?
+       AND (player1_id = ? OR player2_id = ?)`,
+    [userId, userId, userId]
   );
 
-  const total = totalRow?.total || 0;
-  const wins = winsRow?.wins || 0;
+  const regularWinsRow = await db.get(
+    `SELECT COUNT(*) AS wins
+     FROM matches
+     WHERE winner_id = ?
+       AND mode != 'tournament'
+       AND (player1_id = ? OR player2_id = ?)`,
+    [userId, userId, userId]
+  );
+
+  const tournamentWinsRow = await db.get(
+    `SELECT COUNT(*) AS wins
+     FROM matches
+     WHERE winner_id = ?
+       AND mode = 'tournament'
+       AND (player1_id = ? OR player2_id = ?)`,
+    [userId, userId, userId]
+  );
+
+  const total = totalFinishedRow?.total || 0;
+  const wins = totalWinsRow?.wins || 0;
   const losses = total - wins;
 
   return reply.code(200).send({
     userId,
-    wins,
-    losses,
-    total,
-    winRate: total > 0 ? Number((wins / total).toFixed(3)) : 0
+    regularWins: regularWinsRow?.wins || 0,
+    tournamentWins: tournamentWinsRow?.wins || 0,
+    losses
   });
+}
+
+export async function getHistory(req, reply) {
+  const userId = req.user.id;
+
+  const matches = await db.all(
+    `
+    SELECT
+      m.id,
+      u1.username AS player1_name,
+      m.player2_name AS player2_name,
+      m.score_p1,
+      m.score_p2,
+      m.winner_id,
+      m.created_at
+    FROM matches m
+    JOIN users u1 ON u1.id = m.player1_id
+    WHERE m.winner_id IS NOT NULL
+      AND m.mode != 'tournament'
+      AND (m.player1_id = ? OR m.player2_id = ?)
+    ORDER BY m.created_at DESC
+    `,
+    [userId, userId]
+  );
+
+  return reply.code(200).send({ matches });
 }

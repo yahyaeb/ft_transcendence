@@ -6,7 +6,8 @@ import { getAllUsersController,
         getMeProfile,
         updatePassword,
         updateUsername,
-        getUserStats
+        getUserStats,
+        getHistory
 }   from "../controllers/usersController.js";
 import { authMiddleware } from "../middleware/auth.js";
 
@@ -33,11 +34,12 @@ export async function usersRoutes(fastify, options) {
     fastify.get('/:id', {
         preHandler: authMiddleware,
     },  getSingleUserController)
-    // users.js
-    fastify.get('/:id/stats',
+    fastify.get('/me/stats',
         { preHandler: authMiddleware },
         getUserStats)
-
+    fastify.get('/me/history',
+        { preHandler: authMiddleware },
+        getHistory)
 
 }
 

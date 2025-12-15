@@ -55,7 +55,7 @@ export function onMount(): void {
   let player2Score = 0;
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYWh5YWJlbGJvdWsiLCJlbWFpbCI6InlheWFAeWF5YS5jb20iLCJpYXQiOjE3NjU1NTczNzYsImV4cCI6MTc2NTU2MDk3Nn0.qDRwpPVzsfFUIKeh-fenaAkUxxRncVK77mZ-SDB12T0";
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlcm5hbWUiOiJZYXNzaW5lUzllbGkiLCJlbWFpbCI6InRlc3QyQG1haWwuY29tIiwiaWF0IjoxNzY1ODA5MzA4LCJleHAiOjE3NjU4MTI5MDh9.5nhIny_RFC0Rw_-nWspk3NzvQh9HautYh4SNC6snvCY";
   const isTournament = !!tournamentMatch;
   const isTournamentFinal = tournamentMatch === "final";
   const shouldCreateMatch = !isTournament || isTournamentFinal;
@@ -186,9 +186,17 @@ export function onMount(): void {
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
   resetButton.addEventListener("click", resetGame);
+  let guestName: string | null = null;
 
+  if (mode === "pvp" && !tournamentMatch) {
+    guestName = (window.prompt("Enter Player 2 name:") || "").trim();
+    if (!guestName) guestName = "Guest";
+
+    player2Name = guestName;
+    player2NameElement.textContent = player2Name;
+  }
   if (!shouldCreateMatch) {
-    gameStart();
+  gameStart();
   } else {
     fetch("http://localhost:4999/matches", {
       method: "POST",
@@ -196,15 +204,16 @@ export function onMount(): void {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${TEST_TOKEN}`,
       },
-      body: JSON.stringify({ mode }),
+      body: JSON.stringify({ mode, guest_name: guestName }),
     })
-      .then(async (r) => {
-        const txt = await r.text();
-        try { matchId = JSON.parse(txt).id; } catch {}
-      })
-      .catch((err) => console.error("start match failed", err))
-      .finally(() => gameStart());
+    .then(async (r) => {
+      const txt = await r.text();
+      try { matchId = JSON.parse(txt).id; } catch {}
+    })
+    .catch((err) => console.error("start match failed", err))
+    .finally(() => gameStart());
   }
+
 
   function gameStart(){
     createBall();
