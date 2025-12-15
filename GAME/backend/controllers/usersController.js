@@ -115,3 +115,76 @@ export async function updatePassword(req, reply){
     })
 
 }
+
+export async function updateUsername(req, reply) {
+  const id = req.user.id;
+  const { username } = req.body || {};
+
+  if (typeof username !== "string") {
+    return reply.code(400).send({ error: "Username must be a string" });
+  }
+
+  const clean = username.trim();
+  if (!clean) {
+    return reply.code(400).send({ error: "New username is required" });
+  }
+  if (clean.length < 3 || clean.length > 30) {
+    return reply.code(400).send({ error: "Username must be 3-30 characters" });
+  }
+
+  const user = await db.get("SELECT id, username FROM users WHERE id = ?", [id]);
+  if (!user) return reply.code(404).send({ error: "User not found" });
+
+  if (user.username === clean) {
+    return reply.code(400).send({ error: "Username is unchanged" });
+  }
+
+  const taken = await db.get(
+    "SELECT id FROM users WHERE username = ? AND id != ?",
+    [clean, id]
+  );
+  if (taken) return reply.code(409).send({ error: "Username already taken" });
+
+  await db.run("UPDATE users SET username = ? WHERE id = ?", [clean, id]);
+
+  return reply.code(200).send({
+    message: "username updated",
+    id,
+    oldUsername: user.username,
+    newUsername: clean,
+  });
+}
+
+export async function getUserStats(req, reply) {
+  const userId = Number(req.params.id);
+  if (!Number.isInteger(userId)) {
+    return reply.code(400).send({ error: "Invalid user id" });
+  }
+
+  const totalRow = await db.get(
+    `SELECT COUNT(*) AS total
+     FROM matches
+     WHERE winner_id IS NOT NULL
+       AND (player1_id = ? OR player2_id = ?)`,
+    [userId, userId]
+  );
+
+  const winsRow = await db.get(
+    `SELECT COUNT(*) AS wins
+     FROM matches
+     WHERE winner_id = ?`,
+    [userId]
+  );
+
+  const total = totalRow?.total || 0;
+  const wins = winsRow?.wins || 0;
+  const losses = total - wins;
+
+  return reply.code(200).send({
+    userId,
+    wins,
+    losses,
+    total,
+    winRate: total > 0 ? Number((wins / total).toFixed(3)) : 0
+  });
+}

@@ -43,3 +43,4 @@ export async function matchesRoutes(fastify, options) {
         }
     }, finishedMatch)
 }
+
