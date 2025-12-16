@@ -55,7 +55,7 @@ export function onMount(): void {
   let player2Score = 0;
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlcm5hbWUiOiJZYXNzaW5lUzllbGkiLCJlbWFpbCI6InRlc3QyQG1haWwuY29tIiwiaWF0IjoxNzY1ODA5MzA4LCJleHAiOjE3NjU4MTI5MDh9.5nhIny_RFC0Rw_-nWspk3NzvQh9HautYh4SNC6snvCY";
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYXNzaW5lUzllbGkiLCJlbWFpbCI6InRlc3QyQG1haWwuY29tIiwiaWF0IjoxNzY1ODk3MzA5LCJleHAiOjE3NjU5MDA5MDl9.dYKLyRYzbnuSLtZl2eBEsXFJWVo8nBeixnVLYazQNeE";
   const isTournament = !!tournamentMatch;
   const isTournamentFinal = tournamentMatch === "final";
   const shouldCreateMatch = !isTournament || isTournamentFinal;
