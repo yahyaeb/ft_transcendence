@@ -75,44 +75,45 @@ export function render(): string {
 }
 
 export function onMount(): void {
-  const aiButton = document.getElementById('aiButton');
-  const modal = document.getElementById('aiDifficultyModal');
-  const easyBtn = document.getElementById('easyBtn');
-  const mediumBtn = document.getElementById('mediumBtn');
-  const impossibleBtn = document.getElementById('impossibleBtn');
+    localStorage.removeItem('ai');
+    const aiButton = document.getElementById('aiButton');
+    const modal = document.getElementById('aiDifficultyModal');
+    const easyBtn = document.getElementById('easyBtn');
+    const mediumBtn = document.getElementById('mediumBtn');
+    const impossibleBtn = document.getElementById('impossibleBtn');
 
-  aiButton?.addEventListener('click', (e) => {
-    e.preventDefault();
-    modal?.classList.remove('hidden');
-  });
+    aiButton?.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal?.classList.remove('hidden');
+    });
 
-  easyBtn?.addEventListener('click', () => {
-    localStorage.setItem('ai', 'isAi');
-    localStorage.setItem('aiDifficulty', '400');
-    modal?.classList.add('hidden');
-    window.history.pushState({}, '', '/gameplay');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+    easyBtn?.addEventListener('click', () => {
+        localStorage.setItem('ai', 'isAi');
+        localStorage.setItem('aiDifficulty', '400');
+        modal?.classList.add('hidden');
+        window.history.pushState({}, '', '/gameplay');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    });
 
-  mediumBtn?.addEventListener('click', () => {
-    localStorage.setItem('ai', 'isAi');
-    localStorage.setItem('aiDifficulty', '200');
-    modal?.classList.add('hidden');
-    window.history.pushState({}, '', '/gameplay');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+    mediumBtn?.addEventListener('click', () => {
+        localStorage.setItem('ai', 'isAi');
+        localStorage.setItem('aiDifficulty', '200');
+        modal?.classList.add('hidden');
+        window.history.pushState({}, '', '/gameplay');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    });
 
-  impossibleBtn?.addEventListener('click', () => {
-    localStorage.setItem('ai', 'isAi');
-    localStorage.setItem('aiDifficulty', '0');
-    modal?.classList.add('hidden');
-    window.history.pushState({}, '', '/gameplay');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+    impossibleBtn?.addEventListener('click', () => {
+        localStorage.setItem('ai', 'isAi');
+        localStorage.setItem('aiDifficulty', '0');
+        modal?.classList.add('hidden');
+        window.history.pushState({}, '', '/gameplay');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    });
 
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      modal?.classList.add('hidden');
-    }
-  });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+        modal?.classList.add('hidden');
+        }
+    });
 }

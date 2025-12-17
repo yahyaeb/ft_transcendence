@@ -180,6 +180,7 @@ export function onMount(): void {
     clearTimeout(intervalID);
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
+    player2Name = 'Player 2'
   }
   
   cleanupFunction = cleanup;
@@ -576,6 +577,13 @@ export function onMount(): void {
 
   const menuClickHandler = () => {
     localStorage.removeItem('ai');
+    sessionStorage.removeItem('tournamentData');
+    sessionStorage.removeItem('currentMatch');
+    sessionStorage.removeItem('tournamentPlayers');
+    sessionStorage.removeItem('match1Winner');
+    sessionStorage.removeItem('match2Winner');
+    sessionStorage.removeItem('match1Score');
+    sessionStorage.removeItem('match2Score');
     cleanup();
     window.history.pushState({}, '', '/mainPage');
     window.dispatchEvent(new PopStateEvent('popstate'));
