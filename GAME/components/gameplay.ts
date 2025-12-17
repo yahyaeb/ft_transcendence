@@ -180,6 +180,7 @@ export function onMount(): void {
     clearTimeout(intervalID);
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
+    player2Name = 'Player 2'
   }
   
   cleanupFunction = cleanup;
@@ -309,10 +310,14 @@ export function onMount(): void {
   }
 
   function checkCollision(){
-    if (ballY <= 0 + ballRadius)
+    if (ballY <= 0 + ballRadius){
             ballYDirection *= -1;
-    if (ballY >= (gameHeight - ballRadius))
+            ballY = ballRadius;
+    }
+    if (ballY >= (gameHeight - ballRadius)){
             ballYDirection *=  -1;
+            ballY = gameHeight - ballRadius;
+    }
     if (ballX <= 0){
             player2Score += 1;
             updateScore();
@@ -399,22 +404,22 @@ export function onMount(): void {
         createBall();
         return;
     }
-    if (ballX <= (paddle1.x + paddle1.width + ballRadius)){
-        if (ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
-                ballX = (paddle1.x + paddle1.width) + ballRadius;
-                ballXDirection *= -1;
-                ballSpeed += 0.35;
+    if (ballX <= (paddle1.x + paddle1.width + ballRadius) && ballXDirection < 0){
+        if (ballY >= paddle1.y && ballY <= paddle1.y + paddle1.height){
+            ballXDirection *= -1;
+            ballSpeed += 0.35;
+            
             let collidePoint = ballY - (paddle1.y + paddle1.height / 2);
             collidePoint = collidePoint / (paddle1.height / 2);
             let angleRad = (Math.PI / 3) * collidePoint;
             ballYDirection = Math.sin(angleRad) * 1.5;
         }
     }
-    if (ballX >= (paddle2.x - ballRadius)){
-        if (ballY > paddle2.y && ballY < paddle2.y + paddle2.height){
-                ballX = paddle2.x - ballRadius;
-                ballXDirection *= -1;
-                ballSpeed += 0.35;
+    if (ballX >= (paddle2.x - ballRadius) && ballXDirection > 0){
+        if (ballY >= paddle2.y && ballY <= paddle2.y + paddle2.height){
+            ballXDirection *= -1;
+            ballSpeed += 0.35;
+            
             let collidePoint = ballY - (paddle2.y + paddle2.height / 2);
             collidePoint = collidePoint / (paddle2.height / 2);
             let angleRad = (Math.PI / 3) * collidePoint;
@@ -581,6 +586,13 @@ export function onMount(): void {
 
   const menuClickHandler = () => {
     localStorage.removeItem('ai');
+    sessionStorage.removeItem('tournamentData');
+    sessionStorage.removeItem('currentMatch');
+    sessionStorage.removeItem('tournamentPlayers');
+    sessionStorage.removeItem('match1Winner');
+    sessionStorage.removeItem('match2Winner');
+    sessionStorage.removeItem('match1Score');
+    sessionStorage.removeItem('match2Score');
     cleanup();
     window.history.pushState({}, '', '/mainPage');
     window.dispatchEvent(new PopStateEvent('popstate'));
