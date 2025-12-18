@@ -7,7 +7,6 @@ export function render(): string {
           <div id="player1Name" class="text-lg font-semibold text-purple-400">● Player 1</div>
           <div id="leftScore" class="text-[44px] font-extrabold tracking-tight gradient-purple">0</div>
         </div>
-        <div class="text-4xl" style="filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))">🏆</div>
         <div class="playerSection flex flex-col gap-1.5">
           <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
           <div id="player2Name" class="text-lg font-semibold text-cyan-400">● Player 2</div>
