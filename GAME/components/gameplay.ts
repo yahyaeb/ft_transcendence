@@ -47,7 +47,7 @@ export function onMount(): void {
   const player2NameElement = document.querySelector('#player2Name')!;
   const tournamentData = sessionStorage.getItem('tournamentData');
   const tournamentMatch = sessionStorage.getItem('currentMatch');
-  const aiGame = localStorage.getItem('ai');
+  const aiGame = sessionStorage.getItem('ai');
   let matchId: string | null = null;
   let matchFinished = false;
   let player1Score = 0;
@@ -551,7 +551,7 @@ export function onMount(): void {
       if (currentTime - aiReactionTimer >= aiReactionDelay){
         snapshot()
         const perfectPrediction = predictBallY()
-        const aiDifficultyMargin = parseInt(localStorage.getItem('aiDifficulty') || '150')
+        const aiDifficultyMargin = parseInt(sessionStorage.getItem('aiDifficulty') || '150')
         aiErrorMargin = (Math.random() - 0.5) * aiDifficultyMargin
         aiPredictedY = perfectPrediction + aiErrorMargin
         if (aiPredictedY < 0)
@@ -611,7 +611,7 @@ export function onMount(): void {
 
 
   const menuClickHandler = () => {
-    localStorage.removeItem('ai');
+    sessionStorage.removeItem('ai');
     sessionStorage.removeItem('tournamentData');
     sessionStorage.removeItem('currentMatch');
     sessionStorage.removeItem('tournamentPlayers');
