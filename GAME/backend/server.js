@@ -5,8 +5,8 @@ import swaggerUI from '@fastify/swagger-ui'
 import { usersRoutes } from './routes/users.js'
 import { authRoutes } from './routes/auth.js'
 import { matchesRoutes } from './routes/matches.js'
+import { friendsRoute } from './routes/friendships.js'
 import cors from "@fastify/cors";
-
 
 const fastify = fastifyFactory({logger: true })
 const PORT = 4999
@@ -36,6 +36,7 @@ fastify.get('/healthz', async(req, reply) =>{
 fastify.register(usersRoutes, { prefix: '/users' })
 fastify.register(authRoutes, { prefix: '/auth'})
 fastify.register(matchesRoutes, { prefix: '/matches'})
+fastify.register(friendsRoute, { prefix: '/friends'})
 
 const start = async () => {
   try {

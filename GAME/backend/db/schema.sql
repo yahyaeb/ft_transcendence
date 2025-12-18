@@ -29,7 +29,25 @@ CREATE TABLE IF NOT EXISTS matches(
     FOREIGN KEY(winner_id)  REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS friendships (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  friend_id INTEGER NOT NULL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, friend_id),
+  FOREIGN KEY(user_id) REFERENCES users(id),
+  FOREIGN KEY(friend_id) REFERENCES users(id)
+);
 
+CREATE TABLE IF NOT EXISTS blocks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  blocker_id INTEGER NOT NULL,
+  blocked_id INTEGER NOT NULL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(blocker_id, blocked_id),
+  FOREIGN KEY(blocker_id) REFERENCES users(id),
+  FOREIGN KEY(blocked_id) REFERENCES users(id)
+);
 
 INSERT INTO users (username, email, password)
 VALUES
