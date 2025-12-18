@@ -90,7 +90,7 @@ export function onMount(): void {
     if (tournamentData) {
       const data = JSON.parse(tournamentData);
       if (tournamentMatch === '1') {
-        player1Name = getUsernameFromToken();
+        player1Name = data.players[0];
         player2Name = data.players[1];
       } else if (tournamentMatch === '2') {
         player1Name = data.players[2];
