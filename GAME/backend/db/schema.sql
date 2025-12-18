@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users(
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     avatar TEXT,
+    last_seen_at INTEGER,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     two_factor_enabled INTEGER NOT NULL DEFAULT 0,
     two_factor_secret TEXT

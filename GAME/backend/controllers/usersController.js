@@ -4,6 +4,21 @@
 import { db } from '../db/database.js'
 import bcrypt from 'bcrypt'
 
+export async function ping(req, reply) {
+  const me = Number(req.user.id);
+  const now = Date.now();
+
+  await db.run(
+    "UPDATE users SET last_seen_at = ? WHERE id = ?",
+    [now, me]
+  );
+
+  return reply.code(200).send({
+    ok: true,
+    last_seen_at: now
+  });
+}
+
 export async function getAllUsersController(req, reply){
     // const users = await db.all("SELECT * FROM users;");
     const users = await db.all("Select id, email, username, avatar FROM users order by id;");

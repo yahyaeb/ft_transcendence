@@ -7,13 +7,17 @@ import { getAllUsersController,
         updatePassword,
         updateUsername,
         getUserStats,
-        getHistory
+        getHistory,
+        ping
 }   from "../controllers/usersController.js";
 import { authMiddleware } from "../middleware/auth.js";
 
 
 export async function usersRoutes(fastify, options) {
 
+    fastify.patch("/me/ping", {
+            preHandler: authMiddleware,
+    }, ping);
     fastify.get('/me', {
         preHandler: authMiddleware,
     }, getMeProfile)

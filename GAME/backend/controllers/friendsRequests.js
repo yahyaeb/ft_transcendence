@@ -1,17 +1,26 @@
 import { db } from '../db/database.js'
 
 export async function showFriends(req, reply) {
-    const me = req.user.id;
+    const me = Number(req.user.id);
+    const now = Date.now();
+    const ONLINE_MS = 30000;
+
     const friends = await db.all(
-            `SELECT u.id, u.username
-            FROM friendships f
-            JOIN users u ON u.id = f.friend_id
-            WHERE f.user_id = ?
-            Order by u.username`,
-            [me]
-    )
+        `SELECT u.id, u.username, u.last_seen_at,
+                CASE
+                WHEN u.last_seen_at IS NOT NULL AND (? - u.last_seen_at) <= ?
+                THEN 1 ELSE 0
+                END AS online
+        FROM friendships f
+        JOIN users u ON u.id = f.friend_id
+        WHERE f.user_id = ?
+        ORDER BY online DESC, u.last_seen_at DESC, u.username`,
+        [now, ONLINE_MS, me]
+    );
+
     return reply.code(200).send(friends);
-};
+}
+
 
 export async function addFriend(req, reply) {
     const me = Number(req.user.id);
