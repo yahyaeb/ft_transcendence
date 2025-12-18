@@ -78,8 +78,14 @@ export function onMount(): void {
   const player3Name = "player3";
   const player4Name = "player4";
 
-  if (aiGame === 'isAi')
+  if (aiGame === 'isAi') {
       player2Name = 'AI'
+  } else {
+    const pvpPlayer2 = localStorage.getItem('pvpPlayer2');
+    if (pvpPlayer2 && !tournamentMatch) {
+      player2Name = pvpPlayer2;
+    }
+  }
 
   if (tournamentMatch) {
     if (tournamentData) {
@@ -209,7 +215,6 @@ export function onMount(): void {
     clearTimeout(intervalID);
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
-    player2Name = 'Player 2'
   }
   
   cleanupFunction = cleanup;

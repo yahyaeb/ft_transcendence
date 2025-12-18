@@ -72,15 +72,15 @@ export function render(): string {
       </div>
 
       <div class="flex flex-col gap-6 px-8">
-        <a href="/gameplay" data-link 
-           class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer block no-underline"
+        <button id="pvpBtn"
+           class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer text-left"
            style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="relative">
-            <h2 class="text-3xl font-bold mb-2 gradient-purple">Match 1 vs 1</h2>
-            <p class="text-slate-400">Un duel classique entre deux joueurs</p>
+            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">Match 1 vs 1</h2>
+            <p class="text-slate-400 flex justify-center">Un duel classique entre deux joueurs</p>
           </div>
-        </a>
+        </button>
 
 
         <button id="tournamentBtn" 
@@ -149,6 +149,31 @@ export function render(): string {
       </div>
     </div>
 
+    <div id="pvpModal" class="fixed inset-0 bg-black/30 backdrop-blur-lg flex justify-center items-center p-5 z-50 hidden">
+      <div class="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-slate-400/20 rounded-3xl max-w-[550px] w-full mx-auto shadow-2xl p-10">
+        <div class="mb-8 text-center">
+          <h2 class="font-extrabold flex justify-center mb-2 gradient-purple" 
+              style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+            Match 1 vs 1
+          </h2>
+          <p class="text-slate-400 flex justify-center text-sm">Entrez le pseudo du joueur 2</p>
+        </div>
+
+        <div class="space-y-4 mb-8">
+          <div class="relative">
+            <input id="pvpPlayer2" type="text" placeholder="Pseudo joueur 2" 
+                   class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
+          </div>
+        </div>
+
+        <button id="closePvpModal" 
+                class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+          Commencer le match
+        </button>
+      </div>
+    </div>
+
     <div id="modal" class="fixed inset-0 bg-black/30 backdrop-blur-lg flex justify-center items-center p-5 z-50 hidden">
       <div class="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-slate-400/20 rounded-3xl max-w-[550px] w-full mx-auto shadow-2xl p-10">
         <div class="mb-8 text-center">
@@ -180,6 +205,11 @@ export function render(): string {
 }
 
 export function onMount(): void {
+  const pvpBtn = document.getElementById('pvpBtn');
+  const pvpModal = document.getElementById('pvpModal');
+  const closePvpModalBtn = document.getElementById('closePvpModal');
+  const pvpPlayer2Input = document.getElementById('pvpPlayer2') as HTMLInputElement;
+
   const tournamentBtn = document.getElementById('tournamentBtn');
   const modal = document.getElementById('modal');
   const closeModalBtn = document.getElementById('closeModal');
@@ -377,6 +407,23 @@ export function onMount(): void {
   });
 
   player1.value = localStorage.getItem('player1') || ''
+
+  pvpBtn?.addEventListener('click', () => {
+    pvpModal?.classList.remove('hidden');
+  });
+
+  closePvpModalBtn?.addEventListener('click', () => {
+    const player2Name = pvpPlayer2Input?.value.trim() || '';
+    if (player2Name === '') {
+      alert("Veuillez entrer un pseudo pour le joueur 2");
+      return;
+    }
+    localStorage.setItem('pvpPlayer2', player2Name);
+    pvpModal?.classList.add('hidden');
+    window.history.pushState({}, '', '/gameplay');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+
   tournamentBtn?.addEventListener('click', () => {
     modal?.classList.remove('hidden');
   });
@@ -409,10 +456,11 @@ export function onMount(): void {
   window.addEventListener('keydown', (e)=>{
     if (e.key == "Escape"){
         modal?.classList.add('hidden')
-        customizationModal?.classList.add('hidden')
+        pvpModal?.classList.add('hidden')
         player2.value = ""
         player3.value = ""
         player4.value = ""
+        if (pvpPlayer2Input) pvpPlayer2Input.value = ""
     }
   })
 }
