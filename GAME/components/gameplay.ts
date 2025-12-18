@@ -7,7 +7,6 @@ export function render(): string {
           <div id="player1Name" class="text-lg font-semibold text-purple-400">● Player 1</div>
           <div id="leftScore" class="text-[44px] font-extrabold tracking-tight gradient-purple">0</div>
         </div>
-        <div class="text-4xl" style="filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))">🏆</div>
         <div class="playerSection flex flex-col gap-1.5">
           <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
           <div id="player2Name" class="text-lg font-semibold text-cyan-400">● Player 2</div>
@@ -50,14 +49,14 @@ export function onMount(): void {
   const player2NameElement = document.querySelector('#player2Name')!;
   const tournamentData = sessionStorage.getItem('tournamentData');
   const tournamentMatch = sessionStorage.getItem('currentMatch');
-  const aiGame = localStorage.getItem('ai');
+  const aiGame = sessionStorage.getItem('ai');
   let matchId: string | null = null;
   let matchFinished = false;
   let player1Score = 0;
   let player2Score = 0;
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYXNzaW5lUzllbGkiLCJlbWFpbCI6InRlc3QyQG1haWwuY29tIiwiaWF0IjoxNzY2MDUzMjg5LCJleHAiOjE3NjYwNTY4ODl9.Thmt-x1z2lnNGvqQrADXzDWWfmhuAw6p3XBO8khD4hg";
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJIYW1pZCIsImVtYWlsIjoidGVzdDNAbWFpbC5jb20iLCJpYXQiOjE3NjYwNzA3NjEsImV4cCI6MTc2NjA3NDM2MX0.k53UCVEEEg_3zi20y1ZMYFElsh81kfQoCkPMtF6c5xk";
   const isTournament = !!tournamentMatch;
   const isTournamentFinal = tournamentMatch === "final";
   const shouldCreateMatch = !isTournament || isTournamentFinal;
@@ -93,7 +92,7 @@ export function onMount(): void {
     if (tournamentData) {
       const data = JSON.parse(tournamentData);
       if (tournamentMatch === '1') {
-        player1Name = getUsernameFromToken();
+        player1Name = data.players[0];
         player2Name = data.players[1];
       } else if (tournamentMatch === '2') {
         player1Name = data.players[2];
@@ -108,14 +107,43 @@ export function onMount(): void {
   player1NameElement.textContent = `${player1Name}`;
   player2NameElement.textContent = `${player2Name}`;
 
+  interface GameCustomization {
+    paddle1Color: string;
+    paddle2Color: string;
+    ballColor: string;
+    boardBackground: string;
+    mapStyle: string;
+    centerLineColor: string;
+  }
+
+  const defaultGameCustomization: GameCustomization = {
+    paddle1Color: '#a78bfa',
+    paddle2Color: '#22d3ee',
+    ballColor: '#f8fafc',
+    boardBackground: '#0f172a',
+    mapStyle: 'classic',
+    centerLineColor: 'rgba(100, 116, 139, 0.25)'
+  };
+
+  let customization: GameCustomization = { ...defaultGameCustomization };
+  const savedCustomization = localStorage.getItem('gameCustomization');
+  if (savedCustomization) {
+    try {
+      customization = { ...defaultGameCustomization, ...JSON.parse(savedCustomization) };
+    } catch (e) {
+      customization = { ...defaultGameCustomization };
+    }
+  }
+
   const gameWidth = gameBoard.width;
   const gameHeight = gameBoard.height;
-  const boardBackground = "#0f172a";
-  const paddle1Color = "#a78bfa";
-  const paddle2Color = "#22d3ee";
+  const boardBackground = customization.boardBackground;
+  const paddle1Color = customization.paddle1Color;
+  const paddle2Color = customization.paddle2Color;
   const paddleBorder = "transparent";
-  const ballColor = "#f8fafc";
-  const ballBorderColor = "rgba(248, 250, 252, 0.25)";
+  const ballColor = customization.ballColor;
+  const ballBorderColor = `${customization.ballColor}40`;
+  const centerLineColor = customization.centerLineColor;
   const ballRadius = 8.5;
   const maxBallSpeed = 2.5;
   const paddleSpeed = 3.5;
@@ -261,18 +289,20 @@ export function onMount(): void {
   }
 
   function drawCenterLine(){
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.25)";
+    ctx.strokeStyle = centerLineColor;
     ctx.lineWidth = 2;
     ctx.setLineDash([12, 12]);
+    ctx.beginPath();
     ctx.moveTo(gameWidth / 2, 0);
     ctx.lineTo(gameWidth / 2, gameHeight);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.25)";
+    ctx.strokeStyle = centerLineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(gameWidth / 2, gameHeight / 2, 150, 0, 10 * Math.PI);
     ctx.stroke();
+    ctx.setLineDash([]);
   }
 
   function drawPaddles(){
@@ -545,7 +575,7 @@ export function onMount(): void {
       if (currentTime - aiReactionTimer >= aiReactionDelay){
         snapshot()
         const perfectPrediction = predictBallY()
-        const aiDifficultyMargin = parseInt(localStorage.getItem('aiDifficulty') || '150')
+        const aiDifficultyMargin = parseInt(sessionStorage.getItem('aiDifficulty') || '150')
         aiErrorMargin = (Math.random() - 0.5) * aiDifficultyMargin
         aiPredictedY = perfectPrediction + aiErrorMargin
         if (aiPredictedY < 0)
@@ -606,7 +636,8 @@ export function onMount(): void {
 
   const menuClickHandler = () => {
     cancelMatch();
-    localStorage.removeItem('ai');
+    // localStorage.removeItem('ai');
+    sessionStorage.removeItem('ai');
     sessionStorage.removeItem('tournamentData');
     sessionStorage.removeItem('currentMatch');
     sessionStorage.removeItem('tournamentPlayers');

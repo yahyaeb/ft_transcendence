@@ -2,15 +2,68 @@ interface TournamentData {
   players: string[];
 }
 
+interface GameCustomization {
+  paddle1Color: string;
+  paddle2Color: string;
+  ballColor: string;
+  boardBackground: string;
+  mapStyle: string;
+  centerLineColor: string;
+}
+
+const defaultCustomization: GameCustomization = {
+  paddle1Color: '#a78bfa',
+  paddle2Color: '#22d3ee',
+  ballColor: '#f8fafc',
+  boardBackground: '#0f172a',
+  mapStyle: 'classic',
+  centerLineColor: 'rgba(100, 116, 139, 0.25)'
+};
+
+const mapStyles: Record<string, { name: string; boardBg: string; centerLineColor: string }> = {
+  classic: { name: 'Classique', boardBg: '#0f172a', centerLineColor: 'rgba(100, 116, 139, 0.25)' },
+  neon: { name: 'Néon', boardBg: '#0a0a1a', centerLineColor: 'rgba(236, 72, 153, 0.5)' },
+  retro: { name: 'Rétro', boardBg: '#1a1a2e', centerLineColor: 'rgba(233, 196, 106, 0.4)' },
+  forest: { name: 'Forêt', boardBg: '#0d1f0d', centerLineColor: 'rgba(34, 197, 94, 0.3)' },
+  ocean: { name: 'Océan', boardBg: '#0c1929', centerLineColor: 'rgba(56, 189, 248, 0.3)' }
+};
+
+const colorPresets = {
+  paddle: [
+    { name: 'Violet', value: '#a78bfa' },
+    { name: 'Cyan', value: '#22d3ee' },
+    { name: 'Rose', value: '#f472b6' },
+    { name: 'Vert', value: '#4ade80' },
+    { name: 'Orange', value: '#fb923c' },
+    { name: 'Rouge', value: '#ef4444' },
+    { name: 'Jaune', value: '#facc15' },
+    { name: 'Blanc', value: '#f8fafc' }
+  ],
+  ball: [
+    { name: 'Blanc', value: '#f8fafc' },
+    { name: 'Or', value: '#fbbf24' },
+    { name: 'Rose', value: '#f472b6' },
+    { name: 'Vert', value: '#4ade80' },
+    { name: 'Cyan', value: '#22d3ee' }
+  ]
+};
+
 export function render(): string {
   return `
     <div class="text-center max-w-[600px] w-full mx-auto">
       <div class="mb-10">
-        <a href="/" data-link 
-           class="mb-6 text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 mx-auto w-fit">
-          <span>←</span>
-          <span>Retour</span>
-        </a>
+        <div class="flex items-center justify-between mb-6">
+          <a href="/" data-link 
+             class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2">
+            <span>←</span>
+            <span>Retour</span>
+          </a>
+          <button id="customizeBtn" 
+                  class="flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-xl border border-slate-400/20 rounded-xl text-slate-300 hover:text-purple-400 hover:border-purple-500/50 transition-all duration-300"
+                  style="box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15)">
+            <span class="text-sm font-medium">Personnaliser</span>
+          </button>
+        </div>
         <h1 class="text-5xl font-extrabold mb-3 gradient-purple" 
             style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
           Joueur vs Joueur
@@ -42,6 +95,59 @@ export function render(): string {
       </div>
     </div>
 
+    <div id="customizationModal" class="fixed inset-0 bg-black/50 backdrop-blur-lg flex justify-center items-center p-5 z-50 hidden overflow-y-auto">
+      <div class="relative bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-slate-400/20 rounded-3xl max-w-[700px] w-full mx-auto shadow-2xl p-8 my-8">
+        <button id="closeCustomizationModal" 
+                class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors text-2xl">
+          ✕
+        </button>
+        
+        <div class="mb-6 text-center">
+          <h2 class="text-3xl font-extrabold mb-2 gradient-purple" 
+              style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+            Personnalisation
+          </h2>
+          <p class="text-slate-400 text-sm">Personnalisez votre expérience de jeu</p>
+        </div>
+
+        <div class="mb-6 flex justify-center">
+          <canvas id="previewCanvas" width="300" height="150" 
+                  class="border border-slate-600/30 rounded-xl"></canvas>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-slate-300 mb-3">Style de carte</label>
+          <div class="grid grid-cols-5 gap-2" id="mapButtonsContainer"></div>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur Paddle Joueur 1</label>
+          <div class="flex flex-wrap gap-2" id="paddle1ColorsContainer"></div>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur Paddle Joueur 2</label>
+          <div class="flex flex-wrap gap-2" id="paddle2ColorsContainer"></div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur de la balle</label>
+          <div class="flex flex-wrap gap-2" id="ballColorsContainer"></div>
+        </div>
+
+        <div class="flex gap-4">
+          <button id="resetCustomization" 
+                  class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-slate-700/50 border border-slate-600/30 rounded-xl text-slate-300 transition-all duration-300 hover:bg-slate-600/50">
+            Réinitialiser
+          </button> 
+          <button id="saveCustomization" 
+                  class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                  style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+            Sauvegarder
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div id="pvpModal" class="fixed inset-0 bg-black/30 backdrop-blur-lg flex justify-center items-center p-5 z-50 hidden">
       <div class="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-slate-400/20 rounded-3xl max-w-[550px] w-full mx-auto shadow-2xl p-10">
@@ -111,6 +217,194 @@ export function onMount(): void {
   const player2 = (document.getElementById('player2') as HTMLInputElement) || 'Player 2'
   const player3 = (document.getElementById('player3') as HTMLInputElement) || 'Player 3'
   const player4 = (document.getElementById('player4') as HTMLInputElement) || 'Player 4'
+
+  const customizeBtn = document.getElementById('customizeBtn');
+  const customizationModal = document.getElementById('customizationModal');
+  const closeCustomizationModal = document.getElementById('closeCustomizationModal');
+  const saveCustomizationBtn = document.getElementById('saveCustomization');
+  const resetCustomizationBtn = document.getElementById('resetCustomization');
+  const previewCanvas = document.getElementById('previewCanvas') as HTMLCanvasElement;
+  const previewCtx = previewCanvas?.getContext('2d');
+  const mapButtonsContainer = document.getElementById('mapButtonsContainer');
+  const paddle1ColorsContainer = document.getElementById('paddle1ColorsContainer');
+  const paddle2ColorsContainer = document.getElementById('paddle2ColorsContainer');
+  const ballColorsContainer = document.getElementById('ballColorsContainer');
+
+  let currentCustomization: GameCustomization = { ...defaultCustomization };
+  
+  const savedCustomization = localStorage.getItem('gameCustomization');
+  if (savedCustomization) {
+    try {
+      currentCustomization = { ...defaultCustomization, ...JSON.parse(savedCustomization) };
+    } catch (e) {
+      currentCustomization = { ...defaultCustomization };
+    }
+  }
+
+  function renderMapButtons() {
+    if (!mapButtonsContainer) return;
+    mapButtonsContainer.innerHTML = '';
+    Object.entries(mapStyles).forEach(([key, style]) => {
+      const btn = document.createElement('button');
+      btn.dataset.map = key;
+      btn.className = `map-btn px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 border-2 ${
+        key === currentCustomization.mapStyle 
+          ? 'border-purple-500 bg-purple-500/20 text-purple-300' 
+          : 'border-slate-600/30 bg-slate-800/50 text-slate-400 hover:border-slate-500'
+      }`;
+      btn.textContent = style.name;
+      btn.addEventListener('click', () => {
+        currentCustomization.mapStyle = key;
+        currentCustomization.boardBackground = style.boardBg;
+        currentCustomization.centerLineColor = style.centerLineColor;
+        renderMapButtons();
+        updatePreview();
+      });
+      mapButtonsContainer.appendChild(btn);
+    });
+  }
+
+  function renderPaddle1Colors() {
+    if (!paddle1ColorsContainer) return;
+    paddle1ColorsContainer.innerHTML = '';
+    colorPresets.paddle.forEach(color => {
+      const btn = document.createElement('button');
+      btn.dataset.color = color.value;
+      btn.className = `w-10 h-10 rounded-lg border-2 transition-all duration-200 hover:scale-110 ${
+        color.value === currentCustomization.paddle1Color 
+          ? 'border-white ring-2 ring-white/50' 
+          : 'border-slate-600/30'
+      }`;
+      btn.style.backgroundColor = color.value;
+      btn.style.boxShadow = `0 0 10px ${color.value}40`;
+      btn.title = color.name;
+      btn.addEventListener('click', () => {
+        currentCustomization.paddle1Color = color.value;
+        renderPaddle1Colors();
+        updatePreview();
+      });
+      paddle1ColorsContainer.appendChild(btn);
+    });
+  }
+
+  function renderPaddle2Colors() {
+    if (!paddle2ColorsContainer) return;
+    paddle2ColorsContainer.innerHTML = '';
+    colorPresets.paddle.forEach(color => {
+      const btn = document.createElement('button');
+      btn.dataset.color = color.value;
+      btn.className = `w-10 h-10 rounded-lg border-2 transition-all duration-200 hover:scale-110 ${
+        color.value === currentCustomization.paddle2Color 
+          ? 'border-white ring-2 ring-white/50' 
+          : 'border-slate-600/30'
+      }`;
+      btn.style.backgroundColor = color.value;
+      btn.style.boxShadow = `0 0 10px ${color.value}40`;
+      btn.title = color.name;
+      btn.addEventListener('click', () => {
+        currentCustomization.paddle2Color = color.value;
+        renderPaddle2Colors();
+        updatePreview();
+      });
+      paddle2ColorsContainer.appendChild(btn);
+    });
+  }
+
+  function renderBallColors() {
+    if (!ballColorsContainer) return;
+    ballColorsContainer.innerHTML = '';
+    colorPresets.ball.forEach(color => {
+      const btn = document.createElement('button');
+      btn.dataset.color = color.value;
+      btn.className = `w-10 h-10 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+        color.value === currentCustomization.ballColor 
+          ? 'border-white ring-2 ring-white/50' 
+          : 'border-slate-600/30'
+      }`;
+      btn.style.backgroundColor = color.value;
+      btn.style.boxShadow = `0 0 10px ${color.value}40`;
+      btn.title = color.name;
+      btn.addEventListener('click', () => {
+        currentCustomization.ballColor = color.value;
+        renderBallColors();
+        updatePreview();
+      });
+      ballColorsContainer.appendChild(btn);
+    });
+  }
+
+  function updatePreview() {
+    if (!previewCtx) return;
+    
+    previewCtx.fillStyle = currentCustomization.boardBackground;
+    previewCtx.fillRect(0, 0, 300, 150);
+    
+    previewCtx.strokeStyle = currentCustomization.centerLineColor;
+    previewCtx.lineWidth = 2;
+    previewCtx.setLineDash([8, 8]);
+    previewCtx.beginPath();
+    previewCtx.moveTo(150, 0);
+    previewCtx.lineTo(150, 150);
+    previewCtx.stroke();
+    
+    previewCtx.beginPath();
+    previewCtx.arc(150, 75, 40, 0, 2 * Math.PI);
+    previewCtx.stroke();
+    previewCtx.setLineDash([]);
+    
+    previewCtx.shadowBlur = 12;
+    
+    previewCtx.shadowColor = currentCustomization.paddle1Color;
+    previewCtx.fillStyle = currentCustomization.paddle1Color;
+    previewCtx.fillRect(15, 50, 8, 50);
+    
+    previewCtx.shadowColor = currentCustomization.paddle2Color;
+    previewCtx.fillStyle = currentCustomization.paddle2Color;
+    previewCtx.fillRect(277, 50, 8, 50);
+    
+    previewCtx.shadowColor = currentCustomization.ballColor;
+    previewCtx.fillStyle = currentCustomization.ballColor;
+    previewCtx.beginPath();
+    previewCtx.arc(150, 75, 6, 0, 2 * Math.PI);
+    previewCtx.fill();
+    
+    previewCtx.shadowBlur = 0;
+  }
+
+  function initCustomizationModal() {
+    renderMapButtons();
+    renderPaddle1Colors();
+    renderPaddle2Colors();
+    renderBallColors();
+    updatePreview();
+  }
+
+  customizeBtn?.addEventListener('click', () => {
+    const saved = localStorage.getItem('gameCustomization');
+    if (saved) {
+      try {
+        currentCustomization = { ...defaultCustomization, ...JSON.parse(saved) };
+      } catch (e) {
+        currentCustomization = { ...defaultCustomization };
+      }
+    }
+    initCustomizationModal();
+    customizationModal?.classList.remove('hidden');
+  });
+
+  closeCustomizationModal?.addEventListener('click', () => {
+    customizationModal?.classList.add('hidden');
+  });
+
+  resetCustomizationBtn?.addEventListener('click', () => {
+    currentCustomization = { ...defaultCustomization };
+    initCustomizationModal();
+  });
+
+  saveCustomizationBtn?.addEventListener('click', () => {
+    localStorage.setItem('gameCustomization', JSON.stringify(currentCustomization));
+    customizationModal?.classList.add('hidden');
+  });
 
   player1.value = localStorage.getItem('player1') || ''
 

@@ -75,7 +75,7 @@ export function render(): string {
 }
 
 export function onMount(): void {
-    localStorage.removeItem('ai');
+    sessionStorage.removeItem('ai');
     const aiButton = document.getElementById('aiButton');
     const modal = document.getElementById('aiDifficultyModal');
     const easyBtn = document.getElementById('easyBtn');
@@ -88,24 +88,24 @@ export function onMount(): void {
     });
 
     easyBtn?.addEventListener('click', () => {
-        localStorage.setItem('ai', 'isAi');
-        localStorage.setItem('aiDifficulty', '400');
+        sessionStorage.setItem('ai', 'isAi');
+        sessionStorage.setItem('aiDifficulty', '400');
         modal?.classList.add('hidden');
         window.history.pushState({}, '', '/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
     mediumBtn?.addEventListener('click', () => {
-        localStorage.setItem('ai', 'isAi');
-        localStorage.setItem('aiDifficulty', '200');
+        sessionStorage.setItem('ai', 'isAi');
+        sessionStorage.setItem('aiDifficulty', '200');
         modal?.classList.add('hidden');
         window.history.pushState({}, '', '/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
     impossibleBtn?.addEventListener('click', () => {
-        localStorage.setItem('ai', 'isAi');
-        localStorage.setItem('aiDifficulty', '0');
+        sessionStorage.setItem('ai', 'isAi');
+        sessionStorage.setItem('aiDifficulty', '0');
         modal?.classList.add('hidden');
         window.history.pushState({}, '', '/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
