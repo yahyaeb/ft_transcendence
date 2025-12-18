@@ -100,14 +100,43 @@ export function onMount(): void {
   player1NameElement.textContent = `${player1Name}`;
   player2NameElement.textContent = `${player2Name}`;
 
+  interface GameCustomization {
+    paddle1Color: string;
+    paddle2Color: string;
+    ballColor: string;
+    boardBackground: string;
+    mapStyle: string;
+    centerLineColor: string;
+  }
+
+  const defaultGameCustomization: GameCustomization = {
+    paddle1Color: '#a78bfa',
+    paddle2Color: '#22d3ee',
+    ballColor: '#f8fafc',
+    boardBackground: '#0f172a',
+    mapStyle: 'classic',
+    centerLineColor: 'rgba(100, 116, 139, 0.25)'
+  };
+
+  let customization: GameCustomization = { ...defaultGameCustomization };
+  const savedCustomization = localStorage.getItem('gameCustomization');
+  if (savedCustomization) {
+    try {
+      customization = { ...defaultGameCustomization, ...JSON.parse(savedCustomization) };
+    } catch (e) {
+      customization = { ...defaultGameCustomization };
+    }
+  }
+
   const gameWidth = gameBoard.width;
   const gameHeight = gameBoard.height;
-  const boardBackground = "#0f172a";
-  const paddle1Color = "#a78bfa";
-  const paddle2Color = "#22d3ee";
+  const boardBackground = customization.boardBackground;
+  const paddle1Color = customization.paddle1Color;
+  const paddle2Color = customization.paddle2Color;
   const paddleBorder = "transparent";
-  const ballColor = "#f8fafc";
-  const ballBorderColor = "rgba(248, 250, 252, 0.25)";
+  const ballColor = customization.ballColor;
+  const ballBorderColor = `${customization.ballColor}40`;
+  const centerLineColor = customization.centerLineColor;
   const ballRadius = 8.5;
   const maxBallSpeed = 2.5;
   const paddleSpeed = 3.5;
@@ -232,18 +261,20 @@ export function onMount(): void {
   }
 
   function drawCenterLine(){
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.25)";
+    ctx.strokeStyle = centerLineColor;
     ctx.lineWidth = 2;
     ctx.setLineDash([12, 12]);
+    ctx.beginPath();
     ctx.moveTo(gameWidth / 2, 0);
     ctx.lineTo(gameWidth / 2, gameHeight);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.25)";
+    ctx.strokeStyle = centerLineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(gameWidth / 2, gameHeight / 2, 150, 0, 10 * Math.PI);
     ctx.stroke();
+    ctx.setLineDash([]);
   }
 
   function drawPaddles(){
