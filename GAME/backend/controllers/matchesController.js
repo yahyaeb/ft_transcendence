@@ -78,16 +78,19 @@ export async function getMatches(req, reply) {
 
 export async function updateMatchStatus(req, reply) {
 
-	const matchId = Number(req.params.id)
+	const matchId = Number(req.params.id);
+    
     const userId = Number(req.user.id)
     const { status } = req.body || {}
-    const allowedStatus = ["pending", "ongoing", "finished"]
+    const allowedStatus = ["pending", "ongoing", "finished", "cancelled"]
 
     if(!status)
         return reply.code(400).send({error: "Status is required"})
     if (!allowedStatus.includes(status))
         return reply.code(400).send({ error: "Invalid status value" })
-
+    if (Number.isNaN(matchId)) 
+        return reply.code(400).send({ error: "Invalid match id" });
+    
 	const currentStatus = await db.get(
     "SELECT id, player1_id, player2_id, status FROM matches WHERE id = ?",
     [matchId]

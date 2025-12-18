@@ -33,6 +33,8 @@ export function render(): string {
     </div>
   `;
 }
+
+
 let cleanupFunction: (()=> void) | null = null
 export function onMount(): void {
   if (cleanupFunction){
@@ -155,6 +157,23 @@ export function onMount(): void {
     YDirection: 0,
     Speed: 1.5
   };
+
+  function cancelMatch() {
+  if (!matchId || matchFinished) return;
+
+  matchFinished = true;
+  fetch(`http://localhost:4999/matches/${matchId}`, {
+    method: "PATCH",
+    keepalive: true,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${TEST_TOKEN}`,
+    },
+    body: JSON.stringify({
+      status: "cancelled"
+      }),
+    }).catch(err => console.error("cancel match failed", err));
+  }
 
   paddle1.y = (gameHeight / 2) - (paddle1.height / 2);
   paddle2.y = (gameHeight / 2) - (paddle1.height / 2);
@@ -586,6 +605,7 @@ export function onMount(): void {
 
 
   const menuClickHandler = () => {
+    cancelMatch();
     localStorage.removeItem('ai');
     sessionStorage.removeItem('tournamentData');
     sessionStorage.removeItem('currentMatch');
