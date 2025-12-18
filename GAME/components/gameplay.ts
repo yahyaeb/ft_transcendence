@@ -55,7 +55,7 @@ export function onMount(): void {
   let player2Score = 0;
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYXNzaW5lUzllbGkiLCJlbWFpbCI6InRlc3QyQG1haWwuY29tIiwiaWF0IjoxNzY1ODk3MzA5LCJleHAiOjE3NjU5MDA5MDl9.dYKLyRYzbnuSLtZl2eBEsXFJWVo8nBeixnVLYazQNeE";
+  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywidXNlcm5hbWUiOiJZYXNzaW5lUzllbGkiLCJlbWFpbCI6InRlc3QyQG1haWwuY29tIiwiaWF0IjoxNzY2MDUzMjg5LCJleHAiOjE3NjYwNTY4ODl9.Thmt-x1z2lnNGvqQrADXzDWWfmhuAw6p3XBO8khD4hg";
   const isTournament = !!tournamentMatch;
   const isTournamentFinal = tournamentMatch === "final";
   const shouldCreateMatch = !isTournament || isTournamentFinal;
@@ -195,11 +195,7 @@ export function onMount(): void {
   let guestName: string | null = null;
 
   if (mode === "pvp" && !tournamentMatch) {
-    guestName = (window.prompt("Enter Player 2 name:") || "").trim();
-    if (!guestName) guestName = "Guest";
-
-    player2Name = guestName;
-    player2NameElement.textContent = player2Name;
+    guestName = player2Name;
   }
   if (!shouldCreateMatch) {
   gameStart();
