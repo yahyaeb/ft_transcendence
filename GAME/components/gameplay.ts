@@ -469,8 +469,11 @@ export function onMount(): void {
         createBall();
         return;
     }
-    if (ballX <= (paddle1.x + paddle1.width + ballRadius) && ballXDirection < 0){
+    if (ballXDirection < 0 && 
+        ballX - ballRadius <= paddle1.x + paddle1.width && 
+        ballX + ballRadius >= paddle1.x){
         if (ballY >= paddle1.y && ballY <= paddle1.y + paddle1.height){
+            ballX = paddle1.x + paddle1.width + ballRadius;
             ballXDirection *= -1;
             ballSpeed += 0.35;
             
@@ -480,8 +483,11 @@ export function onMount(): void {
             ballYDirection = Math.sin(angleRad) * 1.5;
         }
     }
-    if (ballX >= (paddle2.x - ballRadius) && ballXDirection > 0){
+    if (ballXDirection > 0 && 
+        ballX + ballRadius >= paddle2.x && 
+        ballX - ballRadius <= paddle2.x + paddle2.width){
         if (ballY >= paddle2.y && ballY <= paddle2.y + paddle2.height){
+            ballX = paddle2.x - ballRadius;
             ballXDirection *= -1;
             ballSpeed += 0.35;
             
