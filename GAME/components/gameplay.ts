@@ -279,6 +279,17 @@ export function onMount(): void {
         moveBall();
         checkCollision();
         drawBall(ballX, ballY);
+        window.addEventListener('popstate', (e : PopStateEvent)=>{
+              sessionStorage.removeItem('ai');
+              sessionStorage.removeItem('tournamentData');
+              sessionStorage.removeItem('currentMatch');
+              sessionStorage.removeItem('tournamentPlayers');
+              sessionStorage.removeItem('match1Winner');
+              sessionStorage.removeItem('match2Winner');
+              sessionStorage.removeItem('match1Score');
+              sessionStorage.removeItem('match2Score');
+              cleanup();
+        });
         nextTick();
     }, 0.06);
   }
@@ -371,7 +382,7 @@ export function onMount(): void {
     if (ballX <= 0){
             player2Score += 1;
             updateScore();
-            if (player2Score === 5 ){
+            if (player2Score === 5){
                 endMatch();
                 cleanup();
 
