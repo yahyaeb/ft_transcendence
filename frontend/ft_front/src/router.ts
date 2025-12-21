@@ -34,6 +34,14 @@ const routes: Record<string, Route> = {
       m.onMountProfile?.();
     }),
   },
+
+  "#settings": {
+    protected: true,
+    render: () => import("./pages/settings").then(m => {
+      m.renderSettings();
+      m.onMountSettings?.();
+    }),
+  },
 };
 
 export function router() {

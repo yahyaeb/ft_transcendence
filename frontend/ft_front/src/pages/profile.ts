@@ -2,141 +2,81 @@ import { getLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 import { getUser, logout } from "../state/auth";
 
-
-type Gender = "male" | "female" | "berserker" | "";
-
 export function renderProfile() {
   const app = document.getElementById("app");
   if (!app) return;
 
   const user = getUser();
-
   const lang = getLanguage();
   const t = translations[lang];
 
-  // Front-only profile state
-  let profile = {
-    avatar: "👾",
-    nickname: user?.username ?? "Player",
-    age: "",
-    gender: "" as Gender,
-    achievements: [
-      { title: "First Login", icon: "🥇" },
-      { title: "Pong Beginner", icon: "🏓" },
-      { title: "42 Student", icon: "🎓" },
-    ],
-  };
+  if (!user) {
+    window.location.hash = "#login";
+    return;
+  }
 
-  function render() {
-    app.innerHTML = `
-      <div class="min-h-screen flex flex-col items-center px-6 py-10">
+  app.innerHTML = `
+    <div class="min-h-screen bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 px-6 py-12 flex justify-center">
 
-        <div class="w-full max-w-4xl flex justify-between items-center mb-10">
-          <h1 class="text-3xl font-bold text-white">${t.profile}</h1>
-          <a href="#home" class="text-sm text-gray-300 hover:underline">← Home</a>
+      <div class="w-full max-w-3xl">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-10">
+          <h1 class="text-4xl font-extrabold gradient-purple"
+              style="filter: drop-shadow(0 0 20px rgba(168,139,250,0.5))">
+            ${t.profile}
+          </h1>
+          <a href="#dashboard"
+             class="text-sm text-slate-400 hover:text-purple-400 transition">
+            ← Dashboard
+          </a>
         </div>
 
-        <div class="w-full max-w-4xl bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
+        <!-- Profile Card -->
+        <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/20 rounded-3xl p-10 shadow-2xl">
 
-          <!-- Avatar Picker -->
-          <div class="flex items-center gap-6 mb-10">
-            <div class="text-6xl">${profile.avatar}</div>
-            <div class="flex gap-3">
-              ${["👾", "😺", "🤖", "🦄", "🐧"]
-                .map(
-                  (a) =>
-                    `<button data-avatar="${a}" class="avatar-btn text-2xl hover:scale-110 transition">${a}</button>`
-                )
-                .join("")}
-            </div>
-          </div>
+          <!-- User Info -->
+          <div class="flex items-center gap-8 mb-10">
 
-          <!-- Identity -->
-          <h2 class="text-2xl font-bold text-white">${profile.nickname}</h2>
-          <p class="text-gray-400 mb-8">${user?.email}</p>
-
-          <!-- Editable fields -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-
-            <div>
-              <label class="block text-sm text-gray-300 mb-1">
-                ${t.age}
-              </label>
-              <input id="age-input" type="number" min="1"
-                value="${profile.age}"
-                class="w-full px-4 py-2 rounded-lg bg-white/20 text-white focus:outline-none" />
+            <!-- Avatar (backend-managed later) -->
+            <div class="w-24 h-24 rounded-full bg-slate-700/60 border border-slate-400/30 overflow-hidden flex items-center justify-center text-3xl">
+              <img
+                src="${user.avatarUrl ?? "/avatars/default-avatar.png"}"
+                alt="avatar"
+                class="w-full h-full object-cover"
+              />
             </div>
 
             <div>
-              <label class="block text-sm text-gray-300 mb-1">
-                ${t.gender}
-              </label>
-              <select id="gender-select"
-                class="w-full px-4 py-2 rounded-lg bg-white/20 text-white focus:outline-none">
-                <option value="">—</option>
-                <option value="male" ${profile.gender === "male" ? "selected" : ""}>Male</option>
-                <option value="female" ${profile.gender === "female" ? "selected" : ""}>Female</option>
-                <option value="berserker" ${profile.gender === "berserker" ? "selected" : ""}>Berserker</option>
-              </select>
-            </div>
-
-          </div>
-
-          <!-- Achievements -->
-          <div class="mb-10">
-            <h3 class="text-xl font-semibold text-white mb-4">${t.achievements}</h3>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              ${profile.achievements
-                .map(
-                  (a) => `
-                  <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
-                    <div class="text-3xl mb-2">${a.icon}</div>
-                    <span class="text-sm text-gray-300">${a.title}</span>
-                  </div>
-                `
-                )
-                .join("")}
+              <h2 class="text-2xl font-bold text-white">${user.username}</h2>
+              <p class="text-slate-400">${user.email ?? ""}</p>
+              <p class="text-sm text-slate-500 mt-1">
+                ${t.language ?? "Langue"} : ${lang.toUpperCase()}
+              </p>
             </div>
           </div>
 
-          <div class="flex justify-end">
+          <!-- Actions -->
+          <div class="flex justify-end gap-4">
+            <a href="#settings"
+               class="px-6 py-3 rounded-xl font-semibold bg-slate-700/60 hover:bg-slate-600/60 transition">
+              ⚙️ ${t.settings ?? "Settings"}
+            </a>
+
             <button id="logout-btn"
-              class="px-6 py-3 rounded-xl font-semibold text-white bg-red-500/80 hover:bg-red-500 transition">
+              class="px-6 py-3 rounded-xl font-semibold bg-red-500/80 hover:bg-red-500 transition">
               ${t.logout}
             </button>
           </div>
 
         </div>
       </div>
-    `;
+    </div>
+  `;
 
-    // Avatar picker logic
-    document.querySelectorAll<HTMLButtonElement>(".avatar-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        profile.avatar = btn.dataset.avatar as string;
-        render();
-      });
-    });
-
-    // Age input
-    const ageInput = document.getElementById("age-input") as HTMLInputElement;
-    ageInput.addEventListener("input", () => {
-      profile.age = ageInput.value;
-    });
-
-    // Gender select
-    const genderSelect = document.getElementById("gender-select") as HTMLSelectElement;
-    genderSelect.addEventListener("change", () => {
-      profile.gender = genderSelect.value as Gender;
-    });
-
-    // Logout
-    const logoutBtn = document.getElementById("logout-btn");
-    logoutBtn?.addEventListener("click", () => {
-      logout();
-      window.location.hash = "#home";
-    });
-  }
-
-  render();
+  const logoutBtn = document.getElementById("logout-btn");
+  logoutBtn?.addEventListener("click", () => {
+    logout();
+    window.location.hash = "#home";
+  });
 }
