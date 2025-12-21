@@ -228,16 +228,31 @@ export function onMount(): void {
     }).catch(err => console.error("finish match failed", err));
   }
 
+  const handlePopState = (e: PopStateEvent) => {
+    sessionStorage.removeItem('tournamentData');
+    sessionStorage.removeItem('currentMatch');
+    sessionStorage.removeItem('tournamentPlayers');
+    sessionStorage.removeItem('match1Winner');
+    sessionStorage.removeItem('match2Winner');
+    sessionStorage.removeItem('match1Score');
+    sessionStorage.removeItem('match2Score');
+    sessionStorage.removeItem('ai');
+    cancelMatch();
+    cleanup();
+  };
+
   function cleanup() {
     gameActive = false;
     clearTimeout(intervalID);
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keyup", keyUp);
+    window.removeEventListener('popstate', handlePopState);
   }
   
   cleanupFunction = cleanup;
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
+  window.addEventListener('popstate', handlePopState);
   resetButton.addEventListener("click", resetGame);
   let guestName: string | null = null;
 
@@ -279,18 +294,6 @@ export function onMount(): void {
         moveBall();
         checkCollision();
         drawBall(ballX, ballY);
-        window.addEventListener('popstate', (e : PopStateEvent)=>{
-              e.preventDefault();
-              sessionStorage.removeItem('ai');
-              sessionStorage.removeItem('tournamentData');
-              sessionStorage.removeItem('currentMatch');
-              sessionStorage.removeItem('tournamentPlayers');
-              sessionStorage.removeItem('match1Winner');
-              sessionStorage.removeItem('match2Winner');
-              sessionStorage.removeItem('match1Score');
-              sessionStorage.removeItem('match2Score');
-              cleanup();
-        });
         nextTick();
     }, 0.06);
   }
