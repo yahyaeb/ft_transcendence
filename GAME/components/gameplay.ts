@@ -280,6 +280,7 @@ export function onMount(): void {
         checkCollision();
         drawBall(ballX, ballY);
         window.addEventListener('popstate', (e : PopStateEvent)=>{
+              e.preventDefault();
               sessionStorage.removeItem('ai');
               sessionStorage.removeItem('tournamentData');
               sessionStorage.removeItem('currentMatch');
