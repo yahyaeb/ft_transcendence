@@ -1,59 +1,101 @@
 import { login } from "../state/auth";
+import { getLanguage } from "../state/language";
+import { translations } from "../i18n/translations";
 
 export function renderLogin() {
   const app = document.getElementById("app");
   if (!app) return;
 
+  const lang = getLanguage();
+  const t = translations[lang];
+
   app.innerHTML = `
-    <div class="min-h-screen flex items-center justify-center px-4">
-      <div class="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
-        <h2 class="text-3xl font-bold text-white text-center mb-6">Connexion</h2>
+    <div class="min-h-screen w-full bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 flex items-center justify-center px-6">
 
-        <form class="space-y-5">
-          <div>
-            <label class="block text-sm text-gray-300 mb-1">Email</label>
-            <input id="login-email" type="email" required
-              class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="email@exemple.com" />
+      <div class="w-full max-w-md bg-slate-800/40 backdrop-blur-xl border border-slate-400/20 rounded-3xl p-10 shadow-2xl">
+
+        <!-- Avatar -->
+        <div class="flex justify-center mb-6">
+          <div class="w-24 h-24 rounded-full bg-slate-700/60 border border-slate-400/30 overflow-hidden">
+            <img src="/avatars/default-avatar.png"
+                 alt="avatar"
+                 class="w-full h-full object-cover opacity-80" />
           </div>
+        </div>
 
-          <div>
-            <label class="block text-sm text-gray-300 mb-1">Mot de passe</label>
-            <input id="login-password" type="password" required
-              class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="••••••••" />
-          </div>
+        <!-- Title -->
+        <h1 class="text-4xl font-extrabold text-center mb-2 gradient-purple"
+            style="filter: drop-shadow(0 0 20px rgba(168,139,250,0.5))">
+          ${t.login}
+        </h1>
 
-          <button type="submit"
-            class="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition">
-            Se connecter
+        <p class="text-center text-slate-400 mb-8">
+          ${t.login_description ?? "Connecte-toi pour accéder à ton profil"}
+        </p>
+
+        <!-- Form -->
+        <form id="login-form" class="space-y-5">
+
+          <input
+            id="username"
+            type="text"
+            placeholder="${t.username ?? "Nom d'utilisateur"}"
+            required
+            class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
+          />
+
+          <input
+            id="password"
+            type="password"
+            placeholder="${t.password ?? "Mot de passe"}"
+            required
+            class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
+          />
+
+          <button
+            type="submit"
+            class="w-full mt-2 px-6 py-4 text-lg font-semibold rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)] transition">
+            ${t.login}
           </button>
         </form>
 
-        <p class="text-gray-300 text-sm text-center mt-6">
-          Pas encore de compte ?
-          <a href="#signup" class="text-purple-400 hover:underline ml-1">Créer un compte</a>
-        </p>
+        <!-- Footer -->
+        <div class="mt-8 text-center space-y-3">
 
-        <div class="text-center mt-4">
-          <a href="#home" class="text-sm text-gray-400 hover:underline">← Retour à l'accueil</a>
+          <p class="text-sm text-slate-400">
+            ${t.no_account ?? "Pas encore de compte ?"}
+            <a href="#signup"
+               class="text-purple-400 hover:underline ml-1">
+              ${t.signup ?? "Créer un compte"}
+            </a>
+          </p>
+
+          <a href="#home"
+             class="block text-sm text-slate-400 hover:text-purple-400 transition">
+            ← ${t.back_home ?? "Retour à l'accueil"}
+          </a>
+
         </div>
+
       </div>
     </div>
   `;
+}
 
-  const form = app.querySelector("form") as HTMLFormElement | null;
-  const emailInput = app.querySelector("#login-email") as HTMLInputElement | null;
+export function onMountLogin() {
+  const form = document.getElementById("login-form") as HTMLFormElement;
+  const usernameInput = document.getElementById("username") as HTMLInputElement;
+  const passwordInput = document.getElementById("password") as HTMLInputElement;
 
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const email = (emailInput?.value || "mock@email.com").trim();
-    const username = email.split("@")[0] || "mock_user";
+    login({
+      username: usernameInput.value,
+      password: passwordInput.value
+    });
 
-    login(username, email);
+    window.location.hash = "#dashboard";
 
-    // Retour Home => tu verras le bouton Profile
-    window.location.hash = "#home";
   });
 }

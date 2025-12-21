@@ -1,23 +1,52 @@
-import { renderHome } from "./pages/home";
-import { renderLogin } from "./pages/login";
-import { renderSignup } from "./pages/signup";
-import { renderProfile } from "./pages/profile";
 import { isAuthenticated } from "./state/auth";
 
-const routes: Record<string, () => void> = {
-  "": renderHome,
-  "#home": renderHome,
-  "#login": renderLogin,
-  "#signup": renderSignup,
-  "#profile": renderProfile,
+type Route = {
+  render: () => void;
+  onMount?: () => void;
+  protected?: boolean;
+};
+
+const routes: Record<string, Route> = {
+  "#home": { render: () => import("./pages/home").then(m => m.renderHome()) },
+
+  "#login": { render: () => import("./pages/login").then(m => {
+    m.renderLogin();
+    m.onMountLogin();
+  }) },
+
+  "#signup": { render: () => import("./pages/signup").then(m => {
+    m.renderSignup();
+    m.onMountSignup?.();
+  }) },
+
+  "#dashboard": {
+    protected: true,
+    render: () => import("./pages/dashboard").then(m => {
+      m.renderDashboard();
+      m.onMountDashboard();
+    }),
+  },
+
+  "#profile": {
+    protected: true,
+    render: () => import("./pages/profile").then(m => {
+      m.renderProfile();
+      m.onMountProfile?.();
+    }),
+  },
 };
 
 export function router() {
-  const route = window.location.hash;
-  if (route === "#profile" && !isAuthenticated()) {
-  window.location.hash = "#login";
-  return;
+  const route = window.location.hash || "#home";
+  const target = routes[route] || routes["#home"];
+
+  if (target.protected && !isAuthenticated()) {
+    window.location.hash = "#login";
+    return;
   }
-  const page = routes[route] || renderHome;
-  page();
+
+  const app = document.getElementById("app");
+  if (app) app.innerHTML = "";
+
+  target.render();
 }

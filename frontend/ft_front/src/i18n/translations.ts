@@ -2,7 +2,7 @@ import type { Language } from "../state/language";
 
 export const translations: Record<Language, Record<string, string>> = {
   fr: {
-    home_title: "Transcendence",
+    home_title: "Bienvenue sur Transcendence",
     home_description:
       "Un projet Full-Stack moderne autour du Pong, avec authentification et matchmaking.",
     login: "Connexion",
@@ -16,7 +16,7 @@ export const translations: Record<Language, Record<string, string>> = {
     settings: "Paramètres",
   },
   en: {
-    home_title: "Transcendence",
+    home_title: "Welcome on Transcendence",
     home_description:
       "A modern Full-Stack Pong project with authentication and matchmaking.",
     login: "Login",
