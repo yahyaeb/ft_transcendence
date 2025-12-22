@@ -31,15 +31,18 @@ export function renderDashboard() {
 
         <!-- Menu -->
         <nav class="flex flex-col gap-4 text-slate-300">
-          <button class="text-left font-medium hover:text-purple-400 transition">
-            Dashboard
-          </button>
-          <button class="text-left font-medium hover:text-purple-400 transition">
+          <a
+            href="#profile"
+            class="text-left font-medium hover:text-purple-400 transition"
+          >
             Profile
-          </button>
-          <button class="text-left font-medium hover:text-purple-400 transition">
+          </a>
+          <a
+            href="#settings"
+            class="text-left font-medium hover:text-purple-400 transition"
+          >
             Settings
-          </button>
+          </a>
         </nav>
 
       </aside>

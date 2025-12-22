@@ -51,6 +51,25 @@ export function renderLogin() {
             required
             class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
           />
+                    <!-- 2FA Toggle -->
+          <div class="flex items-center justify-between text-sm text-slate-400">
+            <label for="twofa-toggle" class="select-none">
+              I have a 2FA code
+            </label>
+            <input
+              id="twofa-toggle"
+              type="checkbox"
+              class="h-5 w-5 accent-purple-500 cursor-pointer"
+            />
+          </div>
+          <input
+            id="twofa-code"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="2FA code"
+            class="hidden w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
+          />
 
           <button
             type="submit"
@@ -86,16 +105,33 @@ export function onMountLogin() {
   const form = document.getElementById("login-form") as HTMLFormElement;
   const usernameInput = document.getElementById("username") as HTMLInputElement;
   const passwordInput = document.getElementById("password") as HTMLInputElement;
+  const twofaToggle = document.getElementById("twofa-toggle") as HTMLInputElement;
+  const twofaCode = document.getElementById("twofa-code") as HTMLInputElement;
+
+  twofaToggle?.addEventListener("change", () => {
+    if (twofaToggle.checked) {
+      twofaCode?.classList.remove("hidden");
+      twofaCode?.focus();
+    } else {
+      twofaCode?.classList.add("hidden");
+      if (twofaCode) twofaCode.value = "";
+    }
+  });
+
+  twofaCode?.addEventListener("input", () => {
+    twofaCode.value = twofaCode.value.replace(/\D/g, "").slice(0, 6);
+  });
 
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
 
     login({
-      username: usernameInput.value,
-      password: passwordInput.value
+      username: usernameInput?.value ?? "",
+      password: passwordInput?.value ?? ""
     });
 
     window.location.hash = "#dashboard";
-
   });
 }
+
+
