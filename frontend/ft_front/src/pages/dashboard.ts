@@ -22,27 +22,21 @@ export function renderDashboard() {
               Pong
             </button>
             <button
-              data-game="game2"
+              data-game="Tic Tac Toe"
               class="flex-1 rounded-full py-1 text-sm text-slate-400 hover:text-white transition">
-              Game 2
+              Tic Tac Toe
             </button>
           </div>
         </div>
 
         <!-- Menu -->
         <nav class="flex flex-col gap-4 text-slate-300">
-          <a
-            href="#profile"
-            class="text-left font-medium hover:text-purple-400 transition"
-          >
+          <button class="text-left font-medium hover:text-purple-400 transition">
             Profile
-          </a>
-          <a
-            href="#settings"
-            class="text-left font-medium hover:text-purple-400 transition"
-          >
+          </button>
+          <button class="text-left font-medium hover:text-purple-400 transition">
             Settings
-          </a>
+          </button>
         </nav>
 
       </aside>
@@ -65,17 +59,33 @@ export function renderDashboard() {
 
           <h1 class="text-4xl font-extrabold mb-8 gradient-purple"
               style="filter: drop-shadow(0 0 20px rgba(168,139,250,0.5))">
-            Dashboard
+            Tableau de bord
           </h1>
 
           <div class="flex gap-12 justify-center mb-16">
-            <button class="px-14 py-7 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl text-2xl font-semibold hover:scale-105 transition-all duration-300">
-              🎮 Pong
+
+            <button
+              class="relative group w-[320px] h-[180px] rounded-3xl overflow-hidden border border-slate-400/10 hover:scale-105 transition-all duration-300"
+              style="background-image: url('/images/games/pong.png'); background-size: cover; background-position: center;">
+              
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent group-hover:from-black/20 transition"></div>
+
+              <span class="relative z-10 flex items-center justify-center h-full text-3xl font-extrabold text-white drop-shadow-lg tracking-wide drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+                 Pong
+              </span>
             </button>
 
-            <button class="px-14 py-7 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl text-2xl font-semibold hover:scale-105 transition-all duration-300">
-              🕹️ Game 2
+            <button
+              class="relative group w-[320px] h-[180px] rounded-3xl overflow-hidden border border-slate-400/10 hover:scale-105 transition-all duration-300"
+              style="background-image: url('/images/games/tictactoe.png'); background-size: cover; background-position: center;">
+              
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent group-hover:from-black/20 transition"></div>
+
+              <span class="relative z-10 flex items-center justify-center h-full text-3xl font-extrabold text-white drop-shadow-lg tracking-wide drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+                 Tic Tac Toe
+              </span>
             </button>
+
           </div>
 
           <section class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl p-10">
