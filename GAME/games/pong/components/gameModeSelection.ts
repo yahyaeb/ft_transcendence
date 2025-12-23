@@ -204,6 +204,32 @@ export function render(): string {
   `;
 }
 
+const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get('token');
+
+  if (tokenFromUrl) {
+    localStorage.setItem("access_token", tokenFromUrl);
+  }
+
+  const TOKEN_KEY = "access_token";
+  export const TOKEN = localStorage.getItem(TOKEN_KEY);
+
+  console.log("Token from localStorage:", TOKEN);
+
+export function getUsernameFromToken(): string {
+  const TOKEN_KEY = "access_token";
+  const TOKEN = localStorage.getItem(TOKEN_KEY);
+  if (!TOKEN) {
+    return '';
+  }
+  try {
+    const payload = JSON.parse(atob(TOKEN.split('.')[1]));
+    return payload.username;
+  } catch {
+    return '';
+  }
+}
+
 export function onMount(): void {
   const pvpBtn = document.getElementById('pvpBtn');
   const pvpModal = document.getElementById('pvpModal');

@@ -60,17 +60,29 @@ export function onMount(): void {
   const resetButton = document.querySelector('#resetButton')!;
   const menuButton = document.querySelector('#menuButton')!;
 
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJIYW1pZCIsImVtYWlsIjoidGVzdDNAbWFpbC5jb20iLCJpYXQiOjE3NjYwNzA3NjEsImV4cCI6MTc2NjA3NDM2MX0.k53UCVEEEg_3zi20y1ZMYFElsh81kfQoCkPMtF6c5xk";
+const urlParams = new URLSearchParams(window.location.search);
+const tokenFromUrl = urlParams.get('token');
 
-  function getUsernameFromToken(): string {
-    const token = TEST_TOKEN;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.username;
-    } catch {
-      return '';
-    }
+if (tokenFromUrl) {
+  localStorage.setItem("access_token", tokenFromUrl);
+}
+
+const TOKEN_KEY = "access_token";
+const TOKEN = localStorage.getItem(TOKEN_KEY);
+
+console.log("Token from localStorage:", TOKEN);
+function getUsernameFromToken(): string {
+  const token = TOKEN;
+  if (!token) {
+    return '';
   }
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.username;
+  } catch {
+    return '';
+  }
+}
 
   let player1Name = getUsernameFromToken() || 'Player 1';
   localStorage.setItem('tictactoe_player1', player1Name);

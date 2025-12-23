@@ -119,16 +119,20 @@ export function onMountDashboard(): void {
   const pongBtn = document.getElementById('pongBtn');
   const tictactoeBtn = document.getElementById('tictactoeBtn');
 
+  const TOKEN_KEY = "access_token";
+  const token = localStorage.getItem(TOKEN_KEY) || "";
+  console.log("Token récupéré dans dashboard:", token);
   avatarBtn?.addEventListener("click", () => {
     window.location.hash = "#profile";
   });
 
   pongBtn?.addEventListener('click', () => {
-    window.location.href = 'http://localhost:5174/pong';
+    console.log("Redirection vers Pong avec token:", token);
+    window.location.href = `http://localhost:5174/pong?token=${encodeURIComponent(token)}`;
   });
 
   tictactoeBtn?.addEventListener('click', () => {
-    window.location.href = 'http://localhost:5174/tictactoe';
+    window.location.href = `http://localhost:5174/tictactoe?token=${encodeURIComponent(token)}`;
   });
 
   switchButtons.forEach(btn => {
@@ -156,9 +160,9 @@ export function onMountDashboard(): void {
       btn.classList.remove('text-slate-400');
 
       if (game === 'pong') {
-        window.location.href = 'http://localhost:5174/pong';
+        window.location.href = `http://localhost:5174/pong?token=${encodeURIComponent(token)}`;
       } else if (game === 'game2') {
-        window.location.href = 'http://localhost:5174/tictactoe';
+        window.location.href = `http://localhost:5174/tictactoe?token=${encodeURIComponent(token)}`;
       }
     });
   });

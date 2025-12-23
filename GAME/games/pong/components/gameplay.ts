@@ -1,3 +1,5 @@
+import { getUsernameFromToken, TOKEN } from "./gameModeSelection";
+
 export function render(): string {
   return `
     <div id="gameContainer" class="text-center max-w-[1100px] w-full mx-auto">
@@ -56,22 +58,12 @@ export function onMount(): void {
   let player2Score = 0;
 
   // Yahya's code
-  const TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJIYW1pZCIsImVtYWlsIjoidGVzdDNAbWFpbC5jb20iLCJpYXQiOjE3NjYwNzA3NjEsImV4cCI6MTc2NjA3NDM2MX0.k53UCVEEEg_3zi20y1ZMYFElsh81kfQoCkPMtF6c5xk";
   const isTournament = !!tournamentMatch;
   const isTournamentFinal = tournamentMatch === "final";
   const shouldCreateMatch = !isTournament || isTournamentFinal;
   const mode = isTournamentFinal ? "tournament" : (aiGame === "isAi" ? "pve" : "pvp");
 
-  function getUsernameFromToken(): string{
-    const token = TEST_TOKEN
-    try{
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      return payload.username
-    }
-    catch{
-      return '';
-    }
-  }
+
 
   let player1Name = getUsernameFromToken() || 'Player 1';
   localStorage.setItem("player1", player1Name)
@@ -195,7 +187,7 @@ export function onMount(): void {
     keepalive: true,
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${TEST_TOKEN}`,
+      "Authorization": `Bearer ${TOKEN}`,
     },
     body: JSON.stringify({
       status: "cancelled"
@@ -219,7 +211,7 @@ export function onMount(): void {
       keepalive: true,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${TEST_TOKEN}`,
+        "Authorization": `Bearer ${TOKEN}`,
       },
       body: JSON.stringify({
         score_p1: player1Score,
@@ -266,7 +258,7 @@ export function onMount(): void {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${TEST_TOKEN}`,
+        "Authorization": `Bearer ${TOKEN}`,
       },
       body: JSON.stringify({ mode, guest_name: guestName }),
     })
