@@ -113,7 +113,7 @@ export function renderDashboard() {
 
           <div class="flex gap-12 justify-center mb-16">
 
-            <button
+            <button id="pongBtn"
               class="relative group w-[320px] h-[180px] rounded-3xl overflow-hidden border border-slate-400/10 hover:scale-105 transition-all duration-300"
               style="background-image: url('/images/games/pong.png'); background-size: cover; background-position: center;">
               
@@ -124,7 +124,7 @@ export function renderDashboard() {
               </span>
             </button>
 
-            <button
+            <button id="tictactoeBtn"
               class="relative group w-[320px] h-[180px] rounded-3xl overflow-hidden border border-slate-400/10 hover:scale-105 transition-all duration-300"
               style="background-image: url('/images/games/tictactoe.png'); background-size: cover; background-position: center;">
               
@@ -208,6 +208,9 @@ export function onMountDashboard(): void {
   const TOKEN_KEY = "access_token";
   const token = localStorage.getItem(TOKEN_KEY) || "";
   console.log("Token récupéré dans dashboard:", token);
+  const pongBtn = document.getElementById('pongBtn');
+  const tictactoeBtn = document.getElementById('tictactoeBtn');
+
   avatarBtn?.addEventListener("click", () => {
     window.location.hash = "#profile";
   });
@@ -240,6 +243,7 @@ export function onMountDashboard(): void {
     ctx.stroke();
 
     function drawLine(values: number[], color: string) {
+      if (!ctx || !canvas) return;
       ctx.strokeStyle = color;
       ctx.lineWidth = 4;
       ctx.beginPath();
@@ -255,9 +259,18 @@ export function onMountDashboard(): void {
     drawLine(data.wins, "#8b5cf6");   // purple (theme)
     drawLine(data.losses, "#22d3ee"); // cyan (theme)
   }
+  pongBtn?.addEventListener('click', () => {
+    window.location.href = 'http://localhost:5174/pong';
+  });
+
+  tictactoeBtn?.addEventListener('click', () => {
+    window.location.href = 'http://localhost:5174/tictactoe';
+  });
 
   switchButtons.forEach(btn => {
     btn.addEventListener('click', () => {
+      const game = btn.dataset.game;
+
       switchButtons.forEach(b => {
         b.classList.remove(
           'bg-gradient-to-br',
@@ -277,6 +290,12 @@ export function onMountDashboard(): void {
         'shadow'
       );
       btn.classList.remove('text-slate-400');
+
+      if (game === 'pong') {
+        window.location.href = 'http://localhost:5174/pong';
+      } else if (game === 'game2') {
+        window.location.href = 'http://localhost:5174/tictactoe';
+      }
     });
   });
 }
