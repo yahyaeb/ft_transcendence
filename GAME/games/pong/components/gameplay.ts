@@ -397,7 +397,7 @@ export function onMount(): void {
                             player1: player1Score,
                             player2: player2Score
                         }));
-                        window.history.pushState({}, '', `/tournament-match-winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                        window.history.pushState({}, '', `/pong/tournament-match-winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                         window.dispatchEvent(new PopStateEvent('popstate'));
                         return;
                     }
@@ -407,18 +407,18 @@ export function onMount(): void {
                             player1: player1Score,
                             player2: player2Score
                         }));
-                        window.history.pushState({}, '', `/tournament-match-winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                        window.history.pushState({}, '', `/pong/tournament-match-winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                         window.dispatchEvent(new PopStateEvent('popstate'));
                         return;
                     }
                     else if (tournamentMatch === 'final'){
-                        window.history.pushState({}, '', `/winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                        window.history.pushState({}, '', `/pong/winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                         window.dispatchEvent(new PopStateEvent('popstate'));
                         return;
                     }
                 }
                 else {
-                    window.history.pushState({}, '', `/winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                    window.history.pushState({}, '', `/pong/winner?winner=2&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                     window.dispatchEvent(new PopStateEvent('popstate'));
                 }
                 return;
@@ -440,7 +440,7 @@ export function onMount(): void {
                         player1: player1Score,
                         player2: player2Score
                     }));
-                    window.history.pushState({}, '', `/tournament-match-winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                    window.history.pushState({}, '', `/pong/tournament-match-winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                     window.dispatchEvent(new PopStateEvent('popstate'));
                     return;
                 }
@@ -450,18 +450,18 @@ export function onMount(): void {
                         player1: player1Score,
                         player2: player2Score
                     }));
-                    window.history.pushState({}, '', `/tournament-match-winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                    window.history.pushState({}, '', `/pong/tournament-match-winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                     window.dispatchEvent(new PopStateEvent('popstate'));
                     return;
                 }
                 else if (tournamentMatch === 'final'){
-                    window.history.pushState({}, '', `/winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                    window.history.pushState({}, '', `/pong/winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                     window.dispatchEvent(new PopStateEvent('popstate'));
                     return;
                 }
             }
             else {
-                window.history.pushState({}, '', `/winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
+                window.history.pushState({}, '', `/pong/winner?winner=1&score1=${player1Score}&score2=${player2Score}&player1=${encodeURIComponent(player1Name)}&player2=${encodeURIComponent(player2Name)}`);
                 window.dispatchEvent(new PopStateEvent('popstate'));
             }
             return ;
@@ -657,7 +657,6 @@ export function onMount(): void {
 
   const menuClickHandler = () => {
     cancelMatch();
-    // localStorage.removeItem('ai');
     sessionStorage.removeItem('ai');
     sessionStorage.removeItem('tournamentData');
     sessionStorage.removeItem('currentMatch');
@@ -667,8 +666,7 @@ export function onMount(): void {
     sessionStorage.removeItem('match1Score');
     sessionStorage.removeItem('match2Score');
     cleanup();
-    window.history.pushState({}, '', '/mainPage');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.location.href = 'http://localhost:5173/#dashboard';
   };
   
   menuButton.addEventListener("click", menuClickHandler);

@@ -24,7 +24,7 @@ export function renderDashboard() {
             <button
               data-game="game2"
               class="flex-1 rounded-full py-1 text-sm text-slate-400 hover:text-white transition">
-              Game 2
+              Tic-Tac-Toe
             </button>
           </div>
         </div>
@@ -69,12 +69,12 @@ export function renderDashboard() {
           </h1>
 
           <div class="flex gap-12 justify-center mb-16">
-            <button class="px-14 py-7 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl text-2xl font-semibold hover:scale-105 transition-all duration-300">
+            <button id="pongBtn" class="px-14 py-7 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl text-2xl font-semibold hover:scale-105 transition-all duration-300 cursor-pointer">
               🎮 Pong
             </button>
 
-            <button class="px-14 py-7 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl text-2xl font-semibold hover:scale-105 transition-all duration-300">
-              🕹️ Game 2
+            <button id="tictactoeBtn" class="px-14 py-7 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl text-2xl font-semibold hover:scale-105 transition-all duration-300 cursor-pointer">
+              🕹️ Tic-Tac-Toe
             </button>
           </div>
 
@@ -116,12 +116,25 @@ export function onMountDashboard(): void {
     '#game-switch button'
   );
   const avatarBtn = document.getElementById("avatar-btn");
-  	avatarBtn?.addEventListener("click", () => {
-  	window.location.hash = "#profile";
-	});
+  const pongBtn = document.getElementById('pongBtn');
+  const tictactoeBtn = document.getElementById('tictactoeBtn');
+
+  avatarBtn?.addEventListener("click", () => {
+    window.location.hash = "#profile";
+  });
+
+  pongBtn?.addEventListener('click', () => {
+    window.location.href = 'http://localhost:5174/pong';
+  });
+
+  tictactoeBtn?.addEventListener('click', () => {
+    window.location.href = 'http://localhost:5174/tictactoe';
+  });
 
   switchButtons.forEach(btn => {
     btn.addEventListener('click', () => {
+      const game = btn.dataset.game;
+
       switchButtons.forEach(b => {
         b.classList.remove(
           'bg-gradient-to-br',
@@ -141,6 +154,12 @@ export function onMountDashboard(): void {
         'shadow'
       );
       btn.classList.remove('text-slate-400');
+
+      if (game === 'pong') {
+        window.location.href = 'http://localhost:5174/pong';
+      } else if (game === 'game2') {
+        window.location.href = 'http://localhost:5174/tictactoe';
+      }
     });
   });
 }

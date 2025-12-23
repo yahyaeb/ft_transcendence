@@ -85,13 +85,12 @@ export function onMount(): void {
         sessionStorage.setItem('aiDifficulty', aiDifficulty);
       }
     }
-    window.history.pushState({}, '', '/gameplay');
+    window.history.pushState({}, '', '/pong/gameplay');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
   const menuBtn = document.getElementById('menuBtn');
   menuBtn?.addEventListener('click', () => {
     sessionStorage.clear();
-    window.history.pushState({}, '', '/');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.location.href = 'http://localhost:5173/#dashboard';
   });
 }

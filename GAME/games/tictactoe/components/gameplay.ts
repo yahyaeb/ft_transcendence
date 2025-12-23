@@ -359,8 +359,7 @@ export function onMount(): void {
 
   menuButton.addEventListener('click', () => {
     cleanup();
-    window.history.pushState({}, '', '/tictactoe');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.location.href = 'http://localhost:5173/#dashboard';
   });
 
   drawBoard();
