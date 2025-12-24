@@ -79,7 +79,6 @@ export function onMount(): void {
 
   const menuBtn = document.getElementById('menuBtn');
   menuBtn?.addEventListener('click', () => {
-    window.history.pushState({}, '', '/tictactoe');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.location.href = 'http://localhost:5173/#dashboard';
   });
 }

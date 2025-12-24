@@ -18,7 +18,7 @@ export function renderSignup() {
 
           <div>
             <label class="block text-sm text-slate-400 mb-1">Username</label>
-            <input type="text" required
+            <input id="signup-username" type="text" required
               class="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-600/30 text-white placeholder-slate-500
                      focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
               placeholder="Votre pseudo" />
@@ -26,7 +26,7 @@ export function renderSignup() {
 
           <div>
             <label class="block text-sm text-slate-400 mb-1">Email</label>
-            <input type="email" required
+            <input id="signup-email" type="email" required
               class="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-600/30 text-white placeholder-slate-500
                      focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
               placeholder="email@exemple.com" />
@@ -34,7 +34,7 @@ export function renderSignup() {
 
           <div>
             <label class="block text-sm text-slate-400 mb-1">Mot de passe</label>
-            <input type="password" required
+            <input id="signup-password" type="password" required
               class="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-600/30 text-white placeholder-slate-500
                      focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
               placeholder="••••••••" />
@@ -66,4 +66,44 @@ export function renderSignup() {
       </div>
     </div>
   `;
+}
+
+export function onMountSignup(): void {
+  const form = document.querySelector<HTMLFormElement>("form");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = (document.getElementById("signup-username") as HTMLInputElement)?.value.trim();
+    const email = (document.getElementById("signup-email") as HTMLInputElement)?.value.trim();
+    const password = (document.getElementById("signup-password") as HTMLInputElement)?.value;
+
+    if (!username || !email || !password) {
+      alert("Merci de remplir tous les champs.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:4999/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        console.log("Signup error:", res.status, data);
+        alert(data?.error ?? data?.message ?? "Signup failed");
+        return;
+      }
+
+      alert(data?.message ?? "User created succesfully!");
+      window.location.hash = "#login";
+    } catch (err) {
+      console.error(err);
+      alert("Erreur réseau. Réessaie.");
+    }
+  });
 }

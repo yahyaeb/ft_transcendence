@@ -107,13 +107,13 @@ export function onMount(): void {
       const tournamentPlayers = JSON.parse(tournamentPlayersStr);
       if (currentMatch === '1') {
         sessionStorage.setItem('currentMatch', '2');
-        window.history.pushState({}, '', '/gameplay');
+        window.history.pushState({}, '', '/pong/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
       } else if (currentMatch === '2') {
         const match1Winner = sessionStorage.getItem('match1Winner');
         const match2Winner = sessionStorage.getItem('match2Winner');
         sessionStorage.setItem('currentMatch', 'final');
-        window.history.pushState({}, '', '/gameplay');
+        window.history.pushState({}, '', '/pong/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
       }
     }

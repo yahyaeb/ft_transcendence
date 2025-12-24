@@ -53,7 +53,7 @@ export function render(): string {
     <div class="text-center max-w-[600px] w-full mx-auto">
       <div class="mb-10">
         <div class="flex items-center justify-between mb-6">
-          <a href="/" data-link 
+          <a href="/pong" data-link 
              class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2">
             <span>←</span>
             <span>Retour</span>
@@ -202,6 +202,32 @@ export function render(): string {
       </div>
     </div>
   `;
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get('token');
+
+  if (tokenFromUrl) {
+    localStorage.setItem("access_token", tokenFromUrl);
+  }
+
+  const TOKEN_KEY = "access_token";
+  export const TOKEN = localStorage.getItem(TOKEN_KEY);
+
+  console.log("Token from localStorage:", TOKEN);
+
+export function getUsernameFromToken(): string {
+  const TOKEN_KEY = "access_token";
+  const TOKEN = localStorage.getItem(TOKEN_KEY);
+  if (!TOKEN) {
+    return '';
+  }
+  try {
+    const payload = JSON.parse(atob(TOKEN.split('.')[1]));
+    return payload.username;
+  } catch {
+    return '';
+  }
 }
 
 export function onMount(): void {
@@ -420,7 +446,7 @@ export function onMount(): void {
     }
     localStorage.setItem('pvpPlayer2', player2Name);
     pvpModal?.classList.add('hidden');
-    window.history.pushState({}, '', '/gameplay');
+    window.history.pushState({}, '', '/pong/gameplay');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
@@ -449,7 +475,7 @@ export function onMount(): void {
     const tournamentData: TournamentData = { players };
     sessionStorage.setItem('tournamentData', JSON.stringify(tournamentData));
     modal?.classList.add('hidden');
-    window.history.pushState({}, '', '/tournament-bracket');
+    window.history.pushState({}, '', '/pong/tournament-bracket');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
 

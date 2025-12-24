@@ -2,7 +2,7 @@ export function render(): string {
   return `
     <div class="text-center max-w-[1200px] w-full mx-auto">
       <div class="mb-10">
-        <a href="/game-mode" data-link 
+        <a href="/pong/game-mode" data-link 
            class="mb-6 text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 mx-auto w-fit">
           <span>←</span>
           <span>Retour</span>

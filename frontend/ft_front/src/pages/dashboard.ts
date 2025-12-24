@@ -24,7 +24,7 @@ export function renderDashboard() {
             <button
               data-game="Tic Tac Toe"
               class="flex-1 rounded-full py-1 text-sm text-slate-400 hover:text-white transition">
-              Tic Tac Toe
+              Tic-Tac-Toe
             </button>
           </div>
         </div>
@@ -38,6 +38,56 @@ export function renderDashboard() {
             Settings
           </button>
         </nav>
+
+        <!-- Friends list -->
+        <div class="mt-8">
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">
+            Amis
+          </p>
+          <input
+            type="text"
+            placeholder="Rechercher un ami..."
+            class="w-full mb-4 px-4 py-2 rounded-xl bg-slate-900/60 border border-slate-600/30 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
+          />
+
+          <ul class="space-y-3">
+            <!-- Ami -->
+            <li class="flex items-center gap-3 bg-slate-900/50 rounded-xl px-3 py-2 hover:bg-slate-800/60 transition">
+              <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm">
+                👤
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-slate-200">Yahya</p>
+              </div>
+            </li>
+
+            <li class="flex items-center gap-3 bg-slate-900/50 rounded-xl px-3 py-2 hover:bg-slate-800/60 transition">
+              <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm">
+                👤
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-slate-200">Nisar</p>
+              </div>
+            </li>
+
+            <li class="flex items-center gap-3 bg-slate-900/50 rounded-xl px-3 py-2 hover:bg-slate-800/60 transition">
+              <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm">
+                👤
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-slate-200">Iheb</p>
+              </div>
+            </li>
+          </ul>
+
+          <!-- Placeholder backend -->
+          <!--
+            TODO (backend):
+            - Remplacer cette liste mockée par les amis réels de l'utilisateur
+            - Statut temps réel (online / ingame)
+            - Avatar utilisateur réel
+          -->
+        </div>
 
       </aside>
 
@@ -95,8 +145,27 @@ export function renderDashboard() {
 
             <div class="grid grid-cols-3 gap-8 mb-10">
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
-                <p class="text-slate-400 mb-1">Victoires</p>
-                <p class="text-4xl font-extrabold gradient-green">12</p>
+                <p class="text-slate-400 mb-4">Victoires</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">
+                      Classique
+                    </p>
+                    <p class="text-3xl font-extrabold gradient-green">
+                      12
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">
+                      Tournois
+                    </p>
+                    <p class="text-3xl font-extrabold gradient-purple">
+                      1
+                    </p>
+                  </div>
+                </div>
               </div>
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
                 <p class="text-slate-400 mb-1">Défaites</p>
@@ -108,8 +177,18 @@ export function renderDashboard() {
               </div>
             </div>
 
-            <div class="bg-slate-900/60 rounded-2xl h-64 flex items-center justify-center text-slate-500">
-              📊 Graphiques (à venir)
+            <div class="bg-slate-900/60 rounded-2xl p-6">
+              <canvas id="statsLineChart" width="600" height="260"></canvas>
+              <div class="mt-6 flex justify-center gap-6 text-sm text-slate-400">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+                  <span>Victoires</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+                  <span>Défaites</span>
+                </div>
+              </div>
             </div>
 
           </section>
@@ -125,9 +204,57 @@ export function onMountDashboard(): void {
     '#game-switch button'
   );
   const avatarBtn = document.getElementById("avatar-btn");
-  	avatarBtn?.addEventListener("click", () => {
-  	window.location.hash = "#profile";
-	});
+
+  const TOKEN_KEY = "access_token";
+  const token = localStorage.getItem(TOKEN_KEY) || "";
+  console.log("Token récupéré dans dashboard:", token);
+  avatarBtn?.addEventListener("click", () => {
+    window.location.hash = "#profile";
+  });
+
+  const canvas = document.getElementById("statsLineChart") as HTMLCanvasElement | null;
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const data = {
+      labels: ["J1", "J2", "J3", "J4", "J5", "J6"],
+      wins: [2, 3, 5, 6, 9, 12],
+      losses: [1, 1, 2, 3, 4, 5]
+    };
+
+    const padding = 40;
+    const maxValue = Math.max(...data.wins, ...data.losses);
+    const stepX = (canvas.width - padding * 2) / (data.labels.length - 1);
+    const stepY = (canvas.height - padding * 2) / maxValue;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // axes
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.stroke();
+
+    function drawLine(values: number[], color: string) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      values.forEach((v, i) => {
+        const x = padding + i * stepX;
+        const y = canvas.height - padding - v * stepY;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    drawLine(data.wins, "#8b5cf6");   // purple (theme)
+    drawLine(data.losses, "#22d3ee"); // cyan (theme)
+  }
 
   switchButtons.forEach(btn => {
     btn.addEventListener('click', () => {

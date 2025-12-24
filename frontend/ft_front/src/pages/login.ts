@@ -1,4 +1,4 @@
-import { login } from "../state/auth";
+import { login } from "../state/auth.ts";
 import { getLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 
@@ -37,9 +37,9 @@ export function renderLogin() {
         <form id="login-form" class="space-y-5">
 
           <input
-            id="username"
+            id="email"
             type="text"
-            placeholder="${t.username ?? "Nom d'utilisateur"}"
+            placeholder="${t.email ?? "Email"}"
             required
             class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
           />
@@ -101,37 +101,47 @@ export function renderLogin() {
   `;
 }
 
-export function onMountLogin() {
-  const form = document.getElementById("login-form") as HTMLFormElement;
-  const usernameInput = document.getElementById("username") as HTMLInputElement;
-  const passwordInput = document.getElementById("password") as HTMLInputElement;
-  const twofaToggle = document.getElementById("twofa-toggle") as HTMLInputElement;
-  const twofaCode = document.getElementById("twofa-code") as HTMLInputElement;
 
-  twofaToggle?.addEventListener("change", () => {
+export function onMountLogin() {
+  const form = document.getElementById("login-form") as HTMLFormElement | null;
+  const emailInput = document.getElementById("email") as HTMLInputElement | null; // <-- match your HTML
+  const passwordInput = document.getElementById("password") as HTMLInputElement | null;
+  const twofaToggle = document.getElementById("twofa-toggle") as HTMLInputElement | null;
+  const twofaCodeInput = document.getElementById("twofa-code") as HTMLInputElement | null;
+
+  if (!form || !emailInput || !passwordInput || !twofaToggle || !twofaCodeInput) return;
+
+  twofaToggle.addEventListener("change", () => {
     if (twofaToggle.checked) {
-      twofaCode?.classList.remove("hidden");
-      twofaCode?.focus();
+      twofaCodeInput.classList.remove("hidden");
+      twofaCodeInput.focus();
     } else {
-      twofaCode?.classList.add("hidden");
-      if (twofaCode) twofaCode.value = "";
+      twofaCodeInput.classList.add("hidden");
+      twofaCodeInput.value = "";
     }
   });
 
-  twofaCode?.addEventListener("input", () => {
-    twofaCode.value = twofaCode.value.replace(/\D/g, "").slice(0, 6);
+  twofaCodeInput.addEventListener("input", () => {
+    twofaCodeInput.value = twofaCodeInput.value.replace(/\D/g, "").slice(0, 6);
   });
 
-  form?.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    login({
-      username: usernameInput?.value ?? "",
-      password: passwordInput?.value ?? ""
-    });
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const twofaCode = twofaToggle.checked ? twofaCodeInput.value.trim() : undefined;
 
-    window.location.hash = "#dashboard";
+    if (!email || !password) {
+      alert("Email and password are required.");
+      return;
+    }
+
+    try {
+      await login({email, password, twofaCode });
+      window.location.hash = "#dashboard";
+    } catch (err: any) {
+      alert(err?.message ?? "Login failed");
+    }
   });
 }
-
-

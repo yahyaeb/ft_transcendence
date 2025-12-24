@@ -9,7 +9,7 @@ export function render(): string {
         <p class="text-slate-400 text-lg tracking-wide">Transcendence Edition</p>
       </div>
       <div class="flex flex-col gap-6 px-8">
-        <a href="/game-mode" data-link 
+        <a href="/pong/game-mode" data-link 
            class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer block no-underline"
            style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -91,7 +91,7 @@ export function onMount(): void {
         sessionStorage.setItem('ai', 'isAi');
         sessionStorage.setItem('aiDifficulty', '400');
         modal?.classList.add('hidden');
-        window.history.pushState({}, '', '/gameplay');
+        window.history.pushState({}, '', '/pong/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
@@ -99,7 +99,7 @@ export function onMount(): void {
         sessionStorage.setItem('ai', 'isAi');
         sessionStorage.setItem('aiDifficulty', '200');
         modal?.classList.add('hidden');
-        window.history.pushState({}, '', '/gameplay');
+        window.history.pushState({}, '', '/pong/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
     });
 
@@ -107,7 +107,7 @@ export function onMount(): void {
         sessionStorage.setItem('ai', 'isAi');
         sessionStorage.setItem('aiDifficulty', '0');
         modal?.classList.add('hidden');
-        window.history.pushState({}, '', '/gameplay');
+        window.history.pushState({}, '', '/pong/gameplay');
         window.dispatchEvent(new PopStateEvent('popstate'));
     });
 

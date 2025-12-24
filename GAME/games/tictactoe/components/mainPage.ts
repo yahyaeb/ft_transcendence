@@ -40,11 +40,11 @@ export function render(): string {
     <div class="text-center max-w-[600px] w-full mx-auto">
       <div class="mb-12">
         <div class="flex items-center justify-between mb-6">
-          <a href="/" data-link 
-             class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2">
+          <button id="backBtn"
+             class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 bg-transparent border-none cursor-pointer">
             <span>←</span>
             <span>Retour</span>
-          </a>
+          </button>
           <button id="customizeBtn" 
                   class="flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-xl border border-slate-400/20 rounded-xl text-slate-300 hover:text-purple-400 hover:border-purple-500/50 transition-all duration-300"
                   style="box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15)">
@@ -155,6 +155,7 @@ export function render(): string {
 }
 
 export function onMount(): void {
+  const backBtn = document.getElementById('backBtn');
   const pvpBtn = document.getElementById('pvpBtn');
   const pvpModal = document.getElementById('pvpModal');
   const startPvpGame = document.getElementById('startPvpGame');
@@ -170,6 +171,10 @@ export function onMount(): void {
   const mapButtonsContainer = document.getElementById('mapButtonsContainer');
   const xColorsContainer = document.getElementById('xColorsContainer');
   const oColorsContainer = document.getElementById('oColorsContainer');
+
+  backBtn?.addEventListener('click', () => {
+    window.location.href = 'http://localhost:5173/#dashboard';
+  });
 
   let currentCustomization: GameCustomization = { ...defaultCustomization };
   

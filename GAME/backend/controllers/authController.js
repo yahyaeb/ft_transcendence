@@ -6,60 +6,60 @@ import 'dotenv/config' //importing the secret .env
 
 
 export async function signupController(req, reply) {
-  const { username, email, password, avatar } = req.body || {}
-
-  console.log('SIGNUP body:', req.body)
+  const { username, email, password, avatar } = req.body || {};
 
   if (!username || !email || !password) {
-    return reply.code(400).send({
-      error: 'Username, email and password are required'
-    })
+    return reply.code(400).send({ error: "Username, email and password are required" });
   }
+
+  const u = username.trim();
+  const e = email.trim();
 
   try {
     const existing = await db.get(
       `SELECT id, username, email
        FROM users
-       WHERE username = ? OR email = ?`,
-      [username, email]
-    )
+       WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)`,
+      [u, e]
+    );
 
     if (existing) {
-      if (existing.username === username) {
-        return reply.code(409).send({ error: 'Username already taken' })
+      if (existing.username?.toLowerCase() === u.toLowerCase()) {
+        return reply.code(409).send({ error: "Username already taken" });
       }
-      if (existing.email === email) {
-        return reply.code(409).send({ error: 'Email already in use' })
+      if (existing.email?.toLowerCase() === e.toLowerCase()) {
+        return reply.code(409).send({ error: "Email already in use" });
       }
+      // fallback (shouldn't happen often)
+      return reply.code(409).send({ error: "Username or email already in use" });
     }
 
-    const hashed = await bcrypt.hash(password, 10)
+    const hashed = await bcrypt.hash(password, 10);
 
     const result = await db.run(
       `INSERT INTO users (username, email, password, avatar)
        VALUES (?, ?, ?, ?)`,
-      [username, email, hashed, avatar || null]
-    )
+      [u, e, hashed, avatar || null]
+    );
 
     return reply.code(201).send({
-      message: 'User created',
+      message: "User created",
       id: result.lastID,
-      username,
-      email,
+      username: u,
+      email: e,
       avatar: avatar || null
-    })
+    });
   } catch (error) {
-    console.error('DB Error in /signup:', error)
+    console.error("DB Error in /signup:", error);
 
-    if (error.code === 'SQLITE_CONSTRAINT') {
-      return reply.code(409).send({
-        error: 'Username or email already in use'
-      })
+    if (error.code === "SQLITE_CONSTRAINT") {
+      return reply.code(409).send({ error: "Username or email already in use" });
     }
 
-    return reply.code(500).send({ error: 'Internal Server Error' })
+    return reply.code(500).send({ error: "Internal Server Error" });
   }
 }
+
 
 export async function loginController(req, reply) {
   const { email, password, code } = req.body || {}
