@@ -3,10 +3,6 @@ import { getLanguage, setLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 import { getAvatar } from "../state/profile";
 
-const avatar = isAuthenticated()
-  ? getAvatar()
-  : "/avatars/default-avatar.png";
-
 export function renderHome() {
   const app = document.getElementById("app");
   if (!app) return;

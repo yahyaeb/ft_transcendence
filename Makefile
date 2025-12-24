@@ -1,15 +1,15 @@
 .PHONY: all up down re clean
 
 all:
-	docker-compose up -d --build
+	docker compose up -d --build
 
 up:
-	docker-compose up -d
+	docker compose up -d
 
 down:
-	docker-compose down
+	docker compose down
 
 re: down all
 
 clean:
-	docker-compose down -v --rmi all
+	docker compose down -v --rmi all
