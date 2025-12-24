@@ -45,7 +45,7 @@ export function renderDashboard() {
       <main class="flex-1 flex flex-col">
 
         <!-- HEADER -->
-        <header class="flex justify-end items-center p-6">
+        <header class="flex justify-end items-center px-6 pt-4 pb-2">
          <div
   			id="avatar-btn"
   			class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 hover:ring-2 hover:ring-purple-500 transition cursor-pointer"
@@ -55,10 +55,9 @@ export function renderDashboard() {
         </header>
 
         <!-- CONTENT -->
-        <section class="flex-1 px-10">
+        <section class="flex-1 px-10 pt-0">
 
-          <h1 class="text-4xl font-extrabold mb-8 gradient-purple"
-              style="filter: drop-shadow(0 0 20px rgba(168,139,250,0.5))">
+          <h1 class="text-4xl font-semibold mb-4 mt-0 text-slate-400 tracking-wide">
             Tableau de bord
           </h1>
 
