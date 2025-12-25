@@ -38,7 +38,7 @@ export async function login(payload: {
   password: string;
   twofaCode?: string; 
 }): Promise<User> {
-  const res = await fetch("http://localhost:4999/auth/login", {
+  const res = await fetch("https://localhost:4999/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

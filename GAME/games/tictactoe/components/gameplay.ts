@@ -371,7 +371,7 @@ function getUsernameFromToken(): string {
 
   menuButton.addEventListener('click', () => {
     cleanup();
-    window.location.href = 'http://localhost:5173/#dashboard';
+    window.location.href = 'https://localhost:5173/#dashboard';
   });
 
   drawBoard();

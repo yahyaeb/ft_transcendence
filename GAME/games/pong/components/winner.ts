@@ -96,6 +96,6 @@ export function onMount(): void {
   const menuBtn = document.getElementById('menuBtn');
   menuBtn?.addEventListener('click', () => {
     sessionStorage.clear();
-    window.location.href = 'http://localhost:5173/#dashboard';
+    window.location.href = 'https://localhost:5173/#dashboard';
   });
 }

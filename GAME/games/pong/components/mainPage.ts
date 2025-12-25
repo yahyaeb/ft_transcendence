@@ -89,7 +89,7 @@ export function onMount(): void {
     const returnBtn = document.getElementById('backBtn');
 
     returnBtn?.addEventListener('click', ()=>{
-        window.location.href = 'http://localhost:5173/#dashboard';
+        window.location.href = 'https://localhost:5173/#dashboard';
     })
 
     aiButton?.addEventListener('click', (e) => {

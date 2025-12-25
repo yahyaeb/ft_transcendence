@@ -139,7 +139,7 @@ export function onMount(): void {
   const ballRadius = 8.5;
   const maxBallSpeed = 2.5;
   const paddleSpeed = 3.5;
-  let intervalID: number;
+  let intervalID: ReturnType<typeof setTimeout>;
   let ballSpeed: number;
   let ballX = gameWidth / 2;
   let ballY = gameHeight / 2;
@@ -182,7 +182,7 @@ export function onMount(): void {
   if (!matchId || matchFinished) return;
 
   matchFinished = true;
-  fetch(`http://localhost:4999/matches/${matchId}`, {
+  fetch(`https://localhost:4999/matches/${matchId}`, {
     method: "PATCH",
     keepalive: true,
     headers: {
@@ -206,7 +206,7 @@ export function onMount(): void {
     if (!matchId || matchFinished) return;
     matchFinished = true;
 
-    fetch(`http://localhost:4999/matches/${matchId}/finish`, {
+    fetch(`https://localhost:4999/matches/${matchId}/finish`, {
       method: "PATCH",
       keepalive: true,
       headers: {
@@ -254,7 +254,7 @@ export function onMount(): void {
   if (!shouldCreateMatch) {
   gameStart();
   } else {
-    fetch("http://localhost:4999/matches", {
+    fetch("https://localhost:4999/matches", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -658,7 +658,7 @@ export function onMount(): void {
     sessionStorage.removeItem('match1Score');
     sessionStorage.removeItem('match2Score');
     cleanup();
-    window.location.href = 'http://localhost:5173/#dashboard';
+    window.location.href = 'https://localhost:5173/#dashboard';
   };
   
   menuButton.addEventListener("click", menuClickHandler);

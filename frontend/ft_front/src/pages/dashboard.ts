@@ -260,11 +260,11 @@ export function onMountDashboard(): void {
     drawLine(data.losses, "#22d3ee"); // cyan (theme)
   }
   pongBtn?.addEventListener('click', () => {
-    window.location.href = 'http://localhost:5174/pong';
+    window.location.href = 'https://localhost:5174/pong';
   });
 
   tictactoeBtn?.addEventListener('click', () => {
-    window.location.href = 'http://localhost:5174/tictactoe';
+    window.location.href = 'https://localhost:5174/tictactoe';
   });
 
   switchButtons.forEach(btn => {
