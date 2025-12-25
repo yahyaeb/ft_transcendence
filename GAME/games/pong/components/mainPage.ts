@@ -2,6 +2,11 @@ export function render(): string {
   return `
     <div class="text-center max-w-[600px] w-full mx-auto">
       <div class="mb-12">
+        <button id="backBtn"
+            class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 bg-transparent border-none cursor-pointer">
+            <span>←</span>
+            <span>Retour</span>
+        </button>
         <h1 class="text-7xl font-extrabold mb-4 gradient-purple" 
             style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
           PONG
@@ -81,6 +86,11 @@ export function onMount(): void {
     const easyBtn = document.getElementById('easyBtn');
     const mediumBtn = document.getElementById('mediumBtn');
     const impossibleBtn = document.getElementById('impossibleBtn');
+    const returnBtn = document.getElementById('backBtn');
+
+    returnBtn?.addEventListener('click', ()=>{
+        window.location.href = 'http://localhost:5173/#dashboard';
+    })
 
     aiButton?.addEventListener('click', (e) => {
         e.preventDefault();
