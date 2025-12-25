@@ -44,13 +44,31 @@ export function renderLogin() {
             class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
           />
 
-          <input
-            id="password"
-            type="password"
-            placeholder="${t.password ?? "Mot de passe"}"
-            required
-            class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
-          />
+          <div class="relative">
+            <input
+              id="password"
+              type="password"
+              placeholder="${t.password ?? "Mot de passe"}"
+              required
+              class="w-full px-5 py-4 pr-12 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
+            />
+            <button
+              type="button"
+              id="toggle-password"
+              class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-purple-400 transition"
+              aria-label="Afficher le mot de passe">
+              <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5
+                         c4.478 0 8.268 2.943 9.542 7
+                         -1.274 4.057-5.064 7-9.542 7
+                         -4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
                     <!-- 2FA Toggle -->
           <div class="flex items-center justify-between text-sm text-slate-400">
             <label for="twofa-toggle" class="select-none">
@@ -106,10 +124,18 @@ export function onMountLogin() {
   const form = document.getElementById("login-form") as HTMLFormElement | null;
   const emailInput = document.getElementById("email") as HTMLInputElement | null; // <-- match your HTML
   const passwordInput = document.getElementById("password") as HTMLInputElement | null;
+  const togglePasswordBtn = document.getElementById("toggle-password") as HTMLButtonElement | null;
   const twofaToggle = document.getElementById("twofa-toggle") as HTMLInputElement | null;
   const twofaCodeInput = document.getElementById("twofa-code") as HTMLInputElement | null;
 
   if (!form || !emailInput || !passwordInput || !twofaToggle || !twofaCodeInput) return;
+
+  const eyeIcon = document.getElementById("eye-icon");
+  togglePasswordBtn?.addEventListener("click", () => {
+    const isHidden = passwordInput.type === "password";
+    passwordInput.type = isHidden ? "text" : "password";
+    eyeIcon?.classList.toggle("opacity-40", !isHidden);
+  });
 
   twofaToggle.addEventListener("change", () => {
     if (twofaToggle.checked) {

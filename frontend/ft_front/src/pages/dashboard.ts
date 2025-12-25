@@ -31,61 +31,103 @@ export function renderDashboard() {
 
         <!-- Menu -->
         <nav class="flex flex-col gap-4 text-slate-300">
-          <button class="text-left font-medium hover:text-purple-400 transition">
+          <button id="profileBtn" class="text-left font-medium hover:text-purple-400 transition">
             Profile
           </button>
-          <button class="text-left font-medium hover:text-purple-400 transition">
+          <button id="settingsBtn" class="text-left font-medium hover:text-purple-400 transition">
             Settings
           </button>
         </nav>
 
-        <!-- Friends list -->
+        <!-- Players list -->
         <div class="mt-8">
-          <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">
-            Amis
-          </p>
-          <input
-            type="text"
-            placeholder="Rechercher un ami..."
-            class="w-full mb-4 px-4 py-2 rounded-xl bg-slate-900/60 border border-slate-600/30 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
-          />
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs uppercase tracking-wider text-slate-400">
+              Joueurs
+            </p>
+            <span class="text-[11px] text-slate-500"></span>
+          </div>
 
-          <ul class="space-y-3">
-            <!-- Ami -->
-            <li class="flex items-center gap-3 bg-slate-900/50 rounded-xl px-3 py-2 hover:bg-slate-800/60 transition">
-              <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm">
-                👤
+          <div class="relative mb-4">
+            <input
+              id="players-search"
+              type="text"
+              placeholder="Rechercher un joueur…"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-600/20 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500/40 focus:ring-2 focus:ring-purple-500/15 transition"
+            />
+            <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">⌕</div>
+          </div>
+
+          <ul id="players-list" class="space-y-1">
+            <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 flex items-center justify-center text-slate-400">
+                  👤
+                </div>
+                <p class="text-sm font-medium text-slate-200 truncate">PlayerOne</p>
               </div>
-              <div class="flex-1">
-                <p class="text-sm font-medium text-slate-200">Yahya</p>
+
+              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  title="Accepter"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30 transition"
+                >
+                  ✓
+                </button>
+                <button
+                  type="button"
+                  title="Refuser"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400/30 transition"
+                >
+                  ✕
+                </button>
+                <button
+                  type="button"
+                  title="Bloquer"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
+                >
+                  🚫
+                </button>
               </div>
             </li>
 
-            <li class="flex items-center gap-3 bg-slate-900/50 rounded-xl px-3 py-2 hover:bg-slate-800/60 transition">
-              <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm">
-                👤
+            <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 flex items-center justify-center text-slate-400">
+                  👤
+                </div>
+                <p class="text-sm font-medium text-slate-200 truncate">PlayerTwo</p>
               </div>
-              <div class="flex-1">
-                <p class="text-sm font-medium text-slate-200">Nisar</p>
+
+              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" title="Accepter" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30 transition">✓</button>
+                <button type="button" title="Refuser" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400/30 transition">✕</button>
+                <button type="button" title="Bloquer" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition">🚫</button>
               </div>
             </li>
 
-            <li class="flex items-center gap-3 bg-slate-900/50 rounded-xl px-3 py-2 hover:bg-slate-800/60 transition">
-              <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm">
-                👤
+            <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 flex items-center justify-center text-slate-400">
+                  👤
+                </div>
+                <p class="text-sm font-medium text-slate-200 truncate">PlayerThree</p>
               </div>
-              <div class="flex-1">
-                <p class="text-sm font-medium text-slate-200">Iheb</p>
+
+              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" title="Accepter" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30 transition">✓</button>
+                <button type="button" title="Refuser" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400/30 transition">✕</button>
+                <button type="button" title="Bloquer" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition">🚫</button>
               </div>
             </li>
           </ul>
 
-          <!-- Placeholder backend -->
           <!--
             TODO (backend):
-            - Remplacer cette liste mockée par les amis réels de l'utilisateur
-            - Statut temps réel (online / ingame)
-            - Avatar utilisateur réel
+            - Remplacer cette liste mockée par la liste réelle (amis / joueurs / demandes)
+            - Brancher la recherche sur endpoint backend
+            - Brancher ✓ ✕ 🚫 sur endpoints backend
           -->
         </div>
 
@@ -212,6 +254,18 @@ export function onMountDashboard(): void {
   const tictactoeBtn = document.getElementById('tictactoeBtn');
 
   avatarBtn?.addEventListener("click", () => {
+    window.location.hash = "#profile";
+  });
+
+  const settingsBtn = document.getElementById("settingsBtn");
+
+  settingsBtn?.addEventListener("click", () => {
+    window.location.hash = "#settings";
+  });
+
+  const profileBtn = document.getElementById("profileBtn");
+
+  profileBtn?.addEventListener("click", () => {
     window.location.hash = "#profile";
   });
 
