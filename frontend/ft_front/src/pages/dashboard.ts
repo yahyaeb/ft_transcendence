@@ -207,7 +207,6 @@ export function onMountDashboard(): void {
 
   const TOKEN_KEY = "access_token";
   const token = localStorage.getItem(TOKEN_KEY) || "";
-  console.log("Token récupéré dans dashboard:", token);
   const pongBtn = document.getElementById('pongBtn');
   const tictactoeBtn = document.getElementById('tictactoeBtn');
 
@@ -260,11 +259,11 @@ export function onMountDashboard(): void {
     drawLine(data.losses, "#22d3ee"); // cyan (theme)
   }
   pongBtn?.addEventListener('click', () => {
-    window.location.href = 'https://localhost:5174/pong';
+    window.location.href = `https://localhost:5174/pong?token=${encodeURIComponent(token)}`;
   });
 
   tictactoeBtn?.addEventListener('click', () => {
-    window.location.href = 'https://localhost:5174/tictactoe';
+    window.location.href = `https://localhost:5174/tictactoe?token=${encodeURIComponent(token)}`;
   });
 
   switchButtons.forEach(btn => {

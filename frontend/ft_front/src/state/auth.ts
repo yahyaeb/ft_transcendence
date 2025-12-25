@@ -41,6 +41,7 @@ export async function login(payload: {
   const res = await fetch("https://localhost:4999/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: 'include',
     body: JSON.stringify(payload),
   });
 

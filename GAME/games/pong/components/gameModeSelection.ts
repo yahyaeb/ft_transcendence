@@ -214,7 +214,6 @@ const urlParams = new URLSearchParams(window.location.search);
   const TOKEN_KEY = "access_token";
   export const TOKEN = localStorage.getItem(TOKEN_KEY);
 
-  console.log("Token from localStorage:", TOKEN);
 
 export function getUsernameFromToken(): string {
   const TOKEN_KEY = "access_token";
