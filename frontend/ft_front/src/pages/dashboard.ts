@@ -269,8 +269,6 @@ export function onMountDashboard(): void {
 
   switchButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      const game = btn.dataset.game;
-
       switchButtons.forEach(b => {
         b.classList.remove(
           'bg-gradient-to-br',
@@ -290,12 +288,6 @@ export function onMountDashboard(): void {
         'shadow'
       );
       btn.classList.remove('text-slate-400');
-
-      if (game === 'pong') {
-        window.location.href = 'http://localhost:5174/pong';
-      } else if (game === 'game2') {
-        window.location.href = 'http://localhost:5174/tictactoe';
-      }
     });
   });
 }
