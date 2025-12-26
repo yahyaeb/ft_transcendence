@@ -10,6 +10,11 @@ export function renderHome() {
   const lang = getLanguage();
   const t = translations[lang];
   const loggedIn = isAuthenticated();
+  // Sécurité : si token expiré / session invalide → déconnexion complète
+  if (!loggedIn) {
+    localStorage.removeItem("user");
+    sessionStorage.clear();
+  }
   const avatar = loggedIn
   ? getAvatar()
   : "/avatars/default-avatar.png";
@@ -25,11 +30,14 @@ export function renderHome() {
           <option value="en" ${lang === "en" ? "selected" : ""}>🇬🇧 EN</option>
         </select>
 
-        <a href="#profile"
-           class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-700/60 backdrop-blur-xl border border-slate-400/30 hover:border-purple-500/60 transition overflow-hidden">
+        <a
+          href="${loggedIn ? "#profile" : "#login"}"
+          class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-700/60 backdrop-blur-xl border border-slate-400/30 hover:border-purple-500/60 transition overflow-hidden"
+          aria-label="${loggedIn ? "Aller au profil" : "Aller à la connexion"}"
+        >
           <img src="${avatar}"
-     			alt="avatar"
-     			class="w-full h-full object-cover opacity-80" />
+               alt="avatar"
+               class="w-full h-full object-cover opacity-80" />
         </a>
       </header>
 
@@ -64,17 +72,10 @@ export function renderHome() {
         </div>
 
         <!-- CTA -->
-        ${
-          !loggedIn
-            ? `<a href="#login"
-                class="px-12 py-5 text-xl rounded-2xl font-semibold bg-gradient-to-br from-indigo-500 to-purple-600 text-white hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)] transition">
-                ${t.login}
-              </a>`
-            : `<a href="#profile"
-                class="px-12 py-5 text-xl rounded-2xl font-semibold bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
-                ${t.profile}
-              </a>`
-        }
+        <a href="#login"
+           class="px-12 py-5 text-xl rounded-2xl font-semibold bg-gradient-to-br from-indigo-500 to-purple-600 text-white hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)] transition">
+          ${t.login}
+        </a>
 
       </main>
     </div>

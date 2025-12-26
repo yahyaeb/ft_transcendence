@@ -58,10 +58,6 @@ export function renderProfile() {
 
           <!-- Actions -->
           <div class="flex justify-end gap-4">
-            <a href="#settings"
-               class="px-6 py-3 rounded-xl font-semibold bg-slate-700/60 hover:bg-slate-600/60 transition">
-              ⚙️ ${t.settings ?? "Settings"}
-            </a>
 
             <button id="logout-btn"
               class="px-6 py-3 rounded-xl font-semibold bg-red-500/80 hover:bg-red-500 transition">
