@@ -6,7 +6,11 @@ import { usersRoutes } from './routes/users.js'
 import { authRoutes } from './routes/auth.js'
 import { matchesRoutes } from './routes/matches.js'
 import { friendsRoute } from './routes/friendships.js'
+import fastifyStatic from "@fastify/static";
+import path from "path";
+import multipart from "@fastify/multipart";
 import cors from "@fastify/cors";
+
 
 const fastify = fastifyFactory({logger: true })
 const PORT = 4999
@@ -18,6 +22,13 @@ await fastify.register(cors,{
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 })
+
+fastify.register(multipart);
+
+fastify.register(fastifyStatic, {
+  root: path.join(process.cwd(), "uploads"),
+  prefix: "/uploads/",
+});
 
 
 // API documentation: http://localhost:4999/docs/

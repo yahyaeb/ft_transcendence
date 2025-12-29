@@ -2,6 +2,8 @@
 // controllers/usersController.js
 
 import { db } from '../db/database.js'
+import path from "path";
+import fs from "fs";
 import bcrypt from 'bcrypt'
 
 export async function ping(req, reply) {
@@ -36,33 +38,37 @@ export async function getSingleUserController(req, reply){
     return user
 }
 
-export async function updateAvatar(req, reply){
-    const id = req.user.id
-    const {avatar} = req.body || {}
+export async function updateAvatar(req, reply) {
+  const id = req.user.id;
 
-    if(!avatar) {
-        return reply.code(400).send({error: "Avatar is required"})
-    }
+  const file = await req.file();
+  if (!file) {
+    return reply.code(400).send({ error: "No file uploaded" });
+  }
 
-	if(typeof avatar !== 'string') {
-        return reply.code(400).send({error: "Path is not a valid string"})
-    }
-    const user = await db.get(
-        "SELECT id from users where id = ? ",
-        [id]
-    )
-    if(!user){
-        return reply.code(404).send({error: "User not found"})
-    }
-    await db.run(
-        "UPDATE users SET avatar = ? WHERE id = ?;",
-        [avatar, id]
-    )
-    return reply.code(200).send({
-        message: "Avatar updated",
-        id,
-        avatar
-    })
+  // validate mimetype
+  const mime = file.mimetype;
+  const ext =
+    mime === "image/png" ? "png" :
+    mime === "image/jpeg" ? "jpg" :
+    null;
+
+  if (!ext) {
+    return reply.code(400).send({ error: "Only PNG/JPG allowed" });
+  }
+
+  const dir = path.join(process.cwd(), "uploads", "avatars");
+  fs.mkdirSync(dir, { recursive: true });
+
+  const filename = `user-${id}.${ext}`;
+  const filepath = path.join(dir, filename);
+
+  await fs.promises.writeFile(filepath, await file.toBuffer());
+
+  const avatarUrl = `/uploads/avatars/${filename}`;
+  await db.run("UPDATE users SET avatar = ? WHERE id = ?", [avatarUrl, id]);
+
+  return reply.code(200).send({ avatarUrl });
 }
 
 export async function getMeProfile(req, reply){
