@@ -36,7 +36,7 @@ export function logout() {
 export async function login(payload: {
   email: string;
   password: string;
-  twofaCode?: string; 
+  code?: string; 
 }): Promise<User> {
   const res = await fetch("http://localhost:4999/auth/login", {
     method: "POST",
@@ -67,3 +67,4 @@ export async function login(payload: {
 
   return currentUser;
 }
+

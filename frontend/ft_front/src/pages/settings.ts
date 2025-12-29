@@ -1,4 +1,4 @@
-import { getUser, isAuthenticated } from "../state/auth";
+import { getUser, isAuthenticated, getToken } from "../state/auth";
 
 
 export function renderSettings() {
@@ -16,6 +16,7 @@ export function renderSettings() {
     user?.avatarUrl && user.avatarUrl.trim().length > 0
       ? user.avatarUrl
       : "/avatars/default-avatar.png";
+  const is2faEnabled = !!user?.two_factor_enabled; 
 
   app.innerHTML = `
     <div class="min-h-screen w-full bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 flex justify-center px-6 py-16">
@@ -134,6 +135,58 @@ export function renderSettings() {
           -->
         </section>
 
+          <!-- 2FA SECTION -->
+              <section class="mb-12">
+                <h2 class="text-xl font-semibold mb-4">Two-Factor Authentication (2FA)</h2>
+
+                <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-600/20">
+                  <div class="flex items-center justify-between gap-4">
+                    <div>
+                      <p class="font-semibold">
+                        Status:
+                        <span id="twofa-status" class="${is2faEnabled ? "text-emerald-400" : "text-slate-400"}">
+                          ${is2faEnabled ? "Enabled" : "Disabled"}
+                        </span>
+                      </p>
+                      <p class="text-sm text-slate-400 mt-1">
+                        Use an authenticator app (Google Authenticator, Authy, etc.).
+                      </p>
+                    </div>
+
+                    <div class="flex gap-3">
+                      <button
+                        id="twofa-enable-btn"
+                        class="px-5 py-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold transition disabled:opacity-50"
+                        ${is2faEnabled ? "disabled" : ""}>
+                        Enable
+                      </button>
+
+                      <button
+                        id="twofa-disable-btn"
+                        class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition disabled:opacity-50"
+                        ${is2faEnabled ? "" : "disabled"}>
+                        Disable
+                      </button>
+                    </div>
+                  </div>
+                  <div id="twofa-setup" class="hidden mt-4 p-4 rounded-xl bg-slate-900/50 border border-slate-600/20">
+                    <img id="twofa-qr-img" class="w-44 h-44 rounded-lg bg-white p-2 mx-auto" />
+                    <input
+                      id="twofa-code"
+                      placeholder="123456"
+                      inputmode="numeric"
+                      autocomplete="one-time-code"
+                      class="mt-4 w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white"
+                    />
+                    <button
+                      id="twofa-confirm"
+                      class="mt-3 w-full px-6 py-3 rounded-xl bg-emerald-600/90 text-white font-semibold">
+                      Confirm
+                    </button>
+                    <p id="twofa-msg" class="mt-2 text-sm text-slate-400"></p>
+                  </div>
+          </section>  
+
         <!-- ACTIONS -->
         <div class="flex justify-between items-center mt-10">
           <a
@@ -163,23 +216,160 @@ export function renderSettings() {
 }
 
 export function onMountSettings() {
-  const passwordInput = document.getElementById("password-input") as HTMLInputElement;
-  const toggleBtn = document.getElementById("toggle-password-btn");
 
+  const passwordInput = document.getElementById("password-input") as HTMLInputElement | null;
+  const toggleBtn = document.getElementById("toggle-password-btn");
   const eyeOpen = document.getElementById("eye-open");
   const eyeClosed = document.getElementById("eye-closed");
 
   toggleBtn?.addEventListener("click", () => {
     if (!passwordInput || !eyeOpen || !eyeClosed) return;
-
     const isHidden = passwordInput.type === "password";
     passwordInput.type = isHidden ? "text" : "password";
-
     eyeOpen.classList.toggle("hidden", !isHidden);
     eyeClosed.classList.toggle("hidden", isHidden);
   });
-  // TODO :
-  // gestion click upload avatar
-  // gestion submit settings
-  // gestion erreurs backend
+
+  // 2FA
+  const enableBtn = document.getElementById("twofa-enable-btn") as HTMLButtonElement | null;
+  const disableBtn = document.getElementById("twofa-disable-btn") as HTMLButtonElement | null;
+
+  const setupBox = document.getElementById("twofa-setup");
+  const qrImg = document.getElementById("twofa-qr-img") as HTMLImageElement | null;
+  const codeInput = document.getElementById("twofa-code") as HTMLInputElement | null;
+  const confirmBtn = document.getElementById("twofa-confirm") as HTMLButtonElement | null;
+
+  const msg = document.getElementById("twofa-msg");
+  const statusEl = document.getElementById("twofa-status");
+
+  const token = getToken();
+  if (!token) {
+    window.location.hash = "#login";
+    return;
+  }
+
+  const authHeaders = { Authorization: `Bearer ${token}` };
+  const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
+
+  const setMsg = (t: string) => { if (msg) msg.textContent = t; };
+
+  const refresh2FAStatus = async () => {
+    try {
+      const res = await fetch("http://localhost:4999/auth/2fa/status", {
+        method: "GET",
+        headers: authHeaders,
+      });
+
+      const data = await res.json().catch(() => ({}));
+      const enabled = !!data.enabled;
+
+      if (statusEl) {
+        statusEl.textContent = enabled ? "Enabled" : "Disabled";
+        statusEl.className = enabled ? "text-emerald-400" : "text-red-400";
+      }
+      if (enableBtn) enableBtn.disabled = enabled;
+      if (disableBtn) disableBtn.disabled = !enabled;
+
+      // if enabled, hide setup box
+      if (enabled) setupBox?.classList.add("hidden");
+
+      return enabled;
+    } catch {
+      // if status endpoint fails
+      return null;
+    }
+  };
+
+  refresh2FAStatus();
+
+  let setupStarted = false;
+  if (confirmBtn)
+    confirmBtn.disabled = true;
+
+  enableBtn?.addEventListener("click", async () => {
+    try {
+      setMsg("Generating QR...");
+      setupBox?.classList.remove("hidden");
+
+      const res = await fetch("http://localhost:4999/auth/2fa/enable", {
+        method: "POST",
+        headers: authHeaders, 
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Enable failed");
+
+      const otpAuthUrl = data.optauthURL;
+      if (!otpAuthUrl) throw new Error("No optauthURL returned");
+
+      const finalUrl =
+        `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(otpAuthUrl)}`;
+
+      if (!qrImg) throw new Error("QR image element not found");
+      qrImg.src = finalUrl;
+
+      setupStarted = true;
+      if (confirmBtn) confirmBtn.disabled = false;
+
+      setMsg("Scan the QR and enter the 6-digit code.");
+      codeInput?.focus();
+    } catch (e: any) {
+      setupStarted = false;
+      if (confirmBtn) confirmBtn.disabled = true;
+      setMsg(e?.message ?? "Error");
+    }
+  });
+
+  confirmBtn?.addEventListener("click", async () => {
+    try {
+      if (!setupStarted) throw new Error("Click Enable first (2FA not initialized yet).");
+
+      const code = (codeInput?.value ?? "").replace(/\s+/g, "").trim();
+      if (code.length !== 6) throw new Error("Enter a valid 6-digit code");
+
+      const res = await fetch("http://localhost:4999/auth/2fa/verify-setup", {
+        method: "POST",
+        headers: jsonHeaders, // ✅ needs Content-Type
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Verify failed");
+
+      setMsg("2FA enabled ✅");
+
+      await refresh2FAStatus();
+
+      setupStarted = false;
+      if (confirmBtn) confirmBtn.disabled = true;
+    } catch (e: any) {
+      setMsg(e?.message ?? "Error");
+    }
+  });
+
+  disableBtn?.addEventListener("click", async () => {
+    try {
+      const code = (prompt("Enter 6-digit code to disable 2FA:") ?? "").replace(/\s+/g, "").trim();
+      if (code.length !== 6) return;
+
+      const res = await fetch("http://localhost:4999/auth/2fa/disable", {
+        method: "POST",
+        headers: jsonHeaders,
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Disable failed");
+
+      setMsg("");
+
+      await refresh2FAStatus();
+
+      setupStarted = false;
+      if (confirmBtn) confirmBtn.disabled = true;
+      if (codeInput) codeInput.value = "";
+    } catch (e: any) {
+      alert(e?.message ?? "Error");
+    }
+  });
 }

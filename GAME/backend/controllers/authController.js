@@ -115,7 +115,7 @@ export async function loginController(req, reply) {
         username: user.username,
         email: user.email,
         avatar: user.avatar,
-        two_factor_enabled: user.two_factor_enabled ? "enabaled" : "disabled"
+        two_factor_enabled: user.two_factor_enabled ? "enabled" : "disabled"
       }
     })
   } catch (error) {
@@ -153,6 +153,7 @@ export async function verifyTwoFactorSetup(req, reply){
   const userId = req.user.id
   const { code } = req.body || {}
   if(!code){
+    console.log(code);
     return reply.code(400).send({ error: 'Code is required'})
   }
 
@@ -214,4 +215,18 @@ export async function disable2fa(req, reply){
     console.error('Error disabling 2FA:', err)
     return reply.code(500).send({ error: 'Internal Server Error'})
   }
+}
+
+
+export async function checkTwoFA(req, reply) {
+  const userId = req.user.id;
+
+  const row = await db.get(
+    "SELECT two_factor_enabled FROM users WHERE id = ?",
+    [userId]
+  );
+
+  const enabled = !!row?.two_factor_enabled;
+
+  return reply.code(200).send({ enabled });
 }

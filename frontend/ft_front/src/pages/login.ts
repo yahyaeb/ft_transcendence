@@ -156,7 +156,7 @@ export function onMountLogin() {
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    const twofaCode = twofaToggle.checked ? twofaCodeInput.value.trim() : undefined;
+    const code = twofaToggle.checked ? twofaCodeInput.value.trim() : undefined;
 
     if (!email || !password) {
       alert("Email and password are required.");
@@ -164,7 +164,7 @@ export function onMountLogin() {
     }
 
     try {
-      await login({email, password, twofaCode });
+      await login({email, password, code });
       window.location.hash = "#dashboard";
     } catch (err: any) {
       alert(err?.message ?? "Login failed");
