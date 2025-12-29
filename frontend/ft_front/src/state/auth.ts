@@ -27,10 +27,12 @@ export function getUser(): User | null {
 //   return currentUser?.avatarUrl ?? "null";
 // }
 
-export function logout() {
-  currentUser = null;
-  token = null;
-  localStorage.removeItem(TOKEN_KEY);
+export async function logout() {
+
+    currentUser = null;
+    token = null;
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.setItem('logout-event', Date.now().toString())
 }
 
 export async function login(payload: {
