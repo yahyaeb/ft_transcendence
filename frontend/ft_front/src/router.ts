@@ -27,6 +27,22 @@ const routes: Record<string, Route> = {
     }),
   },
 
+  "#stats-pong": {
+    protected: true,
+    render: () => import("./pages/stats-pong").then(m => {
+      m.renderStatsPong();
+      m.onMountStatsPong?.();
+    }),
+  },
+
+  "#stats-tictactoe": {
+    protected: true,
+    render: () => import("./pages/stats-tictactoe").then(m => {
+      m.renderStatsTicTacToe();
+      m.onMountStatsTicTacToe?.();
+    }),
+  },
+
   "#profile": {
     protected: true,
     render: () => import("./pages/profile").then(m => {
@@ -58,4 +74,3 @@ export function router() {
 
   target.render();
 }
-

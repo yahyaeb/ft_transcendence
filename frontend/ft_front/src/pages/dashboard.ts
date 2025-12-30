@@ -184,41 +184,45 @@ export function renderDashboard() {
 
           <section class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-3xl p-10">
 
-            <h2 class="text-3xl font-bold mb-8">
-              Statistiques du jeu
-            </h2>
+            <div class="flex items-center justify-between mb-8">
+              <h2 class="text-3xl font-bold">
+                Statistiques du jeu
+              </h2>
+              <button
+                id="stats-more-btn"
+                class="text-sm text-purple-400 hover:text-purple-300 hover:underline transition">
+                En savoir plus →
+              </button>
+            </div>
 
             <div class="grid grid-cols-3 gap-8 mb-10">
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
                 <p class="text-slate-400 mb-4">Victoires</p>
 
-                <div class="grid grid-cols-2 gap-4">
+                <!-- Layout Pong (Classique + Tournois) -->
+                <div id="wins-pong" class="grid grid-cols-2 gap-4">
                   <div>
-                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">
-                      Classique
-                    </p>
-                    <p class="text-3xl font-extrabold gradient-green">
-                      12
-                    </p>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Classique</p>
+                    <p data-stat="wins-classic" class="text-3xl font-extrabold gradient-green">12</p>
                   </div>
+                  <div>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Tournois</p>
+                    <p data-stat="wins-tournament" class="text-3xl font-extrabold gradient-purple">1</p>
+                  </div>
+                </div>
 
-                  <div>
-                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">
-                      Tournois
-                    </p>
-                    <p class="text-3xl font-extrabold gradient-purple">
-                      1
-                    </p>
-                  </div>
+                <!-- Layout TicTacToe (Victoires simples) -->
+                <div id="wins-simple" class="hidden">
+                  <p data-stat="wins-total" class="text-5xl font-extrabold gradient-green">6</p>
                 </div>
               </div>
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
                 <p class="text-slate-400 mb-1">Défaites</p>
-                <p class="text-4xl font-extrabold gradient-red">5</p>
+                <p data-stat="defeats" class="text-4xl font-extrabold gradient-red">5</p>
               </div>
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
                 <p class="text-slate-400 mb-1">Winrate</p>
-                <p class="text-4xl font-extrabold gradient-cyan">70%</p>
+                <p data-stat="winrate" class="text-4xl font-extrabold gradient-cyan">70%</p>
               </div>
             </div>
 
@@ -249,6 +253,108 @@ export function onMountDashboard(): void {
   const switchButtons = document.querySelectorAll<HTMLButtonElement>(
     '#game-switch button'
   );
+
+  let activeGame: "pong" | "tictactoe" = "pong";
+
+  const statsMoreBtn = document.getElementById("stats-more-btn");
+
+  const gameStats = {
+    pong: {
+      labels: ["J1", "J2", "J3", "J4", "J5", "J6"],
+      wins: [2, 3, 5, 6, 9, 12],
+      losses: [1, 1, 2, 3, 4, 5],
+      victoriesClassic: 12,
+      victoriesTournament: 1,
+      defeats: 5,
+      winrate: "70%"
+    },
+    tictactoe: {
+      labels: ["J1", "J2", "J3", "J4", "J5", "J6"],
+      wins: [1, 2, 2, 3, 4, 6],
+      losses: [0, 1, 2, 2, 3, 4],
+      winsTotal: 6,
+      defeats: 4,
+      winrate: "60%"
+    }
+  } as const;
+
+  function renderChart(gameKey: "pong" | "tictactoe") {
+    const canvas = document.getElementById("statsLineChart") as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const data = gameStats[gameKey];
+    const maxValue = Math.max(...data.wins, ...data.losses);
+
+    const padding = 40;
+    const stepX = (canvas.width - padding * 2) / (data.labels.length - 1);
+    const stepY = (canvas.height - padding * 2) / maxValue;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.stroke();
+
+    function drawLine(values: number[], color: string) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      values.forEach((v, i) => {
+        const x = padding + i * stepX;
+        const y = canvas.height - padding - v * stepY;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    drawLine(data.wins, "#8b5cf6");   // wins
+    drawLine(data.losses, "#22d3ee"); // losses
+  }
+
+  function renderStats(gameKey: "pong" | "tictactoe") {
+    const winsPong = document.getElementById("wins-pong");
+    const winsSimple = document.getElementById("wins-simple");
+
+    if (gameKey === "pong") {
+      // show pong layout
+      winsPong?.classList.remove("hidden");
+      winsSimple?.classList.add("hidden");
+
+      const data = gameStats.pong;
+      (document.querySelector("[data-stat='wins-classic']") as HTMLElement).textContent =
+        data.victoriesClassic.toString();
+      (document.querySelector("[data-stat='wins-tournament']") as HTMLElement).textContent =
+        data.victoriesTournament.toString();
+
+      (document.querySelector("[data-stat='defeats']") as HTMLElement).textContent =
+        data.defeats.toString();
+      (document.querySelector("[data-stat='winrate']") as HTMLElement).textContent =
+        data.winrate;
+      return;
+    }
+
+    // TicTacToe layout (simple)
+    winsPong?.classList.add("hidden");
+    winsSimple?.classList.remove("hidden");
+
+    const data = gameStats.tictactoe;
+    (document.querySelector("[data-stat='wins-total']") as HTMLElement).textContent =
+      data.winsTotal.toString();
+
+    (document.querySelector("[data-stat='defeats']") as HTMLElement).textContent =
+      data.defeats.toString();
+    (document.querySelector("[data-stat='winrate']") as HTMLElement).textContent =
+      data.winrate;
+  }
+
   const avatarBtn = document.getElementById("avatar-btn");
 
   const TOKEN_KEY = "access_token";
@@ -272,50 +378,6 @@ export function onMountDashboard(): void {
     window.location.hash = "#profile";
   });
 
-  const canvas = document.getElementById("statsLineChart") as HTMLCanvasElement | null;
-  if (canvas) {
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const data = {
-      labels: ["J1", "J2", "J3", "J4", "J5", "J6"],
-      wins: [2, 3, 5, 6, 9, 12],
-      losses: [1, 1, 2, 3, 4, 5]
-    };
-
-    const padding = 40;
-    const maxValue = Math.max(...data.wins, ...data.losses);
-    const stepX = (canvas.width - padding * 2) / (data.labels.length - 1);
-    const stepY = (canvas.height - padding * 2) / maxValue;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // axes
-    ctx.strokeStyle = "#334155";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, canvas.height - padding);
-    ctx.lineTo(canvas.width - padding, canvas.height - padding);
-    ctx.stroke();
-
-    function drawLine(values: number[], color: string) {
-      if (!ctx || !canvas) return;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      values.forEach((v, i) => {
-        const x = padding + i * stepX;
-        const y = canvas.height - padding - v * stepY;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-    }
-
-    drawLine(data.wins, "#8b5cf6");   // purple (theme)
-    drawLine(data.losses, "#22d3ee"); // cyan (theme)
-  }
   pongBtn?.addEventListener('click', () => {
     window.location.href = `https://localhost:5174/pong?token=${encodeURIComponent(token)}`;
   });
@@ -325,26 +387,47 @@ export function onMountDashboard(): void {
   });
 
   switchButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener("click", () => {
+      const game = btn.dataset.game === "pong" ? "pong" : "tictactoe";
+      activeGame = game;
+
       switchButtons.forEach(b => {
         b.classList.remove(
-          'bg-gradient-to-br',
-          'from-indigo-500',
-          'to-purple-600',
-          'text-white',
-          'shadow'
+          "bg-gradient-to-br",
+          "from-indigo-500",
+          "to-purple-600",
+          "text-white",
+          "shadow"
         );
-        b.classList.add('text-slate-400');
+        b.classList.add("text-slate-400");
       });
 
       btn.classList.add(
-        'bg-gradient-to-br',
-        'from-indigo-500',
-        'to-purple-600',
-        'text-white',
-        'shadow'
+        "bg-gradient-to-br",
+        "from-indigo-500",
+        "to-purple-600",
+        "text-white",
+        "shadow"
       );
-      btn.classList.remove('text-slate-400');
+      btn.classList.remove("text-slate-400");
+
+      renderStats(activeGame);
+      renderChart(activeGame);
     });
   });
+
+  // TODO:
+  // - Créer pages #stats-pong et #stats-tictactoe
+  // - Afficher historique complet (victoires/défaites)
+  // - Brancher données backend (users / amis / IA)
+  statsMoreBtn?.addEventListener("click", () => {
+    if (activeGame === "pong") {
+      window.location.hash = "#stats-pong";
+    } else {
+      window.location.hash = "#stats-tictactoe";
+    }
+  });
+
+  renderStats(activeGame);
+  renderChart(activeGame);
 }
