@@ -10,14 +10,30 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 import multipart from "@fastify/multipart";
 import cors from "@fastify/cors";
+import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 
+// <<<<<<< HEAD
 
-const fastify = fastifyFactory({logger: true })
+// const fastify = fastifyFactory({logger: true })
+// =======
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const fastify = fastifyFactory({
+  logger: true,
+  https: {
+    key: readFileSync(join(__dirname, 'certs', 'localhost+1-key.pem')),
+    cert: readFileSync(join(__dirname, 'certs', 'localhost+1.pem'))
+  }
+})
+// >>>>>>> origin/Game_v2
 const PORT = 4999
 
 
 await fastify.register(cors,{
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: ["https://localhost:5173", "https://localhost:5174"],
   credentials: true,
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -31,7 +47,7 @@ fastify.register(fastifyStatic, {
 });
 
 
-// API documentation: http://localhost:4999/docs/
+// API documentation: https://localhost:4999/docs/
 fastify.register(swagger, {
   openapi: {
     info: { title: 'Fastify API', version: '1.0.0' }

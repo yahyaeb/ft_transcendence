@@ -1,6 +1,7 @@
 import { getUser, isAuthenticated, getToken, setAvatarUrl } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
 
+  const API_BASE = `https//localhost:4999`;
 
 export function renderSettings() {
   const app = document.getElementById("app");
@@ -255,7 +256,7 @@ export function onMountSettings() {
 
   const refresh2FAStatus = async () => {
     try {
-      const res = await fetch("http://localhost:4999/auth/2fa/status", {
+      const res = await fetch(`${API_BASE}/auth/2fa/status`, {
         method: "GET",
         headers: authHeaders,
       });
@@ -291,7 +292,7 @@ export function onMountSettings() {
       setMsg("Generating QR...");
       setupBox?.classList.remove("hidden");
 
-      const res = await fetch("http://localhost:4999/auth/2fa/enable", {
+      const res = await fetch(`${API_BASE}/auth/2fa/enable`, {
         method: "POST",
         headers: authHeaders, 
       });
@@ -327,7 +328,7 @@ export function onMountSettings() {
       const code = (codeInput?.value ?? "").replace(/\s+/g, "").trim();
       if (code.length !== 6) throw new Error("Enter a valid 6-digit code");
 
-      const res = await fetch("http://localhost:4999/auth/2fa/verify-setup", {
+      const res = await fetch(`${API_BASE}/auth/2fa/verify-setup`, {
         method: "POST",
         headers: jsonHeaders, // ✅ needs Content-Type
         body: JSON.stringify({ code }),
@@ -352,7 +353,7 @@ export function onMountSettings() {
       const code = (prompt("Enter 6-digit code to disable 2FA:") ?? "").replace(/\s+/g, "").trim();
       if (code.length !== 6) return;
 
-      const res = await fetch("http://localhost:4999/auth/2fa/disable", {
+      const res = await fetch(`${API_BASE}/auth/2fa/disable`, {
         method: "POST",
         headers: jsonHeaders,
         body: JSON.stringify({ code }),
@@ -373,7 +374,7 @@ export function onMountSettings() {
     }
   });
 
-  const API_BASE = "http://localhost:4999";
+
 
   const uploadBtn = document.getElementById("upload-avatar-btn") as HTMLButtonElement | null;
   const fileInput = document.getElementById("avatar-file-input") as HTMLInputElement | null;
@@ -408,8 +409,7 @@ export function onMountSettings() {
 
       const avatarPath = data.avatarUrl; // "/uploads/avatars/user-<id>.png"
       if (!avatarPath) throw new Error("Backend did not return avatarUrl");
-      
-      setAvatarUrl(avatarPath);
+    
       // ✅ convert relative path to full URL + cache-bust so it refreshes immediately
       // const fullUrl = avatarPath.startsWith("http") ? avatarPath : `${API_BASE}${avatarPath}`;
       // if (avatarImg) avatarImg.src = `${fullUrl}?t=${Date.now()}`;

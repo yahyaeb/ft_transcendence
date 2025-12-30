@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "vite": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3"
   }
 }

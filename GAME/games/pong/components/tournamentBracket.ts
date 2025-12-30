@@ -102,7 +102,7 @@ export function onMount(): void {
     const tournamentPlayersStr = sessionStorage.getItem('tournamentPlayers');
     if (tournamentPlayersStr) {
       const players = JSON.parse(tournamentPlayersStr);
-      window.history.pushState({}, '', '/gameplay');
+      window.history.pushState({}, '', '/pong/gameplay');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   });

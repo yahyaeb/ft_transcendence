@@ -6,6 +6,7 @@ export type User = {
   two_factor_enabled?: string; 
 };
 
+const API_BASE = `https://localhost:4999`;
 
 const TOKEN_KEY = "access_token";
 
@@ -28,10 +29,12 @@ export function getUser(): User | null {
 //   return currentUser?.avatarUrl ?? "null";
 // }
 
-export function logout() {
-  currentUser = null;
-  token = null;
-  localStorage.removeItem(TOKEN_KEY);
+export async function logout() {
+
+    currentUser = null;
+    token = null;
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.setItem('logout-event', Date.now().toString())
 }
 
 export async function login(payload: {
@@ -39,9 +42,10 @@ export async function login(payload: {
   password: string;
   code?: string; 
 }): Promise<User> {
-  const res = await fetch("http://localhost:4999/auth/login", {
+  const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: 'include',
     body: JSON.stringify(payload),
   });
 
@@ -69,9 +73,9 @@ export async function login(payload: {
   return currentUser;
 }
 
-const API_BASE = "http://localhost:4999";
 
-export function resolveAvatarUrl(avatarUrl: string) {
+export function resolveAvatarUrl(avatarUrl?: string | null) {
+  if (!avatarUrl || avatarUrl.trim().length === 0) return null;
   return avatarUrl.startsWith("http")
     ? avatarUrl
     : `${API_BASE}${avatarUrl}`;

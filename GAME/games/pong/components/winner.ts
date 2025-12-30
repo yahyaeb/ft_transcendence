@@ -78,6 +78,8 @@ export function onMount(): void {
   replayBtn?.addEventListener('click', () => {
     const wasAiGame = sessionStorage.getItem('ai');
     const aiDifficulty = sessionStorage.getItem('aiDifficulty');
+    const wasTournament = sessionStorage.getItem('currentMatch');
+
     sessionStorage.clear();
     if (wasAiGame) {
       sessionStorage.setItem('ai', wasAiGame);
@@ -85,12 +87,15 @@ export function onMount(): void {
         sessionStorage.setItem('aiDifficulty', aiDifficulty);
       }
     }
+    if (wasTournament){
+      localStorage.removeItem('pvpPlayer2')
+    }
     window.history.pushState({}, '', '/pong/gameplay');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
   const menuBtn = document.getElementById('menuBtn');
   menuBtn?.addEventListener('click', () => {
     sessionStorage.clear();
-    window.location.href = 'http://localhost:5173/#dashboard';
+    window.location.href = 'https://localhost:5173/#dashboard';
   });
 }

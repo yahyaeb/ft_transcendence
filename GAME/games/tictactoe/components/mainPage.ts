@@ -173,7 +173,7 @@ export function onMount(): void {
   const oColorsContainer = document.getElementById('oColorsContainer');
 
   backBtn?.addEventListener('click', () => {
-    window.location.href = 'http://localhost:5173/#dashboard';
+    window.location.href = 'https://localhost:5173/#dashboard';
   });
 
   let currentCustomization: GameCustomization = { ...defaultCustomization };
