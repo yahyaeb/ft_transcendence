@@ -22,8 +22,17 @@ export function isAuthenticated(): boolean {
 }
 
 export function getUser(): User | null {
-  return currentUser;
+  if (currentUser) return currentUser;
+  const raw = localStorage.getItem("user");
+  if (!raw) return null;
+  try {
+    currentUser = JSON.parse(raw);
+    return currentUser;
+  } catch {
+    return null;
+  }
 }
+
 
 // export function getAvatar(): string {
 //   return currentUser?.avatarUrl ?? "null";

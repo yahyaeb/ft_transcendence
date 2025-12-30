@@ -1,7 +1,7 @@
 import { getUser, isAuthenticated, getToken, setAvatarUrl } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
 
-  const API_BASE = `https//localhost:4999`;
+const API_BASE = `https://localhost:4999`;
 
 export function renderSettings() {
   const app = document.getElementById("app");
