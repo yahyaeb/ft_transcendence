@@ -216,7 +216,7 @@ export function renderSettings() {
 }
 
 export function onMountSettings() {
-  paintAvatars(false);
+  paintAvatars(true);
   const passwordInput = document.getElementById("password-input") as HTMLInputElement | null;
   const toggleBtn = document.getElementById("toggle-password-btn");
   const eyeOpen = document.getElementById("eye-open");

@@ -4,6 +4,7 @@ import { getUser, logout } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
 
 export function renderProfile() {
+
   const app = document.getElementById("app");
   if (!app) return;
 
@@ -70,7 +71,7 @@ export function renderProfile() {
       </div>
     </div>
   `;
-  paintAvatars(false);
+  paintAvatars(true);
   const logoutBtn = document.getElementById("logout-btn");
   logoutBtn?.addEventListener("click", () => {
     logout();

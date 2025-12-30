@@ -34,7 +34,10 @@ export async function usersRoutes(fastify, options) {
         preHandler: authMiddleware,
     }, updateUsername)
 
-    fastify.get('/', getAllUsersController)
+    fastify.get('/',  {
+        preHandler: authMiddleware,
+    }, getAllUsersController)
+
     fastify.get('/:id', {
         preHandler: authMiddleware,
     },  getSingleUserController)

@@ -96,3 +96,26 @@ export async function blockUser(req, reply) {
 
     return reply.code(200).send({ message: "User blocked" });
 }
+
+
+export async function unblockUser(req, reply) {
+  const me = Number(req.user.id);
+  const other = Number(req.body?.userId);
+
+  if (!Number.isInteger(other))
+    return reply.code(400).send({ error: "userId must be an integer" });
+
+  if (me === other)
+    return reply.code(400).send({ error: "Cannot unblock yourself" });
+
+  const res = await db.run(
+    "DELETE FROM blocks WHERE blocker_id = ? AND blocked_id = ?",
+    [me, other]
+  );
+
+  if (res.changes === 0) {
+    return reply.code(200).send({ message: "User was not blocked" });
+  }
+
+  return reply.code(200).send({ message: "User unblocked" });
+}

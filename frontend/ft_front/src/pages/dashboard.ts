@@ -14,7 +14,7 @@ export function renderDashboard() {
         <!-- Game Switch -->
         <div>
           <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">
-            Jeu actif
+            Dashboard
           </p>
           <div id="game-switch" class="flex bg-slate-900/60 rounded-full p-1">
             <button
@@ -41,10 +41,17 @@ export function renderDashboard() {
         </nav>
 
         <!-- Players list -->
+
+          <!-- FRIENDS -->
+          <p class="text-xs uppercase tracking-wider text-slate-400 mt-2 mb-2">Friends</p>
+          <ul id="friends-list" class="space-y-1 max-h-40 overflow-y-auto pr-1"></ul>
+          <p id="friends-empty" class="hidden text-sm text-slate-500 mt-2">
+            Aucun ami. Ajoute des joueurs 👇
+          </p>
         <div class="mt-8">
           <div class="flex items-center justify-between mb-3">
             <p class="text-xs uppercase tracking-wider text-slate-400">
-              Joueurs
+              Players
             </p>
             <span class="text-[11px] text-slate-500"></span>
           </div>
@@ -53,76 +60,19 @@ export function renderDashboard() {
             <input
               id="players-search"
               type="text"
-              placeholder="Rechercher un joueur…"
+              placeholder="Search players…"
               class="w-full px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-600/20 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500/40 focus:ring-2 focus:ring-purple-500/15 transition"
             />
             <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">⌕</div>
           </div>
 
-          <ul id="players-list" class="space-y-1">
-            <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 flex items-center justify-center text-slate-400">
-                  👤
-                </div>
-                <p class="text-sm font-medium text-slate-200 truncate">PlayerOne</p>
-              </div>
+          <ul id="players-list" class="space-y-1 max-h-72 overflow-y-auto pr-1"></ul>
 
-              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  type="button"
-                  title="Accepter"
-                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30 transition"
-                >
-                  ✓
-                </button>
-                <button
-                  type="button"
-                  title="Refuser"
-                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400/30 transition"
-                >
-                  ✕
-                </button>
-                <button
-                  type="button"
-                  title="Bloquer"
-                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
-                >
-                  🚫
-                </button>
-              </div>
-            </li>
 
-            <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 flex items-center justify-center text-slate-400">
-                  👤
-                </div>
-                <p class="text-sm font-medium text-slate-200 truncate">PlayerTwo</p>
-              </div>
+          <p id="players-empty" class="hidden text-sm text-slate-500 mt-3">
+            Aucun joueur trouvé.
+          </p>
 
-              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button type="button" title="Accepter" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30 transition">✓</button>
-                <button type="button" title="Refuser" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400/30 transition">✕</button>
-                <button type="button" title="Bloquer" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition">🚫</button>
-              </div>
-            </li>
-
-            <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 flex items-center justify-center text-slate-400">
-                  👤
-                </div>
-                <p class="text-sm font-medium text-slate-200 truncate">PlayerThree</p>
-              </div>
-
-              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button type="button" title="Accepter" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30 transition">✓</button>
-                <button type="button" title="Refuser" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400/30 transition">✕</button>
-                <button type="button" title="Bloquer" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition">🚫</button>
-              </div>
-            </li>
-          </ul>
 
           <!--
             TODO (backend):
@@ -249,7 +199,7 @@ export function renderDashboard() {
 }
 
 export function onMountDashboard(): void {
-  paintAvatars(false);
+  paintAvatars(true);
   const switchButtons = document.querySelectorAll<HTMLButtonElement>(
     '#game-switch button'
   );
@@ -416,10 +366,6 @@ export function onMountDashboard(): void {
     });
   });
 
-  // TODO:
-  // - Créer pages #stats-pong et #stats-tictactoe
-  // - Afficher historique complet (victoires/défaites)
-  // - Brancher données backend (users / amis / IA)
   statsMoreBtn?.addEventListener("click", () => {
     if (activeGame === "pong") {
       window.location.hash = "#stats-pong";
@@ -427,6 +373,320 @@ export function onMountDashboard(): void {
       window.location.hash = "#stats-tictactoe";
     }
   });
+
+const API_BASE = `https://localhost:4999`;
+
+const friendsListEl = document.getElementById("friends-list") as HTMLUListElement | null;
+const friendsEmptyEl = document.getElementById("friends-empty") as HTMLParagraphElement | null;
+
+const playersListEl = document.getElementById("players-list") as HTMLUListElement | null;
+const playersEmptyEl = document.getElementById("players-empty") as HTMLParagraphElement | null;
+
+const playersSearch = document.getElementById("players-search") as HTMLInputElement | null;
+
+type Player = {
+  id: number;
+  username: string;
+  avatarUrl?: string | null;
+  last_seen_at?: number | null;
+};
+
+const token2 = localStorage.getItem("access_token");
+if (!token2) return;
+
+const authHeaders2 = { Authorization: `Bearer ${token2}` };
+const jsonHeaders2 = { ...authHeaders2, "Content-Type": "application/json" };
+
+const ONLINE_WINDOW_MS = 45_000;
+
+const isOnline = (lastSeen?: number | null) =>
+  typeof lastSeen === "number" && (Date.now() - lastSeen) <= ONLINE_WINDOW_MS;
+
+function formatLastSeen(ms?: number | null) {
+  if (typeof ms !== "number") return "";
+
+  const diff = Date.now() - ms;
+  if (diff < 0) return "just now";
+
+  const sec = Math.floor(diff / 1000);
+  if (sec < 60) return "just now";
+
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min} min ago`;
+
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+
+  const day = Math.floor(hr / 24);
+  return `${day}d ago`;
+}
+
+
+let friendsCache: Player[] = [];
+let usersCache: Player[] = [];
+let friendIds = new Set<number>();
+
+function setEmpty(el: HTMLParagraphElement | null, text: string, show: boolean) {
+  if (!el) return;
+  el.textContent = text;
+  el.classList.toggle("hidden", !show);
+}
+
+function renderFriends(list: Player[]) {
+  if (!friendsListEl) return;
+
+  friendsListEl.innerHTML = list
+    .map(f => {
+      const online = isOnline(f.last_seen_at);
+      const dotClass = online ? "bg-emerald-400" : "bg-slate-500";
+
+      const statusText = online ? "Online" : `Last seen ${formatLastSeen(f.last_seen_at)}`;
+
+      return `
+        <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div class="relative w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 overflow-hidden">
+              <img src="${f.avatarUrl ?? "/avatars/default-avatar.png"}" class="w-full h-full object-cover" />
+              <span class="absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ${dotClass} border border-slate-900"></span>
+            </div>
+
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-slate-200 truncate">${f.username}</p>
+              <p class="text-[11px] text-slate-500">${statusText}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              type="button"
+              data-action="Remove"
+              data-user-id="${f.id}"
+              title="Remove"
+              class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
+            >➖​</button>
+          </div>
+        </li>
+      `;
+    })
+    .join("");
+
+  setEmpty(friendsEmptyEl, "No friends Available.", list.length === 0);
+}
+
+function renderUsers(list: Player[]) {
+  if (!playersListEl) return;
+
+  const q = (playersSearch?.value ?? "").trim().toLowerCase();
+  const filtered = q ? list.filter(u => (u.username || "").toLowerCase().includes(q)) : list;
+
+  playersListEl.innerHTML = filtered
+    .map(u => {
+      const alreadyFriend = friendIds.has(u.id);
+      const canShowStatus = typeof u.last_seen_at === "number";
+      const online = canShowStatus && isOnline(u.last_seen_at);
+      const dotClass = !canShowStatus ? "hidden" : (online ? "bg-emerald-400" : "bg-slate-500");
+      const statusText = canShowStatus ? (online ? "Online" : `Last seen ${formatLastSeen(u.last_seen_at)}`) : "";
+
+      return `
+       <li class="group flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div class="relative w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 overflow-hidden">
+              <img src="${u.avatarUrl ?? "/avatars/default-avatar.png"}" class="w-full h-full object-cover" />
+              <span class="absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ${dotClass} border border-slate-900"></span>
+            </div>
+
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-slate-200 truncate">${u.username}</p>
+              <p class="text-[11px] text-slate-500">${statusText}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              type="button"
+              data-action="add"
+              data-user-id="${u.id}"
+              title="${alreadyFriend ? "Already friends" : "Add"}"
+              class="w-3 h-3 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 transition
+                     ${alreadyFriend ? "text-slate-500 opacity-60 cursor-not-allowed" : "text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-400/30 transition"}"
+              ${alreadyFriend ? "disabled" : ""}
+            >${alreadyFriend ? "✓" : "＋"}</button>
+
+            <button
+              type="button"
+              data-action="block"
+              data-user-id="${u.id}"
+              title="Bloquer"
+              class="w-3 h-3 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
+            >🚫</button>
+            <button
+              type="button"
+              data-action="unblock"
+              data-user-id="${u.id}"
+              title="Unblock"
+              class="w-3 h-3 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
+            >🇽</button>
+
+          </div>
+        </li>
+      `;
+    })
+    .join("");
+
+  setEmpty(playersEmptyEl, "Doesn't exist.", filtered.length === 0);
+}
+
+async function loadFriends(): Promise<Player[]> {
+  const res = await fetch(`${API_BASE}/friends/friendsList`, {
+    method: "GET",
+    headers: authHeaders2,
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Failed to load friends");
+
+  const friends: Player[] = Array.isArray(data) ? data : (data.friends ?? []);
+  friendsCache = friends;
+  friendIds = new Set(friends.map(f => f.id));
+
+  renderFriends(friendsCache);
+  renderUsers(usersCache);
+
+  return friends;
+}
+
+async function loadUsers(): Promise<Player[]> {
+  const res = await fetch(`${API_BASE}/users`, {
+    method: "GET",
+    headers: authHeaders2,
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Failed to load users");
+
+  const users: Player[] = Array.isArray(data) ? data : (data.users ?? data.data ?? []);
+  usersCache = users;
+
+  renderUsers(usersCache);
+  return users;
+}
+
+async function initFriendsUsers() {
+  try {
+    await loadUsers();
+    await loadFriends().catch(() => {
+      friendsCache = [];
+      friendIds = new Set();
+      renderFriends([]);
+    });
+  } catch (e: any) {
+    friendsCache = [];
+    usersCache = [];
+    friendIds = new Set();
+    renderFriends([]);
+    renderUsers([]);
+    setEmpty(playersEmptyEl, e?.message ?? "Error loading player", true);
+  }
+}
+
+initFriendsUsers();
+
+playersSearch?.addEventListener("input", () => renderUsers(usersCache));
+
+function handleListClick(e: Event) {
+  const target = e.target as HTMLElement;
+  const btn = target.closest("button[data-action]") as HTMLButtonElement | null;
+  if (!btn) return;
+
+  const action = btn.dataset.action;
+  const userId = Number(btn.dataset.userId);
+  if (!userId) return;
+
+  (async () => {
+    try {
+      if (action === "add") {
+        const ok = confirm("Add this user?");
+        if (!ok) return;
+
+        if (friendIds.has(userId)) return;
+
+        const res = await fetch(`${API_BASE}/friends/addFriend`, {
+          method: "POST",
+          headers: jsonHeaders2,
+          body: JSON.stringify({ userId }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Add friend failed");
+
+        await loadFriends();
+        return;
+      }
+      if (action === "Remove") {
+        const ok = confirm("Remove this user?");
+        if (!ok) return;
+
+        const res = await fetch(`${API_BASE}/friends/blockerUser`, {
+          method: "POST",
+          headers: jsonHeaders2,
+          body: JSON.stringify({ userId }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Block failed");
+
+        await loadFriends().catch(() => {});
+        await loadUsers().catch(() => {});
+      }
+      if (action === "block") {
+        const ok = confirm("Block this user?");
+        if (!ok) return;
+
+        const res = await fetch(`${API_BASE}/friends/blockerUser`, {
+          method: "POST",
+          headers: jsonHeaders2,
+          body: JSON.stringify({ userId }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Block failed");
+
+        await loadFriends().catch(() => {});
+        await loadUsers().catch(() => {});
+      }
+      if (action === "unblock") {
+        const ok = confirm("Unblock this user?");
+        if (!ok) return;
+
+        const res = await fetch(`${API_BASE}/friends/unblockUser`, {
+          method: "POST",
+          headers: jsonHeaders2,
+          body: JSON.stringify({ userId }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Unblock failed");
+
+        await loadFriends().catch(() => {});
+        await loadUsers().catch(() => {});
+        return;
+      }
+    } catch (err: any) {
+      alert(err?.message ?? "Action failed");
+    }
+  })();
+}
+
+playersListEl?.addEventListener("click", handleListClick);
+friendsListEl?.addEventListener("click", handleListClick);
+
+const pingTimer = window.setInterval(() => {
+  fetch(`${API_BASE}/users/me/ping`, { method: "PATCH", headers: authHeaders2 }).catch(() => {});
+}, 20_000);
+
+window.addEventListener("hashchange", () => clearInterval(pingTimer), { once: true });
+
+
 
   renderStats(activeGame);
   renderChart(activeGame);

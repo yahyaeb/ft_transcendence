@@ -1,6 +1,7 @@
 import {    addFriend,
             blockUser,
-            showFriends
+            showFriends,
+            unblockUser
 }   from "../controllers/friendsRequests.js";
 import { authMiddleware } from "../middleware/auth.js";
 
@@ -18,4 +19,8 @@ export async function friendsRoute(fastify, options) {
     fastify.post('/blockerUser', {
         preHandler: authMiddleware,
     }, blockUser)
+
+    fastify.post('/unblockUser', {
+        preHandler: authMiddleware,
+    }, unblockUser)
 }
