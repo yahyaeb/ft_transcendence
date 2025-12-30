@@ -4,7 +4,8 @@ all:
 	docker-compose up -d --build
 
 up:
-	docker-compose up -d
+	cd GAME/backend && npm i @fastify/multipart @fastify/static
+	docker-compose up -d --build
 
 down:
 	docker-compose down

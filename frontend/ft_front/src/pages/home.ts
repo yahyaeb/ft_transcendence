@@ -1,7 +1,9 @@
 import { isAuthenticated } from "../state/auth";
 import { getLanguage, setLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
-import { getAvatar } from "../state/profile";
+// import { getAvatar } from "../state/profile";
+import { paintAvatars } from "../ui/avatar";
+
 
 export function renderHome() {
   const app = document.getElementById("app");
@@ -12,12 +14,11 @@ export function renderHome() {
   const loggedIn = isAuthenticated();
   // Sécurité : si token expiré / session invalide → déconnexion complète
   if (!loggedIn) {
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     sessionStorage.clear();
   }
-  const avatar = loggedIn
-  ? getAvatar()
-  : "/avatars/default-avatar.png";
+
 
   app.innerHTML = `
     <div class="min-h-screen w-full bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 flex flex-col">
@@ -35,9 +36,9 @@ export function renderHome() {
           class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-700/60 backdrop-blur-xl border border-slate-400/30 hover:border-purple-500/60 transition overflow-hidden"
           aria-label="${loggedIn ? "Aller au profil" : "Aller à la connexion"}"
         >
-          <img src="${avatar}"
-               alt="avatar"
-               class="w-full h-full object-cover opacity-80" />
+        <img data-avatar alt="avatar"
+        class="w-full h-full object-cover opacity-80" />
+
         </a>
       </header>
 
@@ -80,6 +81,9 @@ export function renderHome() {
       </main>
     </div>
   `;
+  if (loggedIn)
+    paintAvatars(false);
+
 
   const languageSelect = document.getElementById("language-select") as HTMLSelectElement;
   languageSelect?.addEventListener("change", () => {

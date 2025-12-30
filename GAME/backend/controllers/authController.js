@@ -6,7 +6,7 @@ import 'dotenv/config' //importing the secret .env
 
 
 export async function signupController(req, reply) {
-  const { username, email, password, avatar } = req.body || {};
+  const { username, email, password } = req.body || {};
 
   if (!username || !email || !password) {
     return reply.code(400).send({ error: "Username, email and password are required" });
@@ -14,7 +14,7 @@ export async function signupController(req, reply) {
 
   const u = username.trim();
   const e = email.trim();
-
+  const avatar = "/uploads/avatars/user-22.png"
   try {
     const existing = await db.get(
       `SELECT id, username, email

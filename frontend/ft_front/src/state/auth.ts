@@ -6,6 +6,7 @@ export type User = {
   two_factor_enabled?: string; 
 };
 
+
 const TOKEN_KEY = "access_token";
 
 let currentUser: User | null = null;
@@ -61,10 +62,23 @@ export async function login(payload: {
     id: data.user.id,
     username: data.user.username,
     email: data.user.email,
-    avatarUrl: data.user.avatar ?? "null",
+    avatarUrl: data.user.avatarUrl ?? data.user.avatar ?? undefined,
     two_factor_enabled: data.user.two_factor_enabled,
   };
 
   return currentUser;
 }
 
+const API_BASE = "http://localhost:4999";
+
+export function resolveAvatarUrl(avatarUrl: string) {
+  return avatarUrl.startsWith("http")
+    ? avatarUrl
+    : `${API_BASE}${avatarUrl}`;
+}
+
+
+export function setAvatarUrl(avatarUrl: string) {
+  if (!currentUser) return;
+  currentUser.avatarUrl = avatarUrl;
+}

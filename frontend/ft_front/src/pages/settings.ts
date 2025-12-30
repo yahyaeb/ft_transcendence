@@ -1,4 +1,5 @@
-import { getUser, isAuthenticated, getToken } from "../state/auth";
+import { getUser, isAuthenticated, getToken, setAvatarUrl } from "../state/auth";
+import { paintAvatars } from "../ui/avatar";
 
 
 export function renderSettings() {
@@ -12,10 +13,6 @@ export function renderSettings() {
   }
 
   const user = getUser();
-  const avatarSrc =
-    user?.avatarUrl && user.avatarUrl.trim().length > 0
-      ? user.avatarUrl
-      : "/avatars/default-avatar.png";
   const is2faEnabled = !!user?.two_factor_enabled; 
 
   app.innerHTML = `
@@ -35,30 +32,32 @@ export function renderSettings() {
 
           <div class="relative w-24 h-24">
             <img
-              src="${avatarSrc}"
-              onerror="this.src='/avatars/default-avatar.png'"
+              id="avatar-img"
+              data-avatar
               alt="avatar"
-              class="w-full h-full rounded-full object-cover border border-slate-400/30 bg-slate-700/60"
+              class="w-full h-full rounded-full object-cover"
             />
 
-            <!-- Overlay + button -->
             <button
               id="upload-avatar-btn"
               title="Changer l’avatar"
-              class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-xl font-bold shadow-lg hover:scale-110 transition">
+              class="absolute bottom-0 right-0 z-10
+                    w-8 h-8 rounded-full
+                    bg-gradient-to-br from-indigo-500 to-purple-600
+                    text-white flex items-center justify-center
+                    text-xl font-bold shadow-lg hover:scale-110 transition">
               +
             </button>
-          </div>
 
-          <!-- TODO BACKEND -->
-          <!--
-            Ici :
-            - ouvrir un input type="file"
-            - envoyer le fichier vers le backend (POST /users/avatar)
-            - récupérer l’URL retournée
-            - mettre à jour l’avatar utilisateur
-          -->
+            <input
+              id="avatar-file-input"
+              type="file"
+              accept="image/*"
+              class="hidden"
+            />
+          </div>
         </section>
+
 
         <!-- USERNAME SECTION -->
         <section class="mb-12">
@@ -216,7 +215,7 @@ export function renderSettings() {
 }
 
 export function onMountSettings() {
-
+  paintAvatars(false);
   const passwordInput = document.getElementById("password-input") as HTMLInputElement | null;
   const toggleBtn = document.getElementById("toggle-password-btn");
   const eyeOpen = document.getElementById("eye-open");
@@ -250,6 +249,7 @@ export function onMountSettings() {
 
   const authHeaders = { Authorization: `Bearer ${token}` };
   const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
+
 
   const setMsg = (t: string) => { if (msg) msg.textContent = t; };
 
@@ -372,4 +372,58 @@ export function onMountSettings() {
       alert(e?.message ?? "Error");
     }
   });
+
+  const API_BASE = "http://localhost:4999";
+
+  const uploadBtn = document.getElementById("upload-avatar-btn") as HTMLButtonElement | null;
+  const fileInput = document.getElementById("avatar-file-input") as HTMLInputElement | null;
+  // const avatarImg = document.getElementById("avatar-img") as HTMLImageElement | null;
+
+  uploadBtn?.addEventListener("click", () => fileInput?.click());
+
+  fileInput?.addEventListener("change", async () => {
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Not authenticated");
+
+      const file = fileInput?.files?.[0];
+      if (!file) return;
+
+      // optional: keep it strict like backend
+      if (!["image/png", "image/jpeg"].includes(file.type)) {
+        throw new Error("Only PNG/JPG allowed");
+      }
+
+      const form = new FormData();
+      form.append("avatar", file); // ✅ REQUIRED (same key as Postman)
+
+      const res = await fetch(`${API_BASE}/users/me/avatar`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` }, // ✅ no Content-Type
+        body: form,
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Avatar upload failed");
+
+      const avatarPath = data.avatarUrl; // "/uploads/avatars/user-<id>.png"
+      if (!avatarPath) throw new Error("Backend did not return avatarUrl");
+      
+      setAvatarUrl(avatarPath);
+      // ✅ convert relative path to full URL + cache-bust so it refreshes immediately
+      // const fullUrl = avatarPath.startsWith("http") ? avatarPath : `${API_BASE}${avatarPath}`;
+      // if (avatarImg) avatarImg.src = `${fullUrl}?t=${Date.now()}`;
+      setAvatarUrl(avatarPath);
+      paintAvatars(true);
+      // allow re-uploading same file
+      if (fileInput) fileInput.value = "";
+    } catch (e: any) {
+      alert(e?.message ?? "Upload error");
+    }
+
+  });
+
+
+    
+
 }
