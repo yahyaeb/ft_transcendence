@@ -1,6 +1,7 @@
 import { getLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 import { getUser, logout } from "../state/auth";
+import { paintAvatars } from "../ui/avatar";
 
 export function renderProfile() {
   const app = document.getElementById("app");
@@ -41,7 +42,7 @@ export function renderProfile() {
             <!-- Avatar (backend-managed later) -->
             <div class="w-24 h-24 rounded-full bg-slate-700/60 border border-slate-400/30 overflow-hidden flex items-center justify-center text-3xl">
               <img
-                src="${user.avatarUrl ?? "/avatars/default-avatar.png"}"
+                data-avatar
                 alt="avatar"
                 class="w-full h-full object-cover"
               />
@@ -69,7 +70,7 @@ export function renderProfile() {
       </div>
     </div>
   `;
-
+  paintAvatars(false);
   const logoutBtn = document.getElementById("logout-btn");
   logoutBtn?.addEventListener("click", () => {
     logout();

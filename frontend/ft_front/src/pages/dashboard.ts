@@ -1,4 +1,5 @@
 // src/pages/dashboard.ts
+import { paintAvatars } from "../ui/avatar";
 
 export function renderDashboard() {
   const app = document.getElementById("app");
@@ -138,12 +139,14 @@ export function renderDashboard() {
 
         <!-- HEADER -->
         <header class="flex justify-end items-center px-6 pt-4 pb-2">
-         <div
-  			id="avatar-btn"
-  			class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 hover:ring-2 hover:ring-purple-500 transition cursor-pointer"
-  			title="Profil">
-  			👤
-		</div>
+       <button
+          id="avatar-btn"
+          class="w-12 h-12 rounded-full overflow-hidden bg-slate-700 hover:ring-2 hover:ring-purple-500 transition cursor-pointer"
+          title="Profil"
+        >
+          <img data-avatar alt="avatar" class="w-full h-full object-cover" />
+        </button>
+
         </header>
 
         <!-- CONTENT -->
@@ -242,6 +245,7 @@ export function renderDashboard() {
 }
 
 export function onMountDashboard(): void {
+  paintAvatars(false);
   const switchButtons = document.querySelectorAll<HTMLButtonElement>(
     '#game-switch button'
   );
