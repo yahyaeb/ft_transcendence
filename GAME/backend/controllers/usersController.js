@@ -22,6 +22,7 @@ export async function ping(req, reply) {
 }
 
 export async function getAllUsersController(req, reply){
+    // const users = await db.all("SELECT * FROM users;");
     const users = await db.all("Select id, email, username, avatar FROM users order by id;");
     return users
 }

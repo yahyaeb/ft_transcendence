@@ -62,70 +62,114 @@ export function renderSettings() {
 
         <!-- USERNAME SECTION -->
         <section class="mb-12">
-          <h2 class="text-xl font-semibold mb-4">Nom d’utilisateur</h2>
+          <h2 class="text-xl font-semibold mb-4">Username</h2>
 
-          <input
-            id="username-input"
-            type="text"
-            placeholder="Nom d'utilisateur"
-            value="${user?.username ?? ""}"
-            class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
-          />
+          <div class="space-y-3">
+            <input
+              id="username-input"
+              type="text"
+              placeholder="Username"
+              value="${user?.username ?? ""}"
+              class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
+            />
 
-          <!-- TODO BACKEND -->
-          <!--
-            Ici :
-            - envoyer le nouveau username au backend
-            - vérifier unicité / erreurs
-            - mettre à jour l’état global utilisateur
-          -->
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                id="change-username-btn"
+                class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition"
+              >
+                Change
+              </button>
+              <p id="username-msg" class="text-sm text-slate-400"></p>
+            </div>
+          </div>
         </section>
 
         <!-- PASSWORD SECTION -->
         <section class="mb-12">
-          <h2 class="text-xl font-semibold mb-4">Mot de passe</h2>
+          <h2 class="text-xl font-semibold mb-4">Current password</h2>
 
-          <div class="relative">
-            <input
-              id="password-input"
-              type="password"
-              placeholder="Nouveau mot de passe"
-              class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
-            />
+          <div class="space-y-3">
 
-            <button
-              type="button"
-              id="toggle-password-btn"
-              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-400 transition"
-              title="Afficher / masquer le mot de passe">
+            <!-- Old password -->
+            <div class="relative">
+              <input
+                id="old-password-input"
+                type="password"
+                placeholder="Current password"
+                class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
+              />
+            </div>
 
-              <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                   viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5
-                     c4.478 0 8.268 2.943 9.542 7
-                     -1.274 4.057-5.064 7-9.542 7
-                     -4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
+            <!-- New password -->
+            <div class="relative">
+              <input
+                id="new-password-input"
+                type="password"
+                placeholder="New password"
+                class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
+              />
 
-              <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg"
-                   class="w-5 h-5 hidden" fill="none"
-                   viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19
-                     c-4.478 0-8.268-2.943-9.543-7
-                     a9.97 9.97 0 012.042-3.368" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M6.223 6.223A9.969 9.969 0 0112 5
-                     c4.478 0 8.268 2.943 9.543 7
-                     a9.97 9.97 0 01-4.132 5.411" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 3l18 18" />
-              </svg>
-            </button>
+              <button
+                type="button"
+                id="toggle-password-btn"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-400 transition"
+                title="Hide / Show password">
+
+                <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5
+                      c4.478 0 8.268 2.943 9.542 7
+                      -1.274 4.057-5.064 7-9.542 7
+                      -4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+
+                <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 hidden" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19
+                      c-4.478 0-8.268-2.943-9.543-7
+                      a9.97 9.97 0 012.042-3.368" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6.223 6.223A9.969 9.969 0 0112 5
+                      c4.478 0 8.268 2.943 9.543 7
+                      a9.97 9.97 0 01-4.132 5.411" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3l18 18" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Confirm new password -->
+            <div class="relative">
+              <input
+                id="new-password-confirm-input"
+                type="password"
+                placeholder="Confirm new password"
+                class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
+              />
+            </div>
+
+            <!-- Change button + message -->
+            <div class="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                id="change-password-btn"
+                class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition"
+              >
+                Change
+              </button>
+              <p id="password-msg" class="text-sm text-slate-400"></p>
+            </div>
+
           </div>
+        </section>
+
 
           <!-- TODO BACKEND -->
           <!--
@@ -195,11 +239,7 @@ export function renderSettings() {
             ← Retour au profil
           </a>
 
-          <button
-            id="save-settings-btn"
-            class="px-8 py-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)] transition">
-            Sauvegarder
-          </button>
+
         </div>
 
         <!-- TODO BACKEND -->
@@ -250,7 +290,95 @@ export function onMountSettings() {
 
   const authHeaders = { Authorization: `Bearer ${token}` };
   const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
+  // Password change
+  const oldPwdInput = document.getElementById("old-password-input") as HTMLInputElement | null;
+  const newPwdInput = document.getElementById("new-password-input") as HTMLInputElement | null;
+  const newPwd2Input = document.getElementById("new-password-confirm-input") as HTMLInputElement | null;
+  const changePwdBtn = document.getElementById("change-password-btn") as HTMLButtonElement | null;
+  const pwdMsg = document.getElementById("password-msg") as HTMLParagraphElement | null;
 
+  const setPwdMsg = (t: string) => { if (pwdMsg) pwdMsg.textContent = t; };
+
+  changePwdBtn?.addEventListener("click", async () => {
+    try {
+      const oldpwd = (oldPwdInput?.value ?? "").trim();
+      const newpwd = (newPwdInput?.value ?? "").trim();
+      const secnewpwd = (newPwd2Input?.value ?? "").trim();
+
+      if (!oldpwd || !newpwd || !secnewpwd) {
+        setPwdMsg("Fill all password fields.");
+        return;
+      }
+      if (newpwd !== secnewpwd) {
+        setPwdMsg("New passwords do not match.");
+        return;
+      }
+      if (newpwd.length < 8) {
+        setPwdMsg("Password must be at least 8 characters.");
+        return;
+      }
+
+      setPwdMsg("Updating...");
+
+      const res = await fetch(`${API_BASE}/users/me/updatePassword`, {
+        method: "PATCH",
+        headers: jsonHeaders,
+        body: JSON.stringify({ oldpwd, newpwd, secnewpwd }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Password update failed");
+
+      setPwdMsg("Password updated ✅");
+
+      if (oldPwdInput) oldPwdInput.value = "";
+      if (newPwdInput) newPwdInput.value = "";
+      if (newPwd2Input) newPwd2Input.value = "";
+    } catch (e: any) {
+      setPwdMsg(e?.message ?? "Error");
+    }
+  });
+
+
+    // Username change
+  const usernameInput = document.getElementById("username-input") as HTMLInputElement | null;
+  const changeUsernameBtn = document.getElementById("change-username-btn") as HTMLButtonElement | null;
+  const usernameMsg = document.getElementById("username-msg") as HTMLParagraphElement | null;
+
+  const setUsernameMsg = (t: string) => { if (usernameMsg) usernameMsg.textContent = t; };
+
+  changeUsernameBtn?.addEventListener("click", async () => {
+    try {
+      const current = (getUser()?.username ?? "").trim();
+      const username = (usernameInput?.value ?? "").trim();
+
+      if (!username) { setUsernameMsg("Username cannot be empty."); return; }
+      if (username.length < 3) { setUsernameMsg("Minimum 3 characters."); return; }
+      if (username === current) { setUsernameMsg("No changes."); return; }
+
+      setUsernameMsg("Updating...");
+
+      const res = await fetch(`${API_BASE}/users/me/updateUsername`, {
+        method: "PATCH",
+        headers: jsonHeaders,
+        body: JSON.stringify({ username }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Username update failed");
+
+      const updatedUsername = data?.username ?? username;
+
+      const u = getUser();
+      if (u) {
+        u.username = updatedUsername;
+      }
+
+      setUsernameMsg("Username updated ✅");
+    } catch (e: any) {
+      setUsernameMsg(e?.message ?? "Error");
+    }
+  });
 
   const setMsg = (t: string) => { if (msg) msg.textContent = t; };
 
@@ -271,12 +399,10 @@ export function onMountSettings() {
       if (enableBtn) enableBtn.disabled = enabled;
       if (disableBtn) disableBtn.disabled = !enabled;
 
-      // if enabled, hide setup box
       if (enabled) setupBox?.classList.add("hidden");
 
       return enabled;
     } catch {
-      // if status endpoint fails
       return null;
     }
   };
@@ -330,7 +456,7 @@ export function onMountSettings() {
 
       const res = await fetch(`${API_BASE}/auth/2fa/verify-setup`, {
         method: "POST",
-        headers: jsonHeaders, // ✅ needs Content-Type
+        headers: jsonHeaders,
         body: JSON.stringify({ code }),
       });
 
@@ -378,7 +504,6 @@ export function onMountSettings() {
 
   const uploadBtn = document.getElementById("upload-avatar-btn") as HTMLButtonElement | null;
   const fileInput = document.getElementById("avatar-file-input") as HTMLInputElement | null;
-  // const avatarImg = document.getElementById("avatar-img") as HTMLImageElement | null;
 
   uploadBtn?.addEventListener("click", () => fileInput?.click());
 
@@ -390,32 +515,28 @@ export function onMountSettings() {
       const file = fileInput?.files?.[0];
       if (!file) return;
 
-      // optional: keep it strict like backend
       if (!["image/png", "image/jpeg"].includes(file.type)) {
         throw new Error("Only PNG/JPG allowed");
       }
 
       const form = new FormData();
-      form.append("avatar", file); // ✅ REQUIRED (same key as Postman)
+      form.append("avatar", file); 
 
       const res = await fetch(`${API_BASE}/users/me/avatar`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` }, // ✅ no Content-Type
+        headers: { Authorization: `Bearer ${token}` }, 
         body: form,
       });
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error ?? data?.message ?? "Avatar upload failed");
 
-      const avatarPath = data.avatarUrl; // "/uploads/avatars/user-<id>.png"
+      const avatarPath = data.avatarUrl; 
       if (!avatarPath) throw new Error("Backend did not return avatarUrl");
     
-      // ✅ convert relative path to full URL + cache-bust so it refreshes immediately
-      // const fullUrl = avatarPath.startsWith("http") ? avatarPath : `${API_BASE}${avatarPath}`;
-      // if (avatarImg) avatarImg.src = `${fullUrl}?t=${Date.now()}`;
+
       setAvatarUrl(avatarPath);
       paintAvatars(true);
-      // allow re-uploading same file
       if (fileInput) fileInput.value = "";
     } catch (e: any) {
       alert(e?.message ?? "Upload error");
