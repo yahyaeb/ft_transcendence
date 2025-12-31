@@ -43,6 +43,7 @@ export async function logout() {
     currentUser = null;
     token = null;
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem("user");
     localStorage.setItem('logout-event', Date.now().toString())
 }
 
@@ -78,7 +79,7 @@ export async function login(payload: {
     avatarUrl: data.user.avatarUrl ?? data.user.avatar ?? undefined,
     two_factor_enabled: data.user.two_factor_enabled,
   };
-
+  localStorage.setItem("user", JSON.stringify(currentUser));
   return currentUser;
 }
 
@@ -94,4 +95,5 @@ export function resolveAvatarUrl(avatarUrl?: string | null) {
 export function setAvatarUrl(avatarUrl: string) {
   if (!currentUser) return;
   currentUser.avatarUrl = avatarUrl;
+  localStorage.setItem("user", JSON.stringify(currentUser));
 }
