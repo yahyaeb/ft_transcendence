@@ -658,7 +658,8 @@ export function onMount(): void {
     sessionStorage.removeItem('match1Score');
     sessionStorage.removeItem('match2Score');
     cleanup();
-    window.location.href = 'https://localhost:5173/#dashboard';
+    window.history.pushState({}, '', '/pong');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   };
   
   menuButton.addEventListener("click", menuClickHandler);

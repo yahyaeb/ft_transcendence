@@ -2,19 +2,20 @@ export function render(): string {
   return `
     <div id="gameContainer" class="text-center max-w-[700px] w-full mx-auto">
       <div id="topBar" class="flex justify-between items-center mb-6 px-10 py-[18px] bg-slate-800/40 rounded-xl backdrop-blur-xl border border-slate-400/10">
-        <div class="playerSection flex flex-col gap-1.5">
+        <div class="playerSection flex flex-col gap-1.5 relative">
+          <div id="player1Arrow" class="absolute -left-6 top-1/2 -translate-y-1/2 text-3xl gradient-purple opacity-0 transition-opacity duration-300">→</div>
           <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Joueur X</div>
           <div id="player1Name" class="text-lg font-semibold text-purple-400">Player 1</div>
           <div id="player1Score" class="text-[32px] font-extrabold tracking-tight gradient-purple">0</div>
         </div>
         <div class="flex flex-col items-center">
-          <div id="turnIndicator" class="text-xl font-bold text-slate-300 mb-2">Tour de X</div>
           <div id="drawScore" class="text-slate-400">
             <span class="text-sm">Nuls: </span>
             <span id="drawCount" class="font-bold">0</span>
           </div>
         </div>
-        <div class="playerSection flex flex-col gap-1.5">
+        <div class="playerSection flex flex-col gap-1.5 relative">
+          <div id="player2Arrow" class="absolute -right-6 top-1/2 -translate-y-1/2 text-3xl gradient-cyan opacity-0 transition-opacity duration-300">←</div>
           <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Joueur O</div>
           <div id="player2Name" class="text-lg font-semibold text-cyan-400">Player 2</div>
           <div id="player2Score" class="text-[32px] font-extrabold tracking-tight gradient-cyan">0</div>
@@ -91,7 +92,8 @@ export function onMount(): void {
   const player1ScoreElement = document.querySelector('#player1Score')!;
   const player2ScoreElement = document.querySelector('#player2Score')!;
   const drawCountElement = document.querySelector('#drawCount')!;
-  const turnIndicatorElement = document.querySelector('#turnIndicator')!;
+  const player1ArrowElement = document.querySelector('#player1Arrow')!;
+  const player2ArrowElement = document.querySelector('#player2Arrow')!;
   const resetButton = document.querySelector('#resetButton')!;
   const menuButton = document.querySelector('#menuButton')!;
 
@@ -310,11 +312,15 @@ function getUsernameFromToken(): string {
 
   function updateTurnIndicator() {
     if (currentPlayer === 'X') {
-      turnIndicatorElement.textContent = `Tour de ${player1Name}`;
-      turnIndicatorElement.className = 'text-xl font-bold mb-2 gradient-purple';
+      player1ArrowElement.classList.remove('opacity-0');
+      player1ArrowElement.classList.add('opacity-100');
+      player2ArrowElement.classList.remove('opacity-100');
+      player2ArrowElement.classList.add('opacity-0');
     } else {
-      turnIndicatorElement.textContent = `Tour de ${player2Name}`;
-      turnIndicatorElement.className = 'text-xl font-bold mb-2 gradient-cyan';
+      player2ArrowElement.classList.remove('opacity-0');
+      player2ArrowElement.classList.add('opacity-100');
+      player1ArrowElement.classList.remove('opacity-100');
+      player1ArrowElement.classList.add('opacity-0');
     }
   }
 
@@ -366,8 +372,8 @@ function getUsernameFromToken(): string {
       gameActive = false;
       drawCount++;
       updateScores();
-      turnIndicatorElement.textContent = 'Match nul!';
-      turnIndicatorElement.className = 'text-xl font-bold mb-2 text-yellow-400';
+      player1ArrowElement.classList.add('opacity-0');
+      player2ArrowElement.classList.add('opacity-0');
       setTimeout(() => {
         navigateToWinner("draw", player1Score, player2Score, player1Name, player2Name);
       }, 1200);
@@ -423,7 +429,8 @@ function getUsernameFromToken(): string {
 
   menuButton.addEventListener('click', () => {
     cleanup();
-    window.location.href = 'https://localhost:5173/#dashboard';
+    window.history.pushState({}, '', '/tictactoe');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
   drawBoard();
