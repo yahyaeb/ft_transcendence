@@ -30,6 +30,23 @@ CREATE TABLE IF NOT EXISTS matches(
     FOREIGN KEY(winner_id)  REFERENCES users(id)
 );
 
+
+CREATE TABLE IF NOT EXISTS tictactoe_matches (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  player1_id INTEGER NOT NULL,
+  player2_id INTEGER,
+  player2_name TEXT,
+  status TEXT NOT NULL DEFAULT 'active'
+    CHECK (status IN ('active','finished','cancelled')),
+  winner_id INTEGER,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  finished_at TEXT,
+
+  FOREIGN KEY(player1_id) REFERENCES users(id),
+  -- FOREIGN KEY(player2_id) REFERENCES users(id),
+  FOREIGN KEY(winner_id) REFERENCES users(id)
+);
+
 CREATE TABLE IF NOT EXISTS friendships (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -50,11 +67,11 @@ CREATE TABLE IF NOT EXISTS blocks (
   FOREIGN KEY(blocked_id) REFERENCES users(id)
 );
 
-INSERT INTO users (username, email, password)
-VALUES
-  ('Yahya', 'test1@test.com', '123456'),
-  ('yassine', 'test21@test.com', '123456'),
-  ('mehdi', 'test3@test.com', '123456'),
-  ('nisar', 'test4@test.com', '123456'),
-  ('iheb', 'test5@test.com', '123456'),
-  ('hicham', 'test6@test.com', '123456');
+-- INSERT INTO users (username, email, password)
+-- VALUES
+--   ('Yahya', 'test1@test.com', '123456'),
+--   ('yassine', 'test21@test.com', '123456'),
+--   ('mehdi', 'test3@test.com', '123456'),
+--   ('nisar', 'test4@test.com', '123456'),
+--   ('iheb', 'test5@test.com', '123456'),
+--   ('hicham', 'test6@test.com', '123456');

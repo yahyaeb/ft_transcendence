@@ -3,7 +3,9 @@ import {
   getMatches, 
   startMatch, 
   updateMatchStatus, 
-  finishedMatch 
+  finishedMatch,
+  startMatchTicTac,
+  finishMatchTicTac 
 } from "../controllers/matchesController.js"
 
 import { authMiddleware } from "../middleware/auth.js"
@@ -42,5 +44,28 @@ export async function matchesRoutes(fastify, options) {
             }
         }
     }, finishedMatch)
+    fastify.post('/starttic', startMatchTicTac)
+    fastify.patch("/:id/finishtic", {
+        schema: {
+            body: {
+            type: "object",
+            required: ["result"],
+            properties: {
+                result: { type: "string"},
+            },
+            additionalProperties: false,
+            },
+            response: {
+            200: {
+                type: "object",
+                properties: {
+                message: { type: "string" },
+                winner_id: { anyOf: [{ type: "integer" }, { type: "null" }] },
+                },
+            },
+            },
+        },
+    }, finishMatchTicTac);
+
 }
 

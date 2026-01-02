@@ -93,7 +93,6 @@ export async function getMeProfile(req, reply){
     })
 }
 
-
 export async function updatePassword(req, reply){
 
     const userId = req.user.id
@@ -247,6 +246,88 @@ export async function getHistory(req, reply) {
     `,
     [userId, userId]
   );
+
+  return reply.code(200).send({ matches });
+}
+
+
+export async function getUserTicStats(req, reply) {
+  const userId = Number(req.user?.id);
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+
+  const row = await db.get(
+    `
+    SELECT
+      SUM(CASE WHEN winner_id = ? THEN 1 ELSE 0 END) AS wins,
+      SUM(CASE WHEN winner_id = 9999 THEN 1 ELSE 0 END) AS losses,
+      SUM(CASE WHEN winner_id IS NULL THEN 1 ELSE 0 END) AS draws,
+      COUNT(*) AS total
+    FROM tictactoe_matches
+    WHERE player1_id = ?
+      AND status = 'finished';
+    `,
+    [userId, userId]
+  );
+
+  const wins = Number(row?.wins ?? 0);
+  const losses = Number(row?.losses ?? 0);
+  const draws = Number(row?.draws ?? 0);
+  const total = Number(row?.total ?? 0);
+  const winrate = total ? Math.round((wins / total) * 100) : 0;
+
+  return reply.code(200).send({
+    userId,
+    wins,
+    losses,
+    draws,
+    total,
+    winrate: `${winrate}%`,
+  });
+}
+
+
+export async function getTicHistory(req, reply) {
+  const userId = Number(req.user?.id);
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+
+  const rows = await db.all(
+    `
+    SELECT
+      id,
+      player2_name,
+      winner_id,
+      created_at
+    FROM tictactoe_matches
+    WHERE player1_id = ?
+      AND status = 'finished'
+    ORDER BY created_at DESC
+    LIMIT 50
+    `,
+    [userId]
+  );
+
+  const matches = rows.map(m => {
+    let outcome = 'draw';
+
+    if (m.winner_id === userId) {
+      outcome = 'win';
+    } else if (m.winner_id === 9999) {
+      outcome = 'loss';
+    }
+
+    return {
+      id: m.id,
+      opponent: m.player2_name || "Guest",
+      winner_id: m.winner_id,   // keep raw value if frontend needs it
+      outcome,                  // 'win' | 'loss' | 'draw'
+      played_at: m.created_at,
+    };
+  });
+
 
   return reply.code(200).send({ matches });
 }
