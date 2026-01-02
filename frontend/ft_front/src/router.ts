@@ -1,5 +1,6 @@
 import { isAuthenticated } from "./state/auth";
 
+
 type Route = {
   render: () => void;
   onMount?: () => void;
