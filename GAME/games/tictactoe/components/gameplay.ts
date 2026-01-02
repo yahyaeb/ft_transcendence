@@ -44,6 +44,41 @@ export function render(): string {
 
 let cleanupFunction: (() => void) | null = null;
 
+async function startMatchTicTac(guestName: string): Promise<string | null> {
+  const token = localStorage.getItem("access_token") || "";
+  if (!token) return null;
+
+  const existing = sessionStorage.getItem("ttt_match_id");
+  if (existing) return existing;
+
+  try {
+    const res = await fetch("https://localhost:4999/matches/starttic", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ guest_name: guestName }),
+    });
+
+    const data = await res.json().catch(() => ({} as any));
+    if (!res.ok) {
+      console.warn("startMatch failed:", data);
+      return null;
+    }
+
+    const id = String(data.id ?? "");
+    if (!id) return null;
+
+    sessionStorage.setItem("ttt_match_id", id);
+    sessionStorage.setItem("ttt_guest_name", guestName);
+    return id;
+  } catch (e) {
+    console.warn("startMatch error:", e);
+    return null;
+  }
+}
+
 export function onMount(): void {
   if (cleanupFunction) {
     cleanupFunction();
@@ -95,6 +130,8 @@ function getUsernameFromToken(): string {
 
   player1NameElement.textContent = player1Name;
   player2NameElement.textContent = player2Name;
+
+  startMatchTicTac(player2Name);
 
   interface GameCustomization {
     xColor: string;
@@ -331,6 +368,9 @@ function getUsernameFromToken(): string {
       updateScores();
       turnIndicatorElement.textContent = 'Match nul!';
       turnIndicatorElement.className = 'text-xl font-bold mb-2 text-yellow-400';
+      setTimeout(() => {
+        navigateToWinner("draw", player1Score, player2Score, player1Name, player2Name);
+      }, 1200);
       return;
     }
 
@@ -338,11 +378,23 @@ function getUsernameFromToken(): string {
     updateTurnIndicator();
   }
 
-  function navigateToWinner(winner: string, score1: number, score2: number, p1Name: string, p2Name: string) {
+  function navigateToWinner(
+    winner: "1" | "2" | "draw",
+    score1: number,
+    score2: number,
+    p1Name: string,
+    p2Name: string
+  ) {
     cleanup();
-    window.history.pushState({}, '', `/tictactoe/winner?winner=${winner}&score1=${score1}&score2=${score2}&player1=${encodeURIComponent(p1Name)}&player2=${encodeURIComponent(p2Name)}`);
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.history.pushState(
+      {},
+      "",
+      `/tictactoe/winner?winner=${winner}&score1=${score1}&score2=${score2}` +
+        `&player1=${encodeURIComponent(p1Name)}&player2=${encodeURIComponent(p2Name)}`
+    );
+    window.dispatchEvent(new PopStateEvent("popstate"));
   }
+
 
   function resetGame() {
     board = Array(9).fill(null);

@@ -48,37 +48,95 @@ export function render(): string {
 
 export function onMount(): void {
   const urlParams = new URLSearchParams(window.location.search);
-  const winner = urlParams.get('winner') || '1';
-  const score1 = urlParams.get('score1') || '0';
-  const score2 = urlParams.get('score2') || '0';
-  const player1 = urlParams.get('player1') || 'Player 1';
-  const player2 = urlParams.get('player2') || 'Player 2';
-  const winnerName = winner === '1' ? player1 : player2;
 
-  const winnerTitle = document.getElementById('winnerTitle')!;
-  winnerTitle.textContent = `${winnerName} Gagne!`;
+  const winnerParam = urlParams.get("winner"); // expect: "1" | "2" | "draw"
+  const score1 = urlParams.get("score1") || "0";
+  const score2 = urlParams.get("score2") || "0";
+  const player1 = urlParams.get("player1") || "Player 1";
+  const player2 = urlParams.get("player2") || "Guest";
 
-  if (winner === '1') {
-    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-purple';
-    winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))';
-  } else {
-    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-cyan';
-    winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))';
+  const matchId =
+    urlParams.get("matchId") || sessionStorage.getItem("ttt_match_id") || "";
+
+  // ---------- UI winner name ----------
+  const winnerName =
+    winnerParam === "1" ? player1 :
+    winnerParam === "2" ? player2 :
+    "Match nul";
+
+  const winnerTitle = document.getElementById("winnerTitle") as HTMLElement | null;
+  if (winnerTitle) {
+    winnerTitle.textContent =
+      winnerParam === "draw" ? "Match nul !" : `${winnerName} Gagne!`;
+
+    if (winnerParam === "1") {
+      winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-purple";
+      winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))";
+    } else if (winnerParam === "2") {
+      winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-cyan";
+      winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))";
+    } else {
+      // draw style (choose whatever you want)
+      winnerTitle.className = "text-6xl font-extrabold mb-4 text-yellow-300";
+      winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(251, 191, 36, 0.6))";
+    }
   }
 
-  document.getElementById('player1Name')!.textContent = player1;
-  document.getElementById('player2Name')!.textContent = player2;
-  document.getElementById('finalScore1')!.textContent = score1;
-  document.getElementById('finalScore2')!.textContent = score2;
+  // ---------- fill UI ----------
+  const p1El = document.getElementById("player1Name");
+  const p2El = document.getElementById("player2Name");
+  const s1El = document.getElementById("finalScore1");
+  const s2El = document.getElementById("finalScore2");
 
-  const replayBtn = document.getElementById('replayBtn');
-  replayBtn?.addEventListener('click', () => {
-    window.history.pushState({}, '', '/tictactoe/gameplay');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+  if (p1El) p1El.textContent = player1;
+  if (p2El) p2El.textContent = player2;
+  if (s1El) s1El.textContent = score1;
+  if (s2El) s2El.textContent = score2;
+
+  // ---------- Backend: finish match ----------
+  const result =
+    winnerParam === "1" ? "p1" :
+    winnerParam === "2" ? "p2" :
+    "draw"; // <-- important
+
+  async function finishMatch(): Promise<void> {
+    if (!matchId) return;
+
+    const token = localStorage.getItem("access_token") || "";
+    if (!token) return;
+
+    try {
+      const res = await fetch(`https://localhost:4999/matches/${matchId}/finishtic`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ result }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        console.warn("finishMatch failed:", data);
+        return;
+      }
+
+      sessionStorage.removeItem("ttt_match_id");
+    } catch (e) {
+      console.warn("finishMatch error:", e);
+    }
+  }
+
+  void finishMatch();
+
+  const replayBtn = document.getElementById("replayBtn");
+  replayBtn?.addEventListener("click", () => {
+    window.history.pushState({}, "", "/tictactoe/gameplay");
+    window.dispatchEvent(new PopStateEvent("popstate"));
   });
 
-  const menuBtn = document.getElementById('menuBtn');
-  menuBtn?.addEventListener('click', () => {
-    window.location.href = 'https://localhost:5173/#dashboard';
+  const menuBtn = document.getElementById("menuBtn");
+  menuBtn?.addEventListener("click", () => {
+    window.location.href = "https://localhost:5173/#dashboard";
   });
 }
