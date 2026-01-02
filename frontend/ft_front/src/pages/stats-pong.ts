@@ -11,7 +11,7 @@ type Match = {
   score_p1: number;
   score_p2: number;
   winner_id: number;
-  created_at: string; // "YYYY-MM-DD HH:mm:ss"
+  created_at: string;
 };
 
 type HistoryResponse = { matches: Match[] };
@@ -86,7 +86,7 @@ export function onMountStatsPong() {
   }
 
   const me = getUser();
-  const myId = Number(me?.id);           // best if your state has id
+  const myId = Number(me?.id);
   const myName = String(me?.username ?? "");
 
   const tbody = document.getElementById("history-body") as HTMLTableSectionElement | null;
@@ -126,14 +126,11 @@ export function onMountStatsPong() {
 
       tbody.innerHTML = matches
         .map((m) => {
-          // Determine if you're player1 or player2 (by name)
           const iAmP1 = m.player1_name === myName;
 
           const myScore = iAmP1 ? m.score_p1 : m.score_p2;
           const oppScore = iAmP1 ? m.score_p2 : m.score_p1;
           const opponent = iAmP1 ? m.player2_name : m.player1_name;
-
-          // Prefer winner_id if you have myId; fallback to score compare.
           const isWin = Number.isFinite(myId) ? (m.winner_id === myId) : (myScore > oppScore);
 
           const resultText = isWin ? "WIN" : "LOSS";

@@ -289,8 +289,8 @@ export function onMountDashboard(): void {
 
 
   function renderStats(gameKey: "pong" | "tictactoe") {
-    const winsPong = document.getElementById("wins-pong");
-    const winsSimple = document.getElementById("wins-simple");
+  const winsPong = document.getElementById("wins-pong");
+  const winsSimple = document.getElementById("wins-simple");
 
     if (gameKey === "pong") {
       winsPong?.classList.remove("hidden");
@@ -298,20 +298,11 @@ export function onMountDashboard(): void {
       return;
     }
 
-
     // TicTacToe layout (simple)
     winsPong?.classList.add("hidden");
     winsSimple?.classList.remove("hidden");
-
-    const data = gameStats.tictactoe;
-    (document.querySelector("[data-stat='wins-total']") as HTMLElement).textContent =
-      data.winsTotal.toString();
-
-    (document.querySelector("[data-stat='defeats']") as HTMLElement).textContent =
-      data.defeats.toString();
-    (document.querySelector("[data-stat='winrate']") as HTMLElement).textContent =
-      data.winrate;
   }
+
 
   const avatarBtn = document.getElementById("avatar-btn");
 
@@ -360,6 +351,45 @@ export function onMountDashboard(): void {
     if (el) el.textContent = String(value);
   }
 
+  type TicStatsResponse = {
+  userId: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  total: number;
+  winrate: string; // "42%"
+};
+
+  async function fetchTicStats() {
+    try {
+      const res = await fetch(`${API_BASE}/users/me/ticstats`, {
+        method: "GET",
+        headers: authHeaders,
+      });
+
+      const data = (await res.json().catch(() => ({}))) as Partial<TicStatsResponse>;
+      if (!res.ok) throw new Error((data as any)?.error ?? (data as any)?.message ?? "Tic stats load failed");
+
+      const wins = Number(data.wins ?? 0);
+      const losses = Number(data.losses ?? 0);
+      const winrate = String(data.winrate ?? "0%");
+
+      // UI cards
+      setText("[data-stat='wins-total']", wins);
+      setText("[data-stat='defeats']", losses);
+      setText("[data-stat='winrate']", winrate);
+
+      // chart (simple)
+      renderChartSeries({
+        labels: ["Start", "Now"],
+        wins: [0, wins],
+        losses: [0, losses],
+      });
+    } catch (e: any) {
+      console.warn("Failed to load tic stats:", e?.message ?? e);
+    }
+  }
+
   async function fetchPongStats() {
     try {
       const res = await fetch(`${API_BASE}/users/me/stats`, {
@@ -393,14 +423,15 @@ export function onMountDashboard(): void {
       console.warn("Failed to load pong stats:", e?.message ?? e);
     }
   }
-  function renderChartFromGameStats(gameKey: "pong" | "tictactoe") {
-    const data = gameStats[gameKey];
-      renderChartSeries({
-      labels: data.labels,
-      wins: data.wins,
-      losses: data.losses,
-    });
-  }
+
+  // function renderChartFromGameStats(gameKey: "pong" | "tictactoe") {
+  //   const data = gameStats[gameKey];
+  //     renderChartSeries({
+  //     labels: data.labels,
+  //     wins: data.wins,
+  //     losses: data.losses,
+  //   });
+  // }
   
   switchButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -431,9 +462,9 @@ export function onMountDashboard(): void {
       renderStats(activeGame);
 
       if (activeGame === "pong") {
-        fetchPongStats(); // draws real chart
+        fetchPongStats();
       } else {
-        renderChartFromGameStats(activeGame); // mock chart
+        fetchTicStats();
       }
 
 
@@ -756,12 +787,9 @@ export function onMountDashboard(): void {
 
   renderStats(activeGame);
   if (activeGame === "pong") {
-    fetchPongStats(); // this draws the real chart
+    fetchPongStats();
   } else {
-    renderChartFromGameStats(activeGame); // mock chart for tictactoe
+    fetchTicStats();
   }
-
-  // if (activeGame === "pong")
-  //   fetchPongStats();
 
 }
