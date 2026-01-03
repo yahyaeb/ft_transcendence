@@ -1,4 +1,4 @@
-import { login } from "../state/auth.ts";
+import { login } from "../state/auth";
 import { getLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 
@@ -26,11 +26,11 @@ export function renderLogin() {
         <!-- Title -->
         <h1 class="text-4xl font-extrabold text-center mb-2 gradient-purple"
             style="filter: drop-shadow(0 0 20px rgba(168,139,250,0.5))">
-          ${t.login}
+          ${t.login_title}
         </h1>
 
         <p class="text-center text-slate-400 mb-8">
-          ${t.login_description ?? "Connecte-toi pour accéder à ton profil"}
+          ${t.login_description}
         </p>
 
         <!-- Form -->
@@ -39,7 +39,7 @@ export function renderLogin() {
           <input
             id="email"
             type="text"
-            placeholder="${t.email ?? "Email"}"
+            placeholder="${t.email}"
             required
             class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
           />
@@ -48,7 +48,7 @@ export function renderLogin() {
             <input
               id="password"
               type="password"
-              placeholder="${t.password ?? "Mot de passe"}"
+              placeholder="${t.password}"
               required
               class="w-full px-5 py-4 pr-12 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
             />
@@ -72,7 +72,7 @@ export function renderLogin() {
                     <!-- 2FA Toggle -->
           <div class="flex items-center justify-between text-sm text-slate-400">
             <label for="twofa-toggle" class="select-none">
-              j'ai un code à double authentification
+              ${t.twofa_label}
             </label>
             <input
               id="twofa-toggle"
@@ -85,7 +85,7 @@ export function renderLogin() {
             type="text"
             inputmode="numeric"
             maxlength="6"
-            placeholder="Tapez votre code"
+            placeholder="${t.twofa_code}"
             class="hidden w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition"
           />
 
@@ -100,16 +100,16 @@ export function renderLogin() {
         <div class="mt-8 text-center space-y-3">
 
           <p class="text-sm text-slate-400">
-            ${t.no_account ?? "Pas encore de compte ?"}
+            ${t.no_account}
             <a href="#signup"
                class="text-purple-400 hover:underline ml-1">
-              ${t.signup ?? "Créer un compte"}
+              ${t.signup}
             </a>
           </p>
 
           <a href="#home"
              class="block text-sm text-slate-400 hover:text-purple-400 transition">
-            ← ${t.back_home ?? "Retour à l'accueil"}
+            ← ${t.back_home}
           </a>
 
         </div>
@@ -130,6 +130,8 @@ export function onMountLogin() {
 
   if (!form || !emailInput || !passwordInput || !twofaToggle || !twofaCodeInput) return;
 
+  const lang = getLanguage();
+  const t = translations[lang];
   const eyeIcon = document.getElementById("eye-icon");
   togglePasswordBtn?.addEventListener("click", () => {
     const isHidden = passwordInput.type === "password";
@@ -156,18 +158,17 @@ export function onMountLogin() {
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    const code = twofaToggle.checked ? twofaCodeInput.value.trim() : undefined;
 
     if (!email || !password) {
-      alert("Email and password are required.");
+      alert(t.login_error_required);
       return;
     }
 
     try {
-      await login({email, password, code });
+      await login({ email, password });
       window.location.hash = "#dashboard";
     } catch (err: any) {
-      alert(err?.message ?? "Login failed");
+      alert(err?.message ?? t.login_error_generic);
     }
   });
 }

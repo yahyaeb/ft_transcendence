@@ -34,10 +34,6 @@ export function getUser(): User | null {
 }
 
 
-// export function getAvatar(): string {
-//   return currentUser?.avatarUrl ?? "null";
-// }
-
 export async function logout() {
 
     currentUser = null;

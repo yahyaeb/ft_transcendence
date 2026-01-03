@@ -30,7 +30,7 @@ export function renderProfile() {
           </h1>
           <a href="#dashboard"
              class="text-sm text-slate-400 hover:text-purple-400 transition">
-            ← Dashboard
+            ← ${t.title}
           </a>
         </div>
 

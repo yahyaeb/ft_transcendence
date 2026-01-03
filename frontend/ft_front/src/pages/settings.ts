@@ -1,3 +1,5 @@
+import { getLanguage } from "../state/language";
+import { translations } from "../i18n/translations";
 import { getUser, isAuthenticated, getToken, setAvatarUrl } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
 
@@ -13,6 +15,9 @@ export function renderSettings() {
     return;
   }
 
+  const lang = getLanguage();
+  const t = translations[lang];
+
   const user = getUser();
   const is2faEnabled = !!user?.two_factor_enabled; 
 
@@ -24,12 +29,12 @@ export function renderSettings() {
         <!-- Title -->
         <h1 class="text-4xl font-extrabold mb-10 gradient-purple"
             style="filter: drop-shadow(0 0 20px rgba(168,139,250,0.5))">
-          Settings
+          ${t.settings_title}
         </h1>
 
         <!-- AVATAR SECTION -->
         <section class="mb-12">
-          <h2 class="text-xl font-semibold mb-4">Avatar</h2>
+          <h2 class="text-xl font-semibold mb-4">${t.settings_avatar}</h2>
 
           <div class="relative w-24 h-24">
             <img
@@ -41,7 +46,7 @@ export function renderSettings() {
 
             <button
               id="upload-avatar-btn"
-              title="Changer l’avatar"
+              title="${t.settings_change_avatar}"
               class="absolute bottom-0 right-0 z-10
                     w-8 h-8 rounded-full
                     bg-gradient-to-br from-indigo-500 to-purple-600
@@ -62,13 +67,13 @@ export function renderSettings() {
 
         <!-- USERNAME SECTION -->
         <section class="mb-12">
-          <h2 class="text-xl font-semibold mb-4">Username</h2>
+          <h2 class="text-xl font-semibold mb-4">${t.settings_username}</h2>
 
           <div class="space-y-3">
             <input
               id="username-input"
               type="text"
-              placeholder="Username"
+              placeholder="${t.settings_username_placeholder}"
               value="${user?.username ?? ""}"
               class="w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
             />
@@ -79,7 +84,7 @@ export function renderSettings() {
                 id="change-username-btn"
                 class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition"
               >
-                Change
+                ${t.settings_change}
               </button>
               <p id="username-msg" class="text-sm text-slate-400"></p>
             </div>
@@ -88,7 +93,7 @@ export function renderSettings() {
 
         <!-- PASSWORD SECTION -->
         <section class="mb-12">
-          <h2 class="text-xl font-semibold mb-4">Current password</h2>
+          <h2 class="text-xl font-semibold mb-4">${t.settings_pw_title}</h2>
 
           <div class="space-y-3">
 
@@ -97,7 +102,7 @@ export function renderSettings() {
               <input
                 id="old-password-input"
                 type="password"
-                placeholder="Current password"
+                placeholder="${t.settings_current_password}"
                 class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
               />
             </div>
@@ -107,7 +112,7 @@ export function renderSettings() {
               <input
                 id="new-password-input"
                 type="password"
-                placeholder="New password"
+                placeholder="${t.settings_new_password}"
                 class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
               />
 
@@ -115,7 +120,7 @@ export function renderSettings() {
                 type="button"
                 id="toggle-password-btn"
                 class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-400 transition"
-                title="Hide / Show password">
+                title="${t.settings_password_toggle}">
 
                 <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -150,7 +155,7 @@ export function renderSettings() {
               <input
                 id="new-password-confirm-input"
                 type="password"
-                placeholder="Confirm new password"
+                placeholder="${t.settings_confirm_password}"
                 class="w-full px-5 py-4 pr-14 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50 transition"
               />
             </div>
@@ -162,7 +167,7 @@ export function renderSettings() {
                 id="change-password-btn"
                 class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition"
               >
-                Change
+                ${t.settings_change}
               </button>
               <p id="password-msg" class="text-sm text-slate-400"></p>
             </div>
@@ -170,73 +175,65 @@ export function renderSettings() {
           </div>
         </section>
 
+        <!-- 2FA SECTION -->
+        <section class="mb-12">
+          <h2 class="text-xl font-semibold mb-4">${t.settings_2fa_title}</h2>
 
-          <!-- TODO BACKEND -->
-          <!--
-            Ici :
-            - vérifier la sécurité du mot de passe
-            - envoyer au backend (PATCH /users/password)
-          -->
-        </section>
+          <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-600/20">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="font-semibold">
+                  ${t.settings_2fa_status}
+                  <span id="twofa-status" class="${is2faEnabled ? "text-emerald-400" : "text-slate-400"}">
+                    ${is2faEnabled ? t.settings_enabled : t.settings_disabled}
+                  </span>
+                </p>
+                <p class="text-sm text-slate-400 mt-1">
+                  ${t.settings_2fa_description}
+                </p>
+              </div>
 
-          <!-- 2FA SECTION -->
-              <section class="mb-12">
-                <h2 class="text-xl font-semibold mb-4">Two-Factor Authentication (2FA)</h2>
+              <div class="flex gap-3">
+                <button
+                  id="twofa-enable-btn"
+                  class="px-5 py-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold transition disabled:opacity-50"
+                  ${is2faEnabled ? "disabled" : ""}>
+                  ${t.settings_enable}
+                </button>
 
-                <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-600/20">
-                  <div class="flex items-center justify-between gap-4">
-                    <div>
-                      <p class="font-semibold">
-                        Status:
-                        <span id="twofa-status" class="${is2faEnabled ? "text-emerald-400" : "text-slate-400"}">
-                          ${is2faEnabled ? "Enabled" : "Disabled"}
-                        </span>
-                      </p>
-                      <p class="text-sm text-slate-400 mt-1">
-                        Use an authenticator app (Google Authenticator, Authy, etc.).
-                      </p>
-                    </div>
-
-                    <div class="flex gap-3">
-                      <button
-                        id="twofa-enable-btn"
-                        class="px-5 py-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold transition disabled:opacity-50"
-                        ${is2faEnabled ? "disabled" : ""}>
-                        Enable
-                      </button>
-
-                      <button
-                        id="twofa-disable-btn"
-                        class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition disabled:opacity-50"
-                        ${is2faEnabled ? "" : "disabled"}>
-                        Disable
-                      </button>
-                    </div>
-                  </div>
-                  <div id="twofa-setup" class="hidden mt-4 p-4 rounded-xl bg-slate-900/50 border border-slate-600/20">
-                    <img id="twofa-qr-img" class="w-44 h-44 rounded-lg bg-white p-2 mx-auto" />
-                    <input
-                      id="twofa-code"
-                      placeholder="123456"
-                      inputmode="numeric"
-                      autocomplete="one-time-code"
-                      class="mt-4 w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white"
-                    />
-                    <button
-                      id="twofa-confirm"
-                      class="mt-3 w-full px-6 py-3 rounded-xl bg-emerald-600/90 text-white font-semibold">
-                      Confirm
-                    </button>
-                    <p id="twofa-msg" class="mt-2 text-sm text-slate-400"></p>
-                  </div>
-          </section>  
+                <button
+                  id="twofa-disable-btn"
+                  class="px-5 py-3 rounded-xl bg-slate-700/60 border border-slate-500/20 text-white font-semibold hover:bg-slate-700 transition disabled:opacity-50"
+                  ${is2faEnabled ? "" : "disabled"}>
+                  ${t.settings_disable}
+                </button>
+              </div>
+            </div>
+            <div id="twofa-setup" class="hidden mt-4 p-4 rounded-xl bg-slate-900/50 border border-slate-600/20">
+              <img id="twofa-qr-img" class="w-44 h-44 rounded-lg bg-white p-2 mx-auto" />
+              <input
+                id="twofa-code"
+                placeholder="${t.settings_2fa_code_placeholder}"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                class="mt-4 w-full px-5 py-4 bg-slate-900/60 border border-slate-600/30 rounded-xl text-white"
+              />
+              <button
+                id="twofa-confirm"
+                class="mt-3 w-full px-6 py-3 rounded-xl bg-emerald-600/90 text-white font-semibold">
+                ${t.settings_confirm}
+              </button>
+              <p id="twofa-msg" class="mt-2 text-sm text-slate-400"></p>
+              ${t.settings_scan_qr}
+            </div>
+        </section>  
 
         <!-- ACTIONS -->
         <div class="flex justify-between items-center mt-10">
           <a
             href="#profile"
             class="text-slate-400 hover:text-purple-400 transition">
-            ← Retour au profil
+            ← ${t.settings_back_profile}
           </a>
 
 
@@ -438,7 +435,7 @@ export function onMountSettings() {
       setupStarted = true;
       if (confirmBtn) confirmBtn.disabled = false;
 
-      setMsg("Scan the QR and enter the 6-digit code.");
+      setMsg("");
       codeInput?.focus();
     } catch (e: any) {
       setupStarted = false;
