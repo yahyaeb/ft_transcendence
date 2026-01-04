@@ -695,6 +695,7 @@ export function onMountDashboard(): void {
           const res = await fetch(`${API_BASE}/friends/addFriend`, {
             method: "POST",
             credentials: "include",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId }),
           });
 
@@ -711,6 +712,7 @@ export function onMountDashboard(): void {
           const res = await fetch(`${API_BASE}/friends/blockerUser`, {
             method: "POST",
             credentials: "include",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId }),
           });
 
@@ -727,6 +729,7 @@ export function onMountDashboard(): void {
           const res = await fetch(`${API_BASE}/friends/blockerUser`, {
             method: "POST",
             credentials: "include",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId }),
           });
 
@@ -743,6 +746,7 @@ export function onMountDashboard(): void {
           const res = await fetch(`${API_BASE}/friends/unblockUser`, {
             method: "POST",
             credentials: "include",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId }),
           });
 

@@ -79,9 +79,6 @@ export async function blockUser(req, reply) {
 
     if (me === other)
         return reply.code(400).send({ error: "Cannot block yourself" });
-    console.log("\n\n\n");
-    console.log(me, other);
-    console.log("\n\n\n");
     await db.run(
         "INSERT OR IGNORE INTO blocks (blocker_id, blocked_id) VALUES (?, ?)",
         [me, other]
