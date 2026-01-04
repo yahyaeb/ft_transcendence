@@ -50,11 +50,10 @@ export function onMount(): void {
   (async () => {
     const me = await getCurrentUser();
     if (!me) {
-      window.location.href = "https://localhost:5173/#login"; // or your route
+      window.location.href = "https://localhost:5173/#login"; 
       return;
     }
 
-    // ✅ now you can use the username safely
     let player1Name = me.username ?? "Player 1";
     localStorage.setItem("player1", player1Name);
   if (cleanupFunction){

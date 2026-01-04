@@ -1,5 +1,5 @@
 //src/pages/stats-tictactoe.ts
-import { fetchMe, getUser } from "../state/auth";
+import { fetchMe } from "../state/auth";
 
 const API_BASE = "https://localhost:4999";
 const HISTORY_URL = `${API_BASE}/users/me/tichistory`;
@@ -106,7 +106,7 @@ export function onMountStatsTicTacToe() {
       if (countEl) countEl.textContent = `${matches.length} match(es)`;
       if (!tbody) return;
 
-      errEl?.classList.add("hidden"); // ✅ hide stale errors
+      errEl?.classList.add("hidden");
 
       if (matches.length === 0) {
         tbody.innerHTML = "";
