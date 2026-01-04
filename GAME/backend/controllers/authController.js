@@ -239,3 +239,14 @@ export async function checkTwoFA(req, reply) {
 
   return reply.code(200).send({ enabled });
 }
+
+export async function logout(req, reply) {
+    reply
+    .clearCookie("access_token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+    })
+    .send({ ok: true });
+}

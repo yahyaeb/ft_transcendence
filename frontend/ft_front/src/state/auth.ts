@@ -86,10 +86,19 @@ export async function login(payload: {
 }
 
 export async function logout(): Promise<void> {
-  currentUser = null;
+  await fetch(`${API_BASE}/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  }).catch(() => {});
+
   localStorage.removeItem("user");
   localStorage.setItem("logout-event", Date.now().toString());
+
+  // THIS TAB
+  window.location.hash = "#login";
+  window.location.reload();
 }
+
 
 export function resolveAvatarUrl(avatarUrl?: string | null) {
   if (!avatarUrl || avatarUrl.trim().length === 0) return null;

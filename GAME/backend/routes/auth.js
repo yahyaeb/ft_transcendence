@@ -1,4 +1,4 @@
-import { signupController, loginController, verifyTwoFactorSetup, enableTwoFactor, disable2fa, checkTwoFA} from '../controllers/authController.js';
+import { signupController, loginController, verifyTwoFactorSetup, enableTwoFactor, disable2fa, checkTwoFA, logout} from '../controllers/authController.js';
 import { authMiddleware } from "../middleware/auth.js";
 
 export async function authRoutes(fastify, options) {
@@ -39,6 +39,7 @@ export async function authRoutes(fastify, options) {
   fastify.post('/2fa/verify-setup', { preHandler: [authMiddleware] }, verifyTwoFactorSetup)
   fastify.post('/2fa/disable', { preHandler: [authMiddleware] }, disable2fa)
   fastify.get('/2fa/status', { preHandler: [authMiddleware] }, checkTwoFA)
+  fastify.post('/logout', { preHandler: [authMiddleware] }, logout)
 }
 
 //generate QR code for the authenticator: https://www.the-qrcode-generator.com/ 
