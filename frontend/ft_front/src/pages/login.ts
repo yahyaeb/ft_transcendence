@@ -1,4 +1,4 @@
-import { login } from "../state/auth.ts";
+import { login, fetchMe} from "../state/auth.ts";
 import { getLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 

@@ -1,5 +1,5 @@
 // src/pages/pongStats.ts
-import { getToken, getUser } from "../state/auth";
+import { fetchMe, getUser } from "../state/auth";
 
 const API_BASE = "https://localhost:4999";
 const HISTORY_URL = `${API_BASE}/users/me/history`;
@@ -79,33 +79,33 @@ export function renderStatsPong() {
 }
 
 export function onMountStatsPong() {
-  const token = getToken();
-  if (!token) {
-    window.location.hash = "#login";
-    return;
-  }
-
-  const me = getUser();
-  const myId = Number(me?.id);
-  const myName = String(me?.username ?? "");
-
-  const tbody = document.getElementById("history-body") as HTMLTableSectionElement | null;
-  const emptyEl = document.getElementById("history-empty");
-  const errEl = document.getElementById("history-error");
-  const countEl = document.getElementById("history-count");
-
-  const authHeaders = { Authorization: `Bearer ${token}` };
-
-  const showError = (msg: string) => {
-    if (errEl) {
-      errEl.textContent = msg;
-      errEl.classList.remove("hidden");
-    }
-  };
-
   (async () => {
+    const me = (await fetchMe()) ?? getUser();
+    if (!me) {
+      window.location.hash = "#login";
+      return;
+    }
+
+    const myId = Number(me.id);
+    const myName = String(me.username ?? "");
+
+    const tbody = document.getElementById("history-body") as HTMLTableSectionElement | null;
+    const emptyEl = document.getElementById("history-empty");
+    const errEl = document.getElementById("history-error");
+    const countEl = document.getElementById("history-count");
+
+    const showError = (msg: string) => {
+      if (errEl) {
+        errEl.textContent = msg;
+        errEl.classList.remove("hidden");
+      }
+    };
+
     try {
-      const res = await fetch(HISTORY_URL, { method: "GET", headers: authHeaders });
+      const res = await fetch(HISTORY_URL, {
+        method: "GET",
+        credentials: "include",
+      });
 
       const data = (await res.json().catch(() => ({}))) as Partial<HistoryResponse>;
       if (!res.ok) throw new Error((data as any)?.error ?? (data as any)?.message ?? "History load failed");
@@ -131,6 +131,7 @@ export function onMountStatsPong() {
           const myScore = iAmP1 ? m.score_p1 : m.score_p2;
           const oppScore = iAmP1 ? m.score_p2 : m.score_p1;
           const opponent = iAmP1 ? m.player2_name : m.player1_name;
+
           const isWin = Number.isFinite(myId) ? (m.winner_id === myId) : (myScore > oppScore);
 
           const resultText = isWin ? "WIN" : "LOSS";

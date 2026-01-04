@@ -13,7 +13,7 @@ import cors from "@fastify/cors";
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-
+import fastifyCookie from '@fastify/cookie';
 // <<<<<<< HEAD
 
 // const fastify = fastifyFactory({logger: true })
@@ -60,6 +60,11 @@ fastify.register(swaggerUI, {
 fastify.get('/healthz', async(req, reply) =>{
   return { status: "ok"}
 })
+
+fastify.register(fastifyCookie, {
+  secret: process.env.COOKIE_SECRET,
+});
+
 fastify.register(usersRoutes, { prefix: '/users' })
 fastify.register(authRoutes, { prefix: '/auth'})
 fastify.register(matchesRoutes, { prefix: '/matches'})

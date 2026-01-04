@@ -97,21 +97,21 @@ export function onMount(): void {
   const result =
     winnerParam === "1" ? "p1" :
     winnerParam === "2" ? "p2" :
-    "draw"; // <-- important
+    "draw"; 
 
   async function finishMatch(): Promise<void> {
     if (!matchId) return;
 
-    const token = localStorage.getItem("access_token") || "";
-    if (!token) return;
+    // const token = localStorage.getItem("access_token") || "";
+    // if (!token) return;
 
     try {
       const res = await fetch(`https://localhost:4999/matches/${matchId}/finishtic`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ result }),
       });
 
@@ -135,8 +135,9 @@ export function onMount(): void {
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
 
-  const menuBtn = document.getElementById("menuBtn");
-  menuBtn?.addEventListener("click", () => {
-    window.location.href = "https://localhost:5173/#dashboard";
+   const menuBtn = document.getElementById('menuBtn');
+  menuBtn?.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'https://localhost:5173/#dashboard';
   });
 }

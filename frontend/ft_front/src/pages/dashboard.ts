@@ -202,13 +202,6 @@ export function onMountDashboard(): void {
   paintAvatars(true);
 
   const API_BASE = "https://localhost:4999";
-  const TOKEN_KEY = "access_token";
-  const token = localStorage.getItem(TOKEN_KEY) || "";
-  if (!token)
-      return;
-
-  const authHeaders = { Authorization: `Bearer ${token}` };
-  const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
 
 
   const switchButtons = document.querySelectorAll<HTMLButtonElement>(
@@ -326,12 +319,13 @@ export function onMountDashboard(): void {
   });
 
   pongBtn?.addEventListener('click', () => {
-    window.location.href = `https://localhost:5174/pong?token=${encodeURIComponent(token)}`;
+    window.location.href = `https://localhost:5174/pong`;
   });
 
   tictactoeBtn?.addEventListener('click', () => {
-    window.location.href = `https://localhost:5174/tictactoe?token=${encodeURIComponent(token)}`;
+    window.location.href = `https://localhost:5174/tictactoe`;
   });
+
 
   type PongStatsResponse = {
     userId: number;
@@ -364,7 +358,7 @@ export function onMountDashboard(): void {
     try {
       const res = await fetch(`${API_BASE}/users/me/ticstats`, {
         method: "GET",
-        headers: authHeaders,
+        credentials: "include",
       });
 
       const data = (await res.json().catch(() => ({}))) as Partial<TicStatsResponse>;
@@ -374,12 +368,10 @@ export function onMountDashboard(): void {
       const losses = Number(data.losses ?? 0);
       const winrate = String(data.winrate ?? "0%");
 
-      // UI cards
       setText("[data-stat='wins-total']", wins);
       setText("[data-stat='defeats']", losses);
       setText("[data-stat='winrate']", winrate);
 
-      // chart (simple)
       renderChartSeries({
         labels: ["Start", "Now"],
         wins: [0, wins],
@@ -394,7 +386,7 @@ export function onMountDashboard(): void {
     try {
       const res = await fetch(`${API_BASE}/users/me/stats`, {
         method: "GET",
-        headers: authHeaders,
+        credentials: "include",
       });
 
       const data = (await res.json().catch(() => ({}))) as Partial<PongStatsResponse>;
@@ -412,7 +404,6 @@ export function onMountDashboard(): void {
       setText("[data-stat='defeats']", losses);
       setText("[data-stat='winrate']", winrate);
 
-      // ✅ chart from totals
       renderChartSeries({
         labels: ["Start", "Now"],
         wins: [0, totalWins],
@@ -424,14 +415,6 @@ export function onMountDashboard(): void {
     }
   }
 
-  // function renderChartFromGameStats(gameKey: "pong" | "tictactoe") {
-  //   const data = gameStats[gameKey];
-  //     renderChartSeries({
-  //     labels: data.labels,
-  //     wins: data.wins,
-  //     losses: data.losses,
-  //   });
-  // }
   
   switchButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -638,7 +621,7 @@ export function onMountDashboard(): void {
   async function loadFriends(): Promise<Player[]> {
     const res = await fetch(`${API_BASE}/friends/friendsList`, {
       method: "GET",
-      headers: authHeaders,
+      credentials: "include",
     });
 
     const data = await res.json().catch(() => ({}));
@@ -657,7 +640,7 @@ export function onMountDashboard(): void {
   async function loadUsers(): Promise<Player[]> {
     const res = await fetch(`${API_BASE}/users`, {
       method: "GET",
-      headers: authHeaders,
+      credentials: "include",
     });
 
     const data = await res.json().catch(() => ({}));
@@ -711,7 +694,7 @@ export function onMountDashboard(): void {
 
           const res = await fetch(`${API_BASE}/friends/addFriend`, {
             method: "POST",
-            headers: jsonHeaders,
+            credentials: "include",
             body: JSON.stringify({ userId }),
           });
 
@@ -727,7 +710,7 @@ export function onMountDashboard(): void {
 
           const res = await fetch(`${API_BASE}/friends/blockerUser`, {
             method: "POST",
-            headers: jsonHeaders,
+            credentials: "include",
             body: JSON.stringify({ userId }),
           });
 
@@ -743,7 +726,7 @@ export function onMountDashboard(): void {
 
           const res = await fetch(`${API_BASE}/friends/blockerUser`, {
             method: "POST",
-            headers: jsonHeaders,
+            credentials: "include",
             body: JSON.stringify({ userId }),
           });
 
@@ -759,7 +742,7 @@ export function onMountDashboard(): void {
 
           const res = await fetch(`${API_BASE}/friends/unblockUser`, {
             method: "POST",
-            headers: jsonHeaders,
+            credentials: "include",
             body: JSON.stringify({ userId }),
           });
 
@@ -780,7 +763,7 @@ export function onMountDashboard(): void {
   friendsListEl?.addEventListener("click", handleListClick);
 
   const pingTimer = window.setInterval(() => {
-    fetch(`${API_BASE}/users/me/ping`, { method: "PATCH", headers: authHeaders }).catch(() => {});
+    fetch(`${API_BASE}/users/me/ping`, { method: "PATCH", credentials: "include", }).catch(() => {});
   }, 20_000);
 
   window.addEventListener("hashchange", () => clearInterval(pingTimer), { once: true });

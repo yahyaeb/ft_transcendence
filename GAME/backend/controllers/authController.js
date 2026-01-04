@@ -97,7 +97,9 @@ export async function loginController(req, reply) {
       }
     }
 
-    const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret'
+    const JWT_SECRET = process.env.JWT_SECRET
+    if (!JWT_SECRET)
+      return reply.code(400).send({error: "JWT_SECRET missing"})
 
     const payload = {
       id: user.id,
@@ -107,9 +109,17 @@ export async function loginController(req, reply) {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' })
 
+    reply.setCookie('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      domain: 'localhost',
+      maxAge: 60 * 60,
+    })
+
     return reply.code(200).send({
       message: 'Login successful',
-      token,
       user: {
         id: user.id,
         username: user.username,
@@ -123,7 +133,6 @@ export async function loginController(req, reply) {
     return reply.code(500).send({ error: 'Internal Server Error' })
   }
 }
-
 
 export async function enableTwoFactor(req, reply){
   const userId = req.user.id

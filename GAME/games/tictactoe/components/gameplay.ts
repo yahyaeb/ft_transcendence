@@ -42,23 +42,17 @@ export function render(): string {
     </div>
   `;
 }
-
 let cleanupFunction: (() => void) | null = null;
 
 async function startMatchTicTac(guestName: string): Promise<string | null> {
-  const token = localStorage.getItem("access_token") || "";
-  if (!token) return null;
-
   const existing = sessionStorage.getItem("ttt_match_id");
   if (existing) return existing;
 
   try {
     const res = await fetch("https://localhost:4999/matches/starttic", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ guest_name: guestName }),
     });
 
@@ -68,7 +62,7 @@ async function startMatchTicTac(guestName: string): Promise<string | null> {
       return null;
     }
 
-    const id = String(data.id ?? "");
+    const id = String(data.id ?? data.match?.id ?? "");
     if (!id) return null;
 
     sessionStorage.setItem("ttt_match_id", id);
@@ -81,59 +75,65 @@ async function startMatchTicTac(guestName: string): Promise<string | null> {
 }
 
 export function onMount(): void {
-  if (cleanupFunction) {
-    cleanupFunction();
+  if (cleanupFunction) cleanupFunction();
+
+  const gameBoard = document.querySelector("#gameBoard") as HTMLCanvasElement | null;
+  if (!gameBoard) return;
+
+  const ctx = gameBoard.getContext("2d");
+  if (!ctx) return;
+
+  const player1NameElement = document.querySelector("#player1Name") as HTMLElement | null;
+  const player2NameElement = document.querySelector("#player2Name") as HTMLElement | null;
+  const player1ScoreElement = document.querySelector("#player1Score") as HTMLElement | null;
+  const player2ScoreElement = document.querySelector("#player2Score") as HTMLElement | null;
+  const drawCountElement = document.querySelector("#drawCount") as HTMLElement | null;
+  const player1ArrowElement = document.querySelector("#player1Arrow") as HTMLElement | null;
+  const player2ArrowElement = document.querySelector("#player2Arrow") as HTMLElement | null;
+  const resetButton = document.querySelector("#resetButton") as HTMLButtonElement | null;
+  const menuButton = document.querySelector("#menuButton") as HTMLButtonElement | null;
+
+  if (
+    !player1NameElement ||
+    !player2NameElement ||
+    !player1ScoreElement ||
+    !player2ScoreElement ||
+    !drawCountElement ||
+    !player1ArrowElement ||
+    !player2ArrowElement ||
+    !resetButton ||
+    !menuButton
+  ) {
+    console.warn("TicTacToe: missing DOM elements");
+    return;
   }
 
-  const gameBoard = document.querySelector('#gameBoard') as HTMLCanvasElement;
-  const ctx = gameBoard.getContext('2d')!;
-  const player1NameElement = document.querySelector('#player1Name')!;
-  const player2NameElement = document.querySelector('#player2Name')!;
-  const player1ScoreElement = document.querySelector('#player1Score')!;
-  const player2ScoreElement = document.querySelector('#player2Score')!;
-  const drawCountElement = document.querySelector('#drawCount')!;
-  const player1ArrowElement = document.querySelector('#player1Arrow')!;
-  const player2ArrowElement = document.querySelector('#player2Arrow')!;
-  const resetButton = document.querySelector('#resetButton')!;
-  const menuButton = document.querySelector('#menuButton')!;
-
-const urlParams = new URLSearchParams(window.location.search);
-const tokenFromUrl = urlParams.get('token');
-
-if (tokenFromUrl) {
-  localStorage.setItem("access_token", tokenFromUrl);
-}
-
-const TOKEN_KEY = "access_token";
-const TOKEN = localStorage.getItem(TOKEN_KEY);
-
-console.log("Token from localStorage:", TOKEN);
-function getUsernameFromToken(): string {
-  const token = TOKEN;
-  if (!token) {
-    return '';
-  }
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.username;
-  } catch {
-    return '';
-  }
-}
-
-  let player1Name = getUsernameFromToken() || 'Player 1';
-  localStorage.setItem('tictactoe_player1', player1Name);
-  let player2Name = 'Player 2';
-
-  const pvpPlayer2 = localStorage.getItem('tictactoe_pvpPlayer2');
-  if (pvpPlayer2) {
-    player2Name = pvpPlayer2;
+  async function getMe() {
+    const res = await fetch("https://localhost:4999/users/me", {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!res.ok) return null;
+    return res.json();
   }
 
-  player1NameElement.textContent = player1Name;
-  player2NameElement.textContent = player2Name;
+  (async () => {
+    const me = await getMe();
+    if (!me) {
+      window.location.hash = "#login";
+      return;
+    }
 
-  startMatchTicTac(player2Name);
+    const player1Name = String(me.username ?? "Player 1");
+    localStorage.setItem("tictactoe_player1", player1Name);
+
+    const player2Name = localStorage.getItem("tictactoe_pvpPlayer2") || "Guest";
+
+    player1NameElement.textContent = player1Name;
+    player2NameElement.textContent = player2Name;
+
+    const matchId = await startMatchTicTac(player2Name);
+    console.log("TTT matchId:", matchId);
 
   interface GameCustomization {
     xColor: string;
@@ -433,6 +433,8 @@ function getUsernameFromToken(): string {
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
-  drawBoard();
-  updateTurnIndicator();
+    drawBoard();
+    updateTurnIndicator();
+  })().catch((e) => console.error("TTT init crashed:", e));
 }
+

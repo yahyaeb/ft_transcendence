@@ -1,4 +1,5 @@
-import { getUser, isAuthenticated, getToken, setAvatarUrl } from "../state/auth";
+// import { json } from "node:stream/consumers";
+import { getUser, fetchMe, setAvatarUrl } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
 
 const API_BASE = `https://localhost:4999`;
@@ -8,12 +9,12 @@ export function renderSettings() {
   if (!app) return;
 
   // Sécurité SPA : si non connecté, on ne devrait jamais arriver ici
-  if (!isAuthenticated()) {
+  const user = getUser();
+  if (!user) {
     window.location.hash = "#login";
     return;
   }
 
-  const user = getUser();
   const is2faEnabled = !!user?.two_factor_enabled; 
 
   app.innerHTML = `
@@ -256,8 +257,14 @@ export function renderSettings() {
 }
 
 export function onMountSettings() {
+  (async () => {
+    const me = await fetchMe();
+    if (!me) {
+      window.location.hash = "#login";
+      return;
+    }
   paintAvatars(true);
-  const passwordInput = document.getElementById("password-input") as HTMLInputElement | null;
+  const passwordInput = document.getElementById("new-password-input") as HTMLInputElement | null;
   const toggleBtn = document.getElementById("toggle-password-btn");
   const eyeOpen = document.getElementById("eye-open");
   const eyeClosed = document.getElementById("eye-closed");
@@ -282,14 +289,8 @@ export function onMountSettings() {
   const msg = document.getElementById("twofa-msg");
   const statusEl = document.getElementById("twofa-status");
 
-  const token = getToken();
-  if (!token) {
-    window.location.hash = "#login";
-    return;
-  }
+  const jsonHeaders = { "Content-Type": "application/json" };
 
-  const authHeaders = { Authorization: `Bearer ${token}` };
-  const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
   // Password change
   const oldPwdInput = document.getElementById("old-password-input") as HTMLInputElement | null;
   const newPwdInput = document.getElementById("new-password-input") as HTMLInputElement | null;
@@ -323,6 +324,7 @@ export function onMountSettings() {
       const res = await fetch(`${API_BASE}/users/me/updatePassword`, {
         method: "PATCH",
         headers: jsonHeaders,
+        credentials: "include",
         body: JSON.stringify({ oldpwd, newpwd, secnewpwd }),
       });
 
@@ -360,6 +362,7 @@ export function onMountSettings() {
 
       const res = await fetch(`${API_BASE}/users/me/updateUsername`, {
         method: "PATCH",
+        credentials: "include",
         headers: jsonHeaders,
         body: JSON.stringify({ username }),
       });
@@ -372,7 +375,9 @@ export function onMountSettings() {
       const u = getUser();
       if (u) {
         u.username = updatedUsername;
+        localStorage.setItem("user", JSON.stringify(u));
       }
+
 
       setUsernameMsg("Username updated ✅");
     } catch (e: any) {
@@ -386,7 +391,8 @@ export function onMountSettings() {
     try {
       const res = await fetch(`${API_BASE}/auth/2fa/status`, {
         method: "GET",
-        headers: authHeaders,
+        credentials: "include",
+        // headers: jsonHeaders,
       });
 
       const data = await res.json().catch(() => ({}));
@@ -420,7 +426,7 @@ export function onMountSettings() {
 
       const res = await fetch(`${API_BASE}/auth/2fa/enable`, {
         method: "POST",
-        headers: authHeaders, 
+        credentials: "include",
       });
 
       const data = await res.json().catch(() => ({}));
@@ -456,6 +462,7 @@ export function onMountSettings() {
 
       const res = await fetch(`${API_BASE}/auth/2fa/verify-setup`, {
         method: "POST",
+        credentials: "include",
         headers: jsonHeaders,
         body: JSON.stringify({ code }),
       });
@@ -481,6 +488,7 @@ export function onMountSettings() {
 
       const res = await fetch(`${API_BASE}/auth/2fa/disable`, {
         method: "POST",
+        credentials: "include",
         headers: jsonHeaders,
         body: JSON.stringify({ code }),
       });
@@ -501,7 +509,6 @@ export function onMountSettings() {
   });
 
 
-
   const uploadBtn = document.getElementById("upload-avatar-btn") as HTMLButtonElement | null;
   const fileInput = document.getElementById("avatar-file-input") as HTMLInputElement | null;
 
@@ -509,9 +516,6 @@ export function onMountSettings() {
 
   fileInput?.addEventListener("change", async () => {
     try {
-      const token = getToken();
-      if (!token) throw new Error("Not authenticated");
-
       const file = fileInput?.files?.[0];
       if (!file) return;
 
@@ -524,7 +528,7 @@ export function onMountSettings() {
 
       const res = await fetch(`${API_BASE}/users/me/avatar`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` }, 
+        credentials: "include",
         body: form,
       });
 
@@ -542,9 +546,6 @@ export function onMountSettings() {
       alert(e?.message ?? "Upload error");
     }
 
-  });
-
-
-    
-
+    });
+  })();
 }
