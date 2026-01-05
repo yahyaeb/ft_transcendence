@@ -53,19 +53,20 @@ export async function addFriend(req, reply) {
 
 
     const already = await db.get(
-        "SELECT 1 FROM friendships WHERE user_id = ? AND friend_id = ?",
-        [me, other]
+        `SELECT 1
+        FROM friendships
+        WHERE (user_id = ? AND friend_id = ?)
+            AND (user_id = ? AND friend_id = ?)
+        LIMIT 1`,
+        [me, other, other, me]
     );
-    if (already)
-        return reply.code(409).send({ error: "Already friends" });
 
-
+    if (already) {
+    return reply.code(409).send({ error: "Already friends" });
+    }
     await db.run(
         "INSERT INTO friendships (user_id, friend_id) VALUES (?, ?)",
         [me, other]);
-    await db.run(
-        "INSERT INTO friendships (user_id, friend_id) VALUES (?, ?)",
-        [other, me]);
 
     return reply.code(201).send({ message: "Friend added" });
 }
