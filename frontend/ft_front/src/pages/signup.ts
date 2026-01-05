@@ -96,6 +96,7 @@ export function onMountSignup(): void {
     try {
       const res = await fetch("https://localhost:4999/auth/signup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
