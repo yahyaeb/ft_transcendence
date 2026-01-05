@@ -49,12 +49,12 @@ let cleanupFunction: (()=> void) | null = null
 export function onMount(): void {
   (async () => {
     const me = await getCurrentUser();
-    if (!me) {
+    if (!me || !me.user) {
       window.location.href = "https://localhost:5173/#login"; 
       return;
     }
 
-    let player1Name = me.username ?? "Player 1";
+    let player1Name = me.user.username ?? "Player 1";
     localStorage.setItem("player1", player1Name);
   if (cleanupFunction){
     cleanupFunction()
@@ -83,11 +83,7 @@ export function onMount(): void {
 
 
 
-  // let player1Name = me.username ?? "Player 1";
-  localStorage.setItem("player1", player1Name)
   let player2Name = 'Player 2';
-  const player3Name = "player3";
-  const player4Name = "player4";
 
   if (aiGame === 'isAi') {
       player2Name = 'AI'
@@ -254,10 +250,44 @@ export function onMount(): void {
     window.removeEventListener('popstate', handlePopState);
   }
   
-  cleanupFunction = cleanup;
+  const handleLogoutEvent = (e: StorageEvent) => {
+    if (e.key === 'logout-event') {
+      window.removeEventListener('storage', handleLogoutEvent);
+      if (matchId) {
+        cancelMatch();
+      }
+      cleanup();
+      window.location.href = 'https://localhost:5173/#login';
+      window.location.reload();
+    }
+  };
+
+  const authCheckInterval = setInterval(async () => {
+    const res = await fetch('https://localhost:4999/users/me', {
+      credentials: 'include',
+    }).catch(() => null);
+    
+    if (!res || !res.ok) {
+      clearInterval(authCheckInterval);
+      if (matchId) {
+        cancelMatch();
+      }
+      cleanup();
+      window.location.href = 'https://localhost:5173/#login';
+      window.location.reload();
+    }
+  }, 2000);
+
+  cleanupFunction = () => {
+    clearInterval(authCheckInterval);
+    window.removeEventListener('storage', handleLogoutEvent);
+    cleanup();
+  };
+
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
   window.addEventListener('popstate', handlePopState);
+  window.addEventListener('storage', handleLogoutEvent);
   resetButton.addEventListener("click", resetGame);
   let guestName: string | null = null;
 

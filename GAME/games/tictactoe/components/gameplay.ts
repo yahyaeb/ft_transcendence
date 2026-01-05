@@ -119,12 +119,12 @@ export function onMount(): void {
 
   (async () => {
     const me = await getMe();
-    if (!me) {
+    if (!me || !me.user) {
       window.location.hash = "#login";
       return;
     }
 
-    const player1Name = String(me.username ?? "Player 1");
+    const player1Name = String(me.user.username ?? "Player 1");
     localStorage.setItem("tictactoe_player1", player1Name);
 
     const player2Name = localStorage.getItem("tictactoe_pvpPlayer2") || "Guest";
@@ -183,6 +183,7 @@ export function onMount(): void {
   ];
 
   function drawBoard() {
+    if (!ctx) return;
     ctx.fillStyle = boardBackground;
     ctx.fillRect(0, 0, gameWidth, gameHeight);
 
@@ -229,7 +230,7 @@ export function onMount(): void {
   function drawX(centerX: number, centerY: number) {
     const padding = 35;
     const halfSize = cellSize / 2 - padding;
-    
+    if (!ctx) return;
     ctx.shadowBlur = 15;
     ctx.shadowColor = xColor;
     ctx.strokeStyle = xColor;
@@ -252,7 +253,7 @@ export function onMount(): void {
   function drawO(centerX: number, centerY: number) {
     const padding = 35;
     const radius = cellSize / 2 - padding;
-
+    if (!ctx) return;
     ctx.shadowBlur = 15;
     ctx.shadowColor = oColor;
     ctx.strokeStyle = oColor;
@@ -281,6 +282,7 @@ export function onMount(): void {
     const endY = endRow * cellSize + cellSize / 2;
 
     const winColor = board[combo[0]] === 'X' ? xColor : oColor;
+    if (!ctx) return;
     
     ctx.shadowBlur = 20;
     ctx.shadowColor = winColor;
@@ -311,6 +313,7 @@ export function onMount(): void {
   }
 
   function updateTurnIndicator() {
+    if (!player1ArrowElement || !player2ArrowElement) return;
     if (currentPlayer === 'X') {
       player1ArrowElement.classList.remove('opacity-0');
       player1ArrowElement.classList.add('opacity-100');
@@ -325,13 +328,14 @@ export function onMount(): void {
   }
 
   function updateScores() {
+    if (!player1ScoreElement || !player2ScoreElement || !drawCountElement) return;
     player1ScoreElement.textContent = `${player1Score}`;
     player2ScoreElement.textContent = `${player2Score}`;
     drawCountElement.textContent = `${drawCount}`;
   }
 
   function handleClick(event: MouseEvent) {
-    if (!gameActive) return;
+    if (!gameActive||!gameBoard) return;
 
     const rect = gameBoard.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -372,6 +376,7 @@ export function onMount(): void {
       gameActive = false;
       drawCount++;
       updateScores();
+      if (!player1ArrowElement || !player2ArrowElement) return;
       player1ArrowElement.classList.add('opacity-0');
       player2ArrowElement.classList.add('opacity-0');
       setTimeout(() => {
@@ -412,6 +417,7 @@ export function onMount(): void {
 
   function cleanup() {
     gameActive = false;
+    if (!gameBoard) return;
     gameBoard.removeEventListener('click', handleClick);
     window.removeEventListener('popstate', handlePopState);
   }
@@ -420,10 +426,37 @@ export function onMount(): void {
     cleanup();
   };
 
-  cleanupFunction = cleanup;
+  const handleLogoutEvent = (e: StorageEvent) => {
+    if (e.key === 'logout-event') {
+      clearInterval(authCheckInterval);
+      window.removeEventListener('storage', handleLogoutEvent);
+      gameActive = false;
+      window.location.replace('https://localhost:5173/#login');
+    }
+  };
+
+  const authCheckInterval = setInterval(async () => {
+    const res = await fetch('https://localhost:4999/users/me', {
+      credentials: 'include',
+    }).catch(() => null);
+    
+    if (!res || !res.ok) {
+      clearInterval(authCheckInterval);
+      window.removeEventListener('storage', handleLogoutEvent);
+      gameActive = false;
+      window.location.replace('https://localhost:5173/#login');
+    }
+  }, 2000);
+
+  cleanupFunction = () => {
+    clearInterval(authCheckInterval);
+    window.removeEventListener('storage', handleLogoutEvent);
+    cleanup();
+  };
 
   gameBoard.addEventListener('click', handleClick);
   window.addEventListener('popstate', handlePopState);
+  window.addEventListener('storage', handleLogoutEvent);
 
   resetButton.addEventListener('click', resetGame);
 
