@@ -2,23 +2,16 @@ export type User = {
   id: number;
   username: string;
   email: string;
-  avatarUrl?: string;             
-  two_factor_enabled?: string; 
+  avatarUrl?: string;
+  two_factor_enabled?: string;
 };
 
 const API_BASE = `https://localhost:4999`;
 
-const TOKEN_KEY = "access_token";
-
 let currentUser: User | null = null;
-let token: string | null = null;
-
-export function getToken(): string | null {
-  return token ?? localStorage.getItem(TOKEN_KEY);
-}
 
 export function isAuthenticated(): boolean {
-  return !!getToken();
+  return !!getUser();
 }
 
 export function getUser(): User | null {
@@ -33,25 +26,41 @@ export function getUser(): User | null {
   }
 }
 
+export async function fetchMe(): Promise<User | null> {
+  const res = await fetch(`${API_BASE}/users/me`, {
+    method: "GET",
+    credentials: "include",
+  });
 
-export async function logout() {
-
+  if (!res.ok) {
     currentUser = null;
-    token = null;
-    localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem("user");
-    localStorage.setItem('logout-event', Date.now().toString())
+    return null;
+  }
+
+  const data = await res.json().catch(() => ({}));
+  const user: User = {
+    id: data.id ?? data.user?.id,
+    username: data.username ?? data.user?.username,
+    email: data.email ?? data.user?.email,
+    avatarUrl: data.avatarUrl ?? data.user?.avatarUrl ?? data.avatar ?? data.user?.avatar,
+    two_factor_enabled: data.two_factor_enabled ?? data.user?.two_factor_enabled,
+  };
+
+  currentUser = user;
+  localStorage.setItem("user", JSON.stringify(user));
+  return user;
 }
 
 export async function login(payload: {
   email: string;
   password: string;
-  code?: string; 
+  code?: string;
 }): Promise<User> {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: 'include',
+    credentials: "include",
     body: JSON.stringify(payload),
   });
 
@@ -60,14 +69,9 @@ export async function login(payload: {
   if (!res.ok) {
     throw new Error(data?.error ?? data?.message ?? "Login failed");
   }
-
-  if (!data?.token || !data?.user) {
-    throw new Error("Login succeeded but response is missing token/user");
+  if (!data?.user) {
+    throw new Error("Login succeeded but response is missing user");
   }
-
-  token = data.token;
-  localStorage.setItem(TOKEN_KEY, data.token);
-
   currentUser = {
     id: data.user.id,
     username: data.user.username,
@@ -75,18 +79,31 @@ export async function login(payload: {
     avatarUrl: data.user.avatarUrl ?? data.user.avatar ?? undefined,
     two_factor_enabled: data.user.two_factor_enabled,
   };
+
   localStorage.setItem("user", JSON.stringify(currentUser));
+  localStorage.setItem("login-event", Date.now().toString());
   return currentUser;
+}
+
+export async function logout(): Promise<void> {
+  await fetch(`${API_BASE}/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  }).catch(() => {});
+
+  localStorage.removeItem("user");
+  localStorage.setItem("logout-event", Date.now().toString());
+
+  // THIS TAB
+  window.location.hash = "#login";
+  window.location.reload();
 }
 
 
 export function resolveAvatarUrl(avatarUrl?: string | null) {
   if (!avatarUrl || avatarUrl.trim().length === 0) return null;
-  return avatarUrl.startsWith("http")
-    ? avatarUrl
-    : `${API_BASE}${avatarUrl}`;
+  return avatarUrl.startsWith("http") ? avatarUrl : `${API_BASE}${avatarUrl}`;
 }
-
 
 export function setAvatarUrl(avatarUrl: string) {
   if (!currentUser) return;

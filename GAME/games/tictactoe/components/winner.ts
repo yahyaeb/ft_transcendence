@@ -1,3 +1,9 @@
+import { getGameLanguage } from "../../../state/language_game";
+import { translations_game } from "../../../i18n/translations_game";
+
+const lang = getGameLanguage();
+const t = translations_game[lang];
+
 export function render(): string {
   return `
     <div class="text-center max-w-[700px] w-full mx-auto">
@@ -76,13 +82,11 @@ export function onMount(): void {
       winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-cyan";
       winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))";
     } else {
-      // draw style (choose whatever you want)
       winnerTitle.className = "text-6xl font-extrabold mb-4 text-yellow-300";
       winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(251, 191, 36, 0.6))";
     }
   }
 
-  // ---------- fill UI ----------
   const p1El = document.getElementById("player1Name");
   const p2El = document.getElementById("player2Name");
   const s1El = document.getElementById("finalScore1");
@@ -93,25 +97,21 @@ export function onMount(): void {
   if (s1El) s1El.textContent = score1;
   if (s2El) s2El.textContent = score2;
 
-  // ---------- Backend: finish match ----------
   const result =
     winnerParam === "1" ? "p1" :
     winnerParam === "2" ? "p2" :
-    "draw"; // <-- important
+    "draw"; 
 
   async function finishMatch(): Promise<void> {
     if (!matchId) return;
-
-    const token = localStorage.getItem("access_token") || "";
-    if (!token) return;
 
     try {
       const res = await fetch(`https://localhost:4999/matches/${matchId}/finishtic`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ result }),
       });
 
@@ -135,8 +135,9 @@ export function onMount(): void {
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
 
-  const menuBtn = document.getElementById("menuBtn");
-  menuBtn?.addEventListener("click", () => {
-    window.location.href = "https://localhost:5173/#dashboard";
+   const menuBtn = document.getElementById('menuBtn');
+  menuBtn?.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'https://localhost:5173/#dashboard';
   });
 }

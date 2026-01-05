@@ -9,6 +9,8 @@ export function renderHome() {
 
   const lang = getLanguage();
   const t = translations[lang];
+
+
   const loggedIn = isAuthenticated();
   // Sécurité : si token expiré / session invalide → déconnexion complète
   if (!loggedIn) {

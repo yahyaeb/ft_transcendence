@@ -1,4 +1,18 @@
-import { getUsernameFromToken, TOKEN } from "./gameModeSelection";
+import { getGameLanguage } from "../../../state/language_game";
+import { translations_game } from "../../../i18n/translations_game";
+
+const lang = getGameLanguage();
+const t = translations_game[lang];
+
+async function getCurrentUser() {
+  const res = await fetch("https://localhost:4999/users/me", {
+    credentials: "include",
+  });
+
+  if (!res.ok) return null;
+  return res.json();
+}
+
 
 export function render(): string {
   return `
@@ -38,6 +52,15 @@ export function render(): string {
 
 let cleanupFunction: (()=> void) | null = null
 export function onMount(): void {
+  (async () => {
+    const me = await getCurrentUser();
+    if (!me) {
+      window.location.href = "https://localhost:5173/#login"; 
+      return;
+    }
+
+    let player1Name = me.username ?? "Player 1";
+    localStorage.setItem("player1", player1Name);
   if (cleanupFunction){
     cleanupFunction()
   }
@@ -65,7 +88,7 @@ export function onMount(): void {
 
 
 
-  let player1Name = getUsernameFromToken() || 'Player 1';
+  // let player1Name = me.username ?? "Player 1";
   localStorage.setItem("player1", player1Name)
   let player2Name = 'Player 2';
   const player3Name = "player3";
@@ -182,17 +205,12 @@ export function onMount(): void {
   if (!matchId || matchFinished) return;
 
   matchFinished = true;
-  fetch(`https://localhost:4999/matches/${matchId}`, {
-    method: "PATCH",
-    keepalive: true,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${TOKEN}`,
-    },
-    body: JSON.stringify({
-      status: "cancelled"
-      }),
-    }).catch(err => console.error("cancel match failed", err));
+  fetch("https://localhost:4999/matches", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode, guest_name: guestName }),
+  }).catch(err => console.error("cancel match failed", err));
   }
 
   paddle1.y = (gameHeight / 2) - (paddle1.height / 2);
@@ -209,9 +227,9 @@ export function onMount(): void {
     fetch(`https://localhost:4999/matches/${matchId}/finish`, {
       method: "PATCH",
       keepalive: true,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
       },
       body: JSON.stringify({
         score_p1: player1Score,
@@ -256,9 +274,9 @@ export function onMount(): void {
   } else {
     fetch("https://localhost:4999/matches", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
       },
       body: JSON.stringify({ mode, guest_name: guestName }),
     })
@@ -663,4 +681,5 @@ export function onMount(): void {
   };
   
   menuButton.addEventListener("click", menuClickHandler);
+})();
 }

@@ -1,5 +1,5 @@
 //src/pages/stats-tictactoe.ts
-import { getToken, getUser } from "../state/auth";
+import { fetchMe } from "../state/auth";
 import { getLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 
@@ -80,34 +80,28 @@ export function renderStatsTicTacToe() {
     </div>
   `;
 }
-
 export function onMountStatsTicTacToe() {
-  const token = getToken();
-  if (!token) {
-    window.location.hash = "#login";
-    return;
-  }
-
-  const me = getUser();
-  const myId = Number(me?.id);
-
-  const tbody = document.getElementById("history-body") as HTMLTableSectionElement | null;
-  const emptyEl = document.getElementById("history-empty");
-  const errEl = document.getElementById("history-error");
-  const countEl = document.getElementById("history-count");
-
-  const authHeaders = { Authorization: `Bearer ${token}` };
-
-  const showError = (msg: string) => {
-    if (errEl) {
-      errEl.textContent = msg;
-      errEl.classList.remove("hidden");
-    }
-  };
-
   (async () => {
+    const me = await fetchMe();
+    if (!me) {
+      window.location.hash = "#login";
+      return;
+    }
+
+    const tbody = document.getElementById("history-body") as HTMLTableSectionElement | null;
+    const emptyEl = document.getElementById("history-empty");
+    const errEl = document.getElementById("history-error");
+    const countEl = document.getElementById("history-count");
+
+    const showError = (msg: string) => {
+      if (errEl) {
+        errEl.textContent = msg;
+        errEl.classList.remove("hidden");
+      }
+    };
+
     try {
-      const res = await fetch(HISTORY_URL, { method: "GET", headers: authHeaders });
+      const res = await fetch(HISTORY_URL, { method: "GET", credentials: "include" });
 
       const data = (await res.json().catch(() => ({}))) as Partial<HistoryResponse>;
       if (!res.ok) throw new Error((data as any)?.error ?? (data as any)?.message ?? "History load failed");
@@ -119,6 +113,8 @@ export function onMountStatsTicTacToe() {
 
       if (countEl) countEl.textContent = `${matches.length} ${t.matches_count}`;
       if (!tbody) return;
+
+      errEl?.classList.add("hidden");
 
       if (matches.length === 0) {
         tbody.innerHTML = "";
@@ -135,22 +131,25 @@ export function onMountStatsTicTacToe() {
         draw: { text: t.draw, cls: "text-yellow-400" },
       };
 
-      tbody.innerHTML = matches
-        .map((m) => {
+      tbody.innerHTML = matches.map((m) => {
         const opponent = m.opponent || "Guest";
+
+        const outcomeMap = {
+          win:  { text: "WIN",  cls: "text-emerald-400" },
+          loss: { text: "LOSS", cls: "text-red-400" },
+          draw: { text: "DRAW", cls: "text-yellow-400" },
+        } as const;
 
         const { text, cls } = outcomeMap[m.outcome];
 
-
-          return `
-            <tr class="border-b border-slate-700/30 hover:bg-slate-900/25 transition">
-              <td class="py-3 pr-4 text-slate-300">${escapeHtml(formatDate(m.played_at))}</td>
-              <td class="py-3 pr-4">${escapeHtml(opponent)}</td>
-              <td class="py-3 pr-4 font-bold ${cls}">${text}</td>
-            </tr>
-          `;
-        })
-        .join("");
+        return `
+          <tr class="border-b border-slate-700/30 hover:bg-slate-900/25 transition">
+            <td class="py-3 pr-4 text-slate-300">${escapeHtml(formatDate(m.played_at))}</td>
+            <td class="py-3 pr-4">${escapeHtml(opponent)}</td>
+            <td class="py-3 pr-4 font-bold ${cls}">${text}</td>
+          </tr>
+        `;
+      }).join("");
     } catch (e: any) {
       if (tbody) tbody.innerHTML = "";
       emptyEl?.classList.add("hidden");

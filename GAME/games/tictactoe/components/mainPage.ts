@@ -1,3 +1,9 @@
+import { getGameLanguage } from "../../../state/language_game";
+import { translations_game } from "../../../i18n/translations_game";
+
+const lang = getGameLanguage();
+const t = translations_game[lang];
+
 interface GameCustomization {
   xColor: string;
   oColor: string;
