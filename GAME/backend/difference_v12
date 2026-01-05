@@ -1,0 +1,73 @@
+ GAME/backend/controllers/authController.js         |   16 +-
+ GAME/backend/controllers/friendsRequests.js        |   19 +-
+ GAME/backend/database.db                           |  Bin 45056 -> 45056 bytes
+ GAME/backend/routes/auth.js                        |    3 +-
+ GAME/backend/server.js                             |    1 -
+ GAME/backend/uploads/avatars/user-22.png           |  Bin 108628 -> 108743 bytes
+ GAME/backend/uploads/avatars/user-3.jpg            |  Bin 0 -> 35981 bytes
+ GAME/backend/uploads/avatars/user-3.png            |  Bin 0 -> 717352 bytes
+ GAME/backend/uploads/avatars/user-6.png            |  Bin 0 -> 108628 bytes
+ GAME/backend/uploads/avatars/user-7.png            |  Bin 0 -> 108628 bytes
+ GAME/games/pong/components/gameModeSelection.ts    |    6 +
+ GAME/games/pong/components/gameplay.ts             |   52 +-
+ GAME/games/pong/components/mainPage.ts             |   41 +-
+ GAME/games/pong/components/tournamentBracket.ts    |    6 +
+ .../games/pong/components/tournamentMatchWinner.ts |    4 +
+ GAME/games/pong/components/winner.ts               |    5 +
+ GAME/games/tictactoe/components/gameplay.ts        |   51 +-
+ GAME/games/tictactoe/components/mainPage.ts        |    6 +
+ GAME/games/tictactoe/components/winner.ts          |   12 +-
+ GAME/i18n/translations_game.ts                     |   41 +
+ GAME/state/language_game.ts                        |   31 +
+ frontend/ft_front/src/i18n/translations.ts         |  202 +++-
+ frontend/ft_front/src/main.ts                      |    2 +-
+ frontend/ft_front/src/pages/dashboard.ts           |  186 ++--
+ frontend/ft_front/src/pages/home.ts                |    2 +
+ frontend/ft_front/src/pages/login.ts               |   27 +-
+ frontend/ft_front/src/pages/profile.ts             |    2 +-
+ frontend/ft_front/src/pages/settings.ts            |  145 ++-
+ frontend/ft_front/src/pages/signup.ts              |   41 +-
+ frontend/ft_front/src/pages/stats-pong.ts          |   30 +-
+ frontend/ft_front/src/pages/stats-tictactoe.ts     |   43 +-
+
+ frontend/ft_front/src/state/language.ts            |   14 +-
+ node_modules/.package-lock.json                    |   65 +-
+ node_modules/@esbuild/linux-x64/README.md          |    3 -
+ node_modules/@esbuild/linux-x64/bin/esbuild        |  Bin 11100344 -> 0 bytes
+ node_modules/@esbuild/linux-x64/package.json       |   20 -
+ node_modules/@fastify/cors/.editorconfig           |    8 +
+ node_modules/@fastify/cors/.gitattributes          |    5 +
+ node_modules/@fastify/cors/.github/dependabot.yml  |   13 +
+ node_modules/@fastify/cors/.github/stale.yml       |   21 +
+ .../@fastify/cors/.github/workflows/ci.yml         |   33 +
+ node_modules/@fastify/cors/LICENSE                 |   23 +
+ node_modules/@fastify/cors/README.md               |  212 ++++
+ node_modules/@fastify/cors/bench.js                |   17 +
+ node_modules/@fastify/cors/benchmark/package.json  |   15 +
+ node_modules/@fastify/cors/benchmark/vary.js       |   34 +
+ node_modules/@fastify/cors/eslint.config.js        |    6 +
+ node_modules/@fastify/cors/index.js                |  318 ++++++
+ node_modules/@fastify/cors/package.json            |   81 ++
+ node_modules/@fastify/cors/test/cors.test.js       | 1124 ++++++++++++++++++++
+ node_modules/@fastify/cors/test/hooks.test.js      |  787 ++++++++++++++
+ node_modules/@fastify/cors/test/preflight.test.js  |  590 ++++++++++
+ node_modules/@fastify/cors/test/vary.test.js       |  237 +++++
+ node_modules/@fastify/cors/types/index.d.ts        |  126 +++
+ node_modules/@fastify/cors/types/index.test-d.ts   |  388 +++++++
+ node_modules/@fastify/cors/vary.js                 |  116 ++
+ .../@rollup/rollup-linux-x64-gnu/README.md         |    3 -
+ .../@rollup/rollup-linux-x64-gnu/package.json      |   25 -
+ .../rollup-linux-x64-gnu/rollup.linux-x64-gnu.node |  Bin 2092184 -> 0 bytes
+ .../@rollup/rollup-linux-x64-musl/README.md        |    3 -
+ .../@rollup/rollup-linux-x64-musl/package.json     |   25 -
+ .../rollup.linux-x64-musl.node                     |  Bin 2124320 -> 0 bytes
+ node_modules/toad-cache/LICENSE                    |   21 +
+ node_modules/toad-cache/README.md                  |  265 +++++
+ node_modules/toad-cache/dist/toad-cache.cjs        |  878 +++++++++++++++
+ node_modules/toad-cache/dist/toad-cache.mjs        |  852 +++++++++++++++
+ node_modules/toad-cache/package.json               |   82 ++
+ node_modules/toad-cache/toad-cache.d.cts           |  138 +++
+ node_modules/toad-cache/toad-cache.d.ts            |  128 +++
+ package-lock.json                                  |   18 +-
+ package.json                                       |    1 +
+ 72 files changed, 7285 insertions(+), 395 deletions(-)
