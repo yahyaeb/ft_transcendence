@@ -14,7 +14,7 @@ export async function signupController(req, reply) {
 
   const u = username.trim();
   const e = email.trim();
-  const avatar = "/uploads/avatars/user-22.png"
+  const avatar = null
   try {
     const existing = await db.get(
       `SELECT id, username, email
@@ -46,8 +46,7 @@ export async function signupController(req, reply) {
       message: "User created",
       id: result.lastID,
       username: u,
-      email: e,
-      avatar: avatar || null
+      email: e
     });
   } catch (error) {
     console.error("DB Error in /signup:", error);

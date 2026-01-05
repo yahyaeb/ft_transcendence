@@ -158,6 +158,8 @@ export function onMountLogin() {
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
+    const code = twofaToggle.checked ? twofaCodeInput.value.trim() : undefined;
+
 
     if (!email || !password) {
       alert(t.login_error_required);
@@ -165,7 +167,7 @@ export function onMountLogin() {
     }
 
     try {
-      await login({ email, password });
+      await login({ email, password, code });
       window.location.hash = "#dashboard";
     } catch (err: any) {
       alert(err?.message ?? t.login_error_generic);
