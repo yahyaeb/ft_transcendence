@@ -1,57 +1,58 @@
 // src/pages/dashboard.ts
 import { paintAvatars } from "../ui/avatar";
+import { getLanguage } from "../state/language";
+import { translations } from "../i18n/translations";
 
 export function renderDashboard() {
   const app = document.getElementById("app");
   if (!app) return;
+  const lang = getLanguage();
+  const t = translations[lang];
 
   app.innerHTML = `
     <div class="min-h-screen flex bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200">
 
       <!-- SIDEBAR -->
-      <aside class="w-64 bg-slate-800/40 backdrop-blur-xl border-r border-slate-400/10 p-6 flex flex-col gap-10">
+      <aside class="w-80 bg-slate-800/40 backdrop-blur-xl border-r border-slate-400/10 p-6 flex flex-col gap-10">
 
         <!-- Game Switch -->
         <div>
-          <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">
-            Dashboard
-          </p>
           <div id="game-switch" class="flex bg-slate-900/60 rounded-full p-1">
             <button
               data-game="pong"
               class="flex-1 rounded-full py-1 text-sm font-semibold bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow">
-              Pong
+              ${t.pong}
             </button>
             <button
               data-game="tictactoe"
               class="flex-1 rounded-full py-1 text-sm text-slate-400 hover:text-white transition">
-              Tic-Tac-Toe
+              ${t.tictactoe}
             </button>
           </div>
         </div>
 
         <!-- Menu -->
         <nav class="flex flex-col gap-4 text-slate-300">
-          <button id="profileBtn" class="text-left font-medium hover:text-purple-400 transition">
-            Profile
+          <button id="profileBtn" class="text-left font-semibold text-slate-200 hover:text-purple-400 hover:pl-1 transition-all">
+            ${t.dashboard_profile}
           </button>
-          <button id="settingsBtn" class="text-left font-medium hover:text-purple-400 transition">
-            Settings
+          <button id="settingsBtn" class="text-left font-semibold text-slate-200 hover:text-purple-400 hover:pl-1 transition-all">
+            ${t.settings}
           </button>
         </nav>
 
         <!-- Players list -->
 
           <!-- FRIENDS -->
-          <p class="text-xs uppercase tracking-wider text-slate-400 mt-2 mb-2">Friends</p>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mt-2 mb-2">${t.friends}</p>
           <ul id="friends-list" class="space-y-1 max-h-40 overflow-y-auto pr-1"></ul>
           <p id="friends-empty" class="hidden text-sm text-slate-500 mt-2">
-            Aucun ami. Ajoute des joueurs 👇
+            ${t.noFriends}
           </p>
         <div class="mt-8">
           <div class="flex items-center justify-between mb-3">
             <p class="text-xs uppercase tracking-wider text-slate-400">
-              Players
+              ${t.players}
             </p>
             <span class="text-[11px] text-slate-500"></span>
           </div>
@@ -60,7 +61,7 @@ export function renderDashboard() {
             <input
               id="players-search"
               type="text"
-              placeholder="Search players…"
+              placeholder="${t.searchPlayers}"
               class="w-full px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-600/20 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500/40 focus:ring-2 focus:ring-purple-500/15 transition"
             />
             <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">⌕</div>
@@ -70,16 +71,9 @@ export function renderDashboard() {
 
 
           <p id="players-empty" class="hidden text-sm text-slate-500 mt-3">
-            Aucun joueur trouvé.
+            ${t.noPlayers}
           </p>
 
-
-          <!--
-            TODO (backend):
-            - Remplacer cette liste mockée par la liste réelle (amis / joueurs / demandes)
-            - Brancher la recherche sur endpoint backend
-            - Brancher ✓ ✕ 🚫 sur endpoints backend
-          -->
         </div>
 
       </aside>
@@ -103,7 +97,7 @@ export function renderDashboard() {
         <section class="flex-1 px-10 pt-0">
 
           <h1 class="text-4xl font-semibold mb-4 mt-0 text-slate-400 tracking-wide">
-            Tableau de bord
+            ${t.title}
           </h1>
 
           <div class="flex gap-12 justify-center mb-16">
@@ -115,7 +109,7 @@ export function renderDashboard() {
               <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent group-hover:from-black/20 transition"></div>
 
               <span class="relative z-10 flex items-center justify-center h-full text-3xl font-extrabold text-white drop-shadow-lg tracking-wide drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-                 Pong
+                 ${t.pong}
               </span>
             </button>
 
@@ -126,7 +120,7 @@ export function renderDashboard() {
               <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent group-hover:from-black/20 transition"></div>
 
               <span class="relative z-10 flex items-center justify-center h-full text-3xl font-extrabold text-white drop-shadow-lg tracking-wide drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-                 Tic Tac Toe
+                 ${t.tictactoe}
               </span>
             </button>
 
@@ -136,42 +130,42 @@ export function renderDashboard() {
 
             <div class="flex items-center justify-between mb-8">
               <h2 class="text-3xl font-bold">
-                Statistiques du jeu
+                ${t.statsTitle}
               </h2>
               <button
                 id="stats-more-btn"
                 class="text-sm text-purple-400 hover:text-purple-300 hover:underline transition">
-                En savoir plus →
+                ${t.more}
               </button>
             </div>
 
             <div class="grid grid-cols-3 gap-8 mb-10">
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
-                <p class="text-slate-400 mb-4">Victoires</p>
+                <p class="text-slate-400 mb-4">${t.wins}</p>
 
                 <!-- Layout Pong (Classique + Tournois) -->
                 <div id="wins-pong" class="grid grid-cols-2 gap-4">
                   <div>
-                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Classique</p>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">${t.classic}</p>
                     <p data-stat="wins-classic" class="text-3xl font-extrabold gradient-green">12</p>
                   </div>
                   <div>
-                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Tournois</p>
+                    <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">${t.tournament}</p>
                     <p data-stat="wins-tournament" class="text-3xl font-extrabold gradient-purple">1</p>
                   </div>
                 </div>
 
                 <!-- Layout TicTacToe (Victoires simples) -->
-                <div id="wins-simple" class="hidden">
-                  <p data-stat="wins-total" class="text-5xl font-extrabold gradient-green">6</p>
+                <div id="wins-simple" class="hidden flex items-center justify-center">
+                  <p data-stat="wins-total" class="text-4xl font-extrabold gradient-green">6</p>
                 </div>
               </div>
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
-                <p class="text-slate-400 mb-1">Défaites</p>
+                <p class="text-slate-400 mb-1">${t.defeats}</p>
                 <p data-stat="defeats" class="text-4xl font-extrabold gradient-red">5</p>
               </div>
               <div class="bg-slate-900/60 rounded-2xl p-6 text-center">
-                <p class="text-slate-400 mb-1">Winrate</p>
+                <p class="text-slate-400 mb-1">${t.winrate}</p>
                 <p data-stat="winrate" class="text-4xl font-extrabold gradient-cyan">70%</p>
               </div>
             </div>
@@ -181,11 +175,11 @@ export function renderDashboard() {
               <div class="mt-6 flex justify-center gap-6 text-sm text-slate-400">
                 <div class="flex items-center gap-2">
                   <span class="w-3 h-3 rounded-full bg-purple-500"></span>
-                  <span>Victoires</span>
+                  <span>${t.wins}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
-                  <span>Défaites</span>
+                  <span>${t.defeats}</span>
                 </div>
               </div>
             </div>
@@ -199,9 +193,19 @@ export function renderDashboard() {
 }
 
 export function onMountDashboard(): void {
-  paintAvatars(true);
+  const lang = getLanguage();
+  const t = translations[lang];
+  paintAvatars();
 
   const API_BASE = "https://localhost:4999";
+  const TOKEN_KEY = "access_token";
+  const token = localStorage.getItem(TOKEN_KEY) || "";
+  if (!token)
+      return;
+
+  const myUsername = null;
+  const authHeaders = { Authorization: `Bearer ${token}` };
+  const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
 
 
   const switchButtons = document.querySelectorAll<HTMLButtonElement>(
@@ -319,11 +323,11 @@ export function onMountDashboard(): void {
   });
 
   pongBtn?.addEventListener('click', () => {
-    window.location.href = `https://localhost:5174/pong`;
+    window.location.href = `https://localhost:5174/pong?lang=${lang}`;
   });
 
   tictactoeBtn?.addEventListener('click', () => {
-    window.location.href = `https://localhost:5174/tictactoe`;
+    window.location.href = `https://localhost:5174/tictactoe?lang=${lang}`;
   });
 
 
@@ -414,7 +418,6 @@ export function onMountDashboard(): void {
       console.warn("Failed to load pong stats:", e?.message ?? e);
     }
   }
-
   
   switchButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -488,19 +491,19 @@ export function onMountDashboard(): void {
     if (typeof ms !== "number") return "";
 
     const diff = Date.now() - ms;
-    if (diff < 0) return "just now";
+    if (diff < 0) return t.lastSeen_now;
 
     const sec = Math.floor(diff / 1000);
-    if (sec < 60) return "just now";
+    if (sec < 60) return t.lastSeen_now;
 
     const min = Math.floor(sec / 60);
-    if (min < 60) return `${min} min ago`;
+    if (min < 60) return `${min} ${t.lastSeen_minutes}`;
 
     const hr = Math.floor(min / 60);
-    if (hr < 24) return `${hr}h ago`;
+    if (hr < 24) return `${hr} ${t.lastSeen_hours}`;
 
     const day = Math.floor(hr / 24);
-    return `${day}d ago`;
+    return `${day} ${t.lastSeen_days}`;
   }
 
 
@@ -521,14 +524,12 @@ export function onMountDashboard(): void {
       .map(f => {
         const online = isOnline(f.last_seen_at);
         const dotClass = online ? "bg-emerald-400" : "bg-slate-500";
-
-        const statusText = online ? "Online" : `Last seen ${formatLastSeen(f.last_seen_at)}`;
-
+        const statusText = online ? t.online : `${t.lastSeen_prefix} ${formatLastSeen(f.last_seen_at)}`;
         return `
-          <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+          <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 transition hover:bg-slate-900/35 hover:shadow-[0_0_0_1px_rgba(139,92,246,0.25)] hover:shadow-purple-500/20">
             <div class="flex items-center gap-3 min-w-0 flex-1">
               <div class="relative w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 overflow-hidden">
-                <img src="${f.avatarUrl ?? "/avatars/default-avatar.png"}" class="w-full h-full object-cover" />
+                <img src="${f.avatarUrl ? f.avatarUrl : "/avatars/default-avatar.png"}" class="w-full h-full object-cover" />
                 <span class="absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ${dotClass} border border-slate-900"></span>
               </div>
 
@@ -567,13 +568,15 @@ export function onMountDashboard(): void {
         const canShowStatus = typeof u.last_seen_at === "number";
         const online = canShowStatus && isOnline(u.last_seen_at);
         const dotClass = !canShowStatus ? "hidden" : (online ? "bg-emerald-400" : "bg-slate-500");
-        const statusText = canShowStatus ? (online ? "Online" : `Last seen ${formatLastSeen(u.last_seen_at)}`) : "";
+        const statusText = canShowStatus ? (online ? t.online : `${t.lastSeen_prefix} ${formatLastSeen(u.last_seen_at)}`) : "";
+
+        const isSelf = myUsername && u.username === myUsername;
 
         return `
-        <li class="group flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-900/35 transition">
+        <li class="group flex items-center gap-3 rounded-xl px-2.5 py-2 transition hover:bg-slate-900/35 hover:shadow-[0_0_0_1px_rgba(139,92,246,0.25)] hover:shadow-purple-500/20">
             <div class="flex items-center gap-3 min-w-0 flex-1">
               <div class="relative w-9 h-9 rounded-full bg-slate-900/40 border border-slate-600/20 overflow-hidden">
-                <img src="${u.avatarUrl ?? "/avatars/default-avatar.png"}" class="w-full h-full object-cover" />
+                <img src="${u.avatarUrl ? u.avatarUrl : "/avatars/default-avatar.png"}" class="w-full h-full object-cover" />
                 <span class="absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ${dotClass} border border-slate-900"></span>
               </div>
 
@@ -583,33 +586,55 @@ export function onMountDashboard(): void {
               </div>
             </div>
 
-            <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                type="button"
-                data-action="add"
-                data-user-id="${u.id}"
-                title="${alreadyFriend ? "Already friends" : "Add"}"
-                class="w-3 h-3 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 transition
-                      ${alreadyFriend ? "text-slate-500 opacity-60 cursor-not-allowed" : "text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-400/30 transition"}"
-                ${alreadyFriend ? "disabled" : ""}
-              >${alreadyFriend ? "✓" : "＋"}</button>
+            ${isSelf ? "" : `
+              <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <!-- Add -->
+                <button
+                  type="button"
+                  data-action="add"
+                  data-user-id="${u.id}"
+                  title="${alreadyFriend ? "Already friends" : "Add"}"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 transition
+                    ${alreadyFriend
+                      ? "text-slate-500 opacity-60 cursor-not-allowed"
+                      : "text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/30"}"
+                  ${alreadyFriend ? "disabled" : ""}
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
 
-              <button
-                type="button"
-                data-action="block"
-                data-user-id="${u.id}"
-                title="Bloquer"
-                class="w-3 h-3 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
-              >🚫</button>
-              <button
-                type="button"
-                data-action="unblock"
-                data-user-id="${u.id}"
-                title="Unblock"
-                class="w-3 h-3 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 transition"
-              >🇽</button>
+                <!-- Block -->
+                <button
+                  type="button"
+                  data-action="block"
+                  data-user-id="${u.id}"
+                  title="Bloquer"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-violet-300
+                         hover:bg-violet-500/10 hover:border-violet-400/30 transition"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M5 5l14 14"></path>
+                  </svg>
+                </button>
 
-            </div>
+                <!-- Unblock -->
+                <button
+                  type="button"
+                  data-action="unblock"
+                  data-user-id="${u.id}"
+                  title="Débloquer"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/40 border border-slate-600/20 text-purple-300
+                         hover:bg-purple-500/10 hover:border-purple-400/30 transition"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                    <path d="M6 6l12 12M6 18L18 6" />
+                  </svg>
+                </button>
+              </div>
+            `}
           </li>
         `;
       })
@@ -778,5 +803,4 @@ export function onMountDashboard(): void {
   } else {
     fetchTicStats();
   }
-
 }

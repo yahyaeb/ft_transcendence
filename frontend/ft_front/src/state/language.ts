@@ -1,11 +1,15 @@
 export type Language = "fr" | "en";
 
-let currentLanguage: Language = "fr";
-
-export function setLanguage(lang: Language) {
-  currentLanguage = lang;
-}
+const STORAGE_KEY = "app_language";
 
 export function getLanguage(): Language {
-  return currentLanguage;
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored === "fr" || stored === "en") {
+    return stored;
+  }
+  return "fr";
+}
+
+export function setLanguage(lang: Language) {
+  localStorage.setItem(STORAGE_KEY, lang);
 }
