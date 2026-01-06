@@ -199,13 +199,8 @@ export function onMountDashboard(): void {
 
   const API_BASE = "https://localhost:4999";
   const TOKEN_KEY = "access_token";
-  const token = localStorage.getItem(TOKEN_KEY) || "";
-  if (!token)
-      return;
 
   const myUsername = null;
-  const authHeaders = { Authorization: `Bearer ${token}` };
-  const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
 
 
   const switchButtons = document.querySelectorAll<HTMLButtonElement>(

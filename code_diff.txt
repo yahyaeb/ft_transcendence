@@ -1,0 +1,1135 @@
+diff --git a/GAME/backend/controllers/authController.js b/GAME/backend/controllers/authController.js
+index 926296d..7cb29dc 100644
+--- a/GAME/backend/controllers/authController.js
++++ b/GAME/backend/controllers/authController.js
+@@ -110,10 +110,9 @@ export async function loginController(req, reply) {
+ 
+     reply.setCookie('access_token', token, {
+       httpOnly: true,
+-      secure: process.env.NODE_ENV === 'production',
++      secure: true,
+       sameSite: 'lax',
+       path: '/',
+-      domain: 'localhost',
+       maxAge: 60 * 60,
+     })
+ 
+diff --git a/GAME/backend/controllers/friendsRequests.js b/GAME/backend/controllers/friendsRequests.js
+index cbc2e93..1dfae28 100644
+--- a/GAME/backend/controllers/friendsRequests.js
++++ b/GAME/backend/controllers/friendsRequests.js
+@@ -53,19 +53,20 @@ export async function addFriend(req, reply) {
+ 
+ 
+     const already = await db.get(
+-        "SELECT 1 FROM friendships WHERE user_id = ? AND friend_id = ?",
+-        [me, other]
++        `SELECT 1
++        FROM friendships
++        WHERE (user_id = ? AND friend_id = ?)
++            AND (user_id = ? AND friend_id = ?)
++        LIMIT 1`,
++        [me, other, other, me]
+     );
+-    if (already)
+-        return reply.code(409).send({ error: "Already friends" });
+-
+ 
++    if (already) {
++    return reply.code(409).send({ error: "Already friends" });
++    }
+     await db.run(
+         "INSERT INTO friendships (user_id, friend_id) VALUES (?, ?)",
+         [me, other]);
+-    await db.run(
+-        "INSERT INTO friendships (user_id, friend_id) VALUES (?, ?)",
+-        [other, me]);
+ 
+     return reply.code(201).send({ message: "Friend added" });
+ }
+diff --git a/GAME/backend/database.db b/GAME/backend/database.db
+index 852a5f6..8d49d7b 100644
+Binary files a/GAME/backend/database.db and b/GAME/backend/database.db differ
+diff --git a/GAME/backend/difference_v12 b/GAME/backend/difference_v12
+new file mode 100644
+index 0000000..a35ead8
+--- /dev/null
++++ b/GAME/backend/difference_v12
+@@ -0,0 +1,73 @@
++ GAME/backend/controllers/authController.js         |   16 +-
++ GAME/backend/controllers/friendsRequests.js        |   19 +-
++ GAME/backend/database.db                           |  Bin 45056 -> 45056 bytes
++ GAME/backend/routes/auth.js                        |    3 +-
++ GAME/backend/server.js                             |    1 -
++ GAME/backend/uploads/avatars/user-22.png           |  Bin 108628 -> 108743 bytes
++ GAME/backend/uploads/avatars/user-3.jpg            |  Bin 0 -> 35981 bytes
++ GAME/backend/uploads/avatars/user-3.png            |  Bin 0 -> 717352 bytes
++ GAME/backend/uploads/avatars/user-6.png            |  Bin 0 -> 108628 bytes
++ GAME/backend/uploads/avatars/user-7.png            |  Bin 0 -> 108628 bytes
++ GAME/games/pong/components/gameModeSelection.ts    |    6 +
++ GAME/games/pong/components/gameplay.ts             |   52 +-
++ GAME/games/pong/components/mainPage.ts             |   41 +-
++ GAME/games/pong/components/tournamentBracket.ts    |    6 +
++ .../games/pong/components/tournamentMatchWinner.ts |    4 +
++ GAME/games/pong/components/winner.ts               |    5 +
++ GAME/games/tictactoe/components/gameplay.ts        |   51 +-
++ GAME/games/tictactoe/components/mainPage.ts        |    6 +
++ GAME/games/tictactoe/components/winner.ts          |   12 +-
++ GAME/i18n/translations_game.ts                     |   41 +
++ GAME/state/language_game.ts                        |   31 +
++ frontend/ft_front/src/i18n/translations.ts         |  202 +++-
++ frontend/ft_front/src/main.ts                      |    2 +-
++ frontend/ft_front/src/pages/dashboard.ts           |  186 ++--
++ frontend/ft_front/src/pages/home.ts                |    2 +
++ frontend/ft_front/src/pages/login.ts               |   27 +-
++ frontend/ft_front/src/pages/profile.ts             |    2 +-
++ frontend/ft_front/src/pages/settings.ts            |  145 ++-
++ frontend/ft_front/src/pages/signup.ts              |   41 +-
++ frontend/ft_front/src/pages/stats-pong.ts          |   30 +-
++ frontend/ft_front/src/pages/stats-tictactoe.ts     |   43 +-
++
++ frontend/ft_front/src/state/language.ts            |   14 +-
++ node_modules/.package-lock.json                    |   65 +-
++ node_modules/@esbuild/linux-x64/README.md          |    3 -
++ node_modules/@esbuild/linux-x64/bin/esbuild        |  Bin 11100344 -> 0 bytes
++ node_modules/@esbuild/linux-x64/package.json       |   20 -
++ node_modules/@fastify/cors/.editorconfig           |    8 +
++ node_modules/@fastify/cors/.gitattributes          |    5 +
++ node_modules/@fastify/cors/.github/dependabot.yml  |   13 +
++ node_modules/@fastify/cors/.github/stale.yml       |   21 +
++ .../@fastify/cors/.github/workflows/ci.yml         |   33 +
++ node_modules/@fastify/cors/LICENSE                 |   23 +
++ node_modules/@fastify/cors/README.md               |  212 ++++
++ node_modules/@fastify/cors/bench.js                |   17 +
++ node_modules/@fastify/cors/benchmark/package.json  |   15 +
++ node_modules/@fastify/cors/benchmark/vary.js       |   34 +
++ node_modules/@fastify/cors/eslint.config.js        |    6 +
++ node_modules/@fastify/cors/index.js                |  318 ++++++
++ node_modules/@fastify/cors/package.json            |   81 ++
++ node_modules/@fastify/cors/test/cors.test.js       | 1124 ++++++++++++++++++++
++ node_modules/@fastify/cors/test/hooks.test.js      |  787 ++++++++++++++
++ node_modules/@fastify/cors/test/preflight.test.js  |  590 ++++++++++
++ node_modules/@fastify/cors/test/vary.test.js       |  237 +++++
++ node_modules/@fastify/cors/types/index.d.ts        |  126 +++
++ node_modules/@fastify/cors/types/index.test-d.ts   |  388 +++++++
++ node_modules/@fastify/cors/vary.js                 |  116 ++
++ .../@rollup/rollup-linux-x64-gnu/README.md         |    3 -
++ .../@rollup/rollup-linux-x64-gnu/package.json      |   25 -
++ .../rollup-linux-x64-gnu/rollup.linux-x64-gnu.node |  Bin 2092184 -> 0 bytes
++ .../@rollup/rollup-linux-x64-musl/README.md        |    3 -
++ .../@rollup/rollup-linux-x64-musl/package.json     |   25 -
++ .../rollup.linux-x64-musl.node                     |  Bin 2124320 -> 0 bytes
++ node_modules/toad-cache/LICENSE                    |   21 +
++ node_modules/toad-cache/README.md                  |  265 +++++
++ node_modules/toad-cache/dist/toad-cache.cjs        |  878 +++++++++++++++
++ node_modules/toad-cache/dist/toad-cache.mjs        |  852 +++++++++++++++
++ node_modules/toad-cache/package.json               |   82 ++
++ node_modules/toad-cache/toad-cache.d.cts           |  138 +++
++ node_modules/toad-cache/toad-cache.d.ts            |  128 +++
++ package-lock.json                                  |   18 +-
++ package.json                                       |    1 +
++ 72 files changed, 7285 insertions(+), 395 deletions(-)
+diff --git a/GAME/backend/uploads/avatars/user-10.png b/GAME/backend/uploads/avatars/user-10.png
+new file mode 100644
+index 0000000..9d81ba7
+Binary files /dev/null and b/GAME/backend/uploads/avatars/user-10.png differ
+diff --git a/GAME/backend/uploads/avatars/user-12.png b/GAME/backend/uploads/avatars/user-12.png
+new file mode 100644
+index 0000000..9d81ba7
+Binary files /dev/null and b/GAME/backend/uploads/avatars/user-12.png differ
+diff --git a/GAME/backend/uploads/avatars/user-8.png b/GAME/backend/uploads/avatars/user-8.png
+index 61c2ca3..a2d88db 100644
+Binary files a/GAME/backend/uploads/avatars/user-8.png and b/GAME/backend/uploads/avatars/user-8.png differ
+diff --git a/GAME/games/pong/components/gameModeSelection.ts b/GAME/games/pong/components/gameModeSelection.ts
+index e74cbd5..266d46f 100644
+--- a/GAME/games/pong/components/gameModeSelection.ts
++++ b/GAME/games/pong/components/gameModeSelection.ts
+@@ -62,19 +62,19 @@ export function render(): string {
+           <a href="/pong" data-link 
+              class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2">
+             <span>←</span>
+-            <span>${t.back}</span>
++            <span>Retour</span>
+           </a>
+           <button id="customizeBtn" 
+                   class="flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-xl border border-slate-400/20 rounded-xl text-slate-300 hover:text-purple-400 hover:border-purple-500/50 transition-all duration-300"
+                   style="box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15)">
+-            <span class="text-sm font-medium">${t.customize}</span>
++            <span class="text-sm font-medium">Personnaliser</span>
+           </button>
+         </div>
+         <h1 class="text-5xl font-extrabold mb-3 gradient-purple" 
+             style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
+-          ${t.pvp_title}
++          Joueur vs Joueur
+         </h1>
+-        <p class="text-slate-400 text-base tracking-wide">${t.choose_mode}</p>
++        <p class="text-slate-400 text-base tracking-wide">Choisissez votre mode de jeu</p>
+       </div>
+ 
+       <div class="flex flex-col gap-6 px-8">
+@@ -83,18 +83,19 @@ export function render(): string {
+            style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
+           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+           <div class="relative">
+-            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">${t.match_1v1}</h2>
+-            <p class="text-slate-400 flex justify-center">${t.match_1v1_desc}</p>
++            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">Match 1 vs 1</h2>
++            <p class="text-slate-400 flex justify-center">Un duel classique entre deux joueurs</p>
+           </div>
+         </button>
+ 
++
+         <button id="tournamentBtn" 
+                 class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer text-left"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
+           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+           <div class="relative">
+-            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">${t.tournament}</h2>
+-            <p class="text-slate-400">${t.tournament_desc}</p>
++            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">Tournoi</h2>
++            <p class="text-slate-400">Organisez un tournoi avec 4 joueurs</p>
+           </div>
+         </button>
+       </div>
+@@ -110,9 +111,9 @@ export function render(): string {
+         <div class="mb-6 text-center">
+           <h2 class="text-3xl font-extrabold mb-2 gradient-purple" 
+               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+-            ${t.customization_title}
++            Personnalisation
+           </h2>
+-          <p class="text-slate-400 text-sm">${t.customization_desc}</p>
++          <p class="text-slate-400 text-sm">Personnalisez votre expérience de jeu</p>
+         </div>
+ 
+         <div class="mb-6 flex justify-center">
+@@ -121,34 +122,34 @@ export function render(): string {
+         </div>
+ 
+         <div class="mb-6">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.map_style}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Style de carte</label>
+           <div class="grid grid-cols-5 gap-2" id="mapButtonsContainer"></div>
+         </div>
+ 
+         <div class="mb-5">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.paddle_p1}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur Paddle Joueur 1</label>
+           <div class="flex flex-wrap gap-2" id="paddle1ColorsContainer"></div>
+         </div>
+ 
+         <div class="mb-5">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.paddle_p2}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur Paddle Joueur 2</label>
+           <div class="flex flex-wrap gap-2" id="paddle2ColorsContainer"></div>
+         </div>
+ 
+         <div class="mb-6">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.ball_color}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur de la balle</label>
+           <div class="flex flex-wrap gap-2" id="ballColorsContainer"></div>
+         </div>
+ 
+         <div class="flex gap-4">
+           <button id="resetCustomization" 
+                   class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-slate-700/50 border border-slate-600/30 rounded-xl text-slate-300 transition-all duration-300 hover:bg-slate-600/50">
+-            ${t.reset}
++            Réinitialiser
+           </button> 
+           <button id="saveCustomization" 
+                   class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                   style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-            ${t.save}
++            Sauvegarder
+           </button>
+         </div>
+       </div>
+@@ -159,14 +160,14 @@ export function render(): string {
+         <div class="mb-8 text-center">
+           <h2 class="font-extrabold flex justify-center mb-2 gradient-purple" 
+               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+-            ${t.match_1v1}
++            Match 1 vs 1
+           </h2>
+-          <p class="text-slate-400 flex justify-center text-sm">${t.enter_player2}</p>
++          <p class="text-slate-400 flex justify-center text-sm">Entrez le pseudo du joueur 2</p>
+         </div>
+ 
+         <div class="space-y-4 mb-8">
+           <div class="relative">
+-            <input id="pvpPlayer2" type="text" placeholder="${t.player2_placeholder}" 
++            <input id="pvpPlayer2" type="text" placeholder="Pseudo joueur 2" 
+                    class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
+           </div>
+         </div>
+@@ -174,7 +175,7 @@ export function render(): string {
+         <button id="closePvpModal" 
+                 class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.start_match}
++          Commencer le match
+         </button>
+       </div>
+     </div>
+@@ -184,15 +185,15 @@ export function render(): string {
+         <div class="mb-8 text-center">
+           <h2 class="text-4xl font-extrabold mb-2 gradient-purple" 
+               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+-            ${t.tournament_config}
++            Configuration Tournoi
+           </h2>
+-          <p class="text-slate-400 text-sm">${t.enter_players}</p>
++          <p class="text-slate-400 text-sm">Entrez les pseudos des 4 joueurs</p>
+         </div>
+ 
+         <div class="space-y-4 mb-8">
+           ${[1, 2, 3, 4].map(num => `
+             <div class="relative">
+-              <input id="player${num}" type="text" placeholder="${t.player_placeholder} ${num}" 
++              <input id="player${num}" type="text" placeholder="Pseudo joueur ${num}" 
+                      class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
+               <div class="absolute right-4 top-1/2 -translate-y-1/2 text-purple-400 font-bold">${num}</div>
+             </div>
+@@ -202,7 +203,7 @@ export function render(): string {
+         <button id="closeModal" 
+                 class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.confirm}
++          Valider
+         </button>
+       </div>
+     </div>
+@@ -445,7 +446,7 @@ export function onMount(): void {
+   closePvpModalBtn?.addEventListener('click', () => {
+     const player2Name = pvpPlayer2Input?.value.trim() || '';
+     if (player2Name === '') {
+-      alert(t.error_player2);
++      alert("Veuillez entrer un pseudo pour le joueur 2");
+       return;
+     }
+     localStorage.setItem('pvpPlayer2', player2Name);
+@@ -469,11 +470,11 @@ export function onMount(): void {
+       (document.getElementById('player4') as HTMLInputElement)?.value.trim() || '',
+     ];
+     if (players.some(p => p === '')) {
+-      alert(t.error_all_players);
++      alert("Veuillez inserer un pseudo pour chaque joueur");
+       return; 
+     }
+     if (hasDuplicates(players)) {
+-      alert(t.error_unique_players);
++      alert("Veuillez inserer le pseudo une seule fois");
+       return; 
+     }
+     const tournamentData: TournamentData = { players };
+diff --git a/GAME/games/pong/components/gameplay.ts b/GAME/games/pong/components/gameplay.ts
+index 8424c10..60a6250 100644
+--- a/GAME/games/pong/components/gameplay.ts
++++ b/GAME/games/pong/components/gameplay.ts
+@@ -19,13 +19,13 @@ export function render(): string {
+     <div id="gameContainer" class="text-center max-w-[1100px] w-full mx-auto">
+       <div id="topBar" class="flex justify-between items-center mb-6 px-10 py-[18px] bg-slate-800/40 rounded-xl backdrop-blur-xl border border-slate-400/10">
+         <div class="playerSection flex flex-col gap-1.5">
+-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player}</div>
+-          <div id="player1Name" class="text-lg font-semibold text-purple-400">● ${t.player_1}</div>
++          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
++          <div id="player1Name" class="text-lg font-semibold text-purple-400">● Player 1</div>
+           <div id="leftScore" class="text-[44px] font-extrabold tracking-tight gradient-purple">0</div>
+         </div>
+         <div class="playerSection flex flex-col gap-1.5">
+-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player}</div>
+-          <div id="player2Name" class="text-lg font-semibold text-cyan-400">● ${t.player_2}</div>
++          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
++          <div id="player2Name" class="text-lg font-semibold text-cyan-400">● Player 2</div>
+           <div id="rightScore" class="text-[44px] font-extrabold tracking-tight gradient-cyan">0</div>
+         </div>
+       </div>
+@@ -37,12 +37,12 @@ export function render(): string {
+         <button id="resetButton"
+                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
+-          ${t.restart}
++          Redémarrer
+         </button>
+         <button id="menuButton"
+                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
+-          ${t.back_to_menu}
++          Retour au menu
+         </button>
+       </div>
+     </div>
+@@ -59,7 +59,7 @@ export function onMount(): void {
+       return;
+     }
+ 
+-    let player1Name = me.user.username ?? t.player_1;
++    let player1Name = me.user.username ?? "Player 1";
+     localStorage.setItem("player1", player1Name);
+   if (cleanupFunction){
+     cleanupFunction()
+@@ -88,10 +88,10 @@ export function onMount(): void {
+ 
+ 
+ 
+-  let player2Name = t.player_2;
++  let player2Name = 'Player 2';
+ 
+   if (aiGame === 'isAi') {
+-      player2Name = t.ai;
++      player2Name = 'AI'
+   } else {
+     const pvpPlayer2 = localStorage.getItem('pvpPlayer2');
+     if (pvpPlayer2 && !tournamentMatch) {
+@@ -109,8 +109,8 @@ export function onMount(): void {
+         player1Name = data.players[2];
+         player2Name = data.players[3];
+       } else if (tournamentMatch === 'final') {
+-        player1Name = sessionStorage.getItem('match1Winner') || t.winner_1;
+-        player2Name = sessionStorage.getItem('match2Winner') || t.winner_2;
++        player1Name = sessionStorage.getItem('match1Winner') || 'Winner 1';
++        player2Name = sessionStorage.getItem('match2Winner') || 'Winner 2';
+       }
+     }
+   }
+diff --git a/GAME/games/pong/components/tournamentBracket.ts b/GAME/games/pong/components/tournamentBracket.ts
+index 487ec8c..e56a753 100644
+--- a/GAME/games/pong/components/tournamentBracket.ts
++++ b/GAME/games/pong/components/tournamentBracket.ts
+@@ -11,37 +11,37 @@ export function render(): string {
+         <a href="/pong/game-mode" data-link 
+            class="mb-6 text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 mx-auto w-fit">
+           <span>←</span>
+-          <span>${t.back}</span>
++          <span>Retour</span>
+         </a>
+         <h1 class="text-5xl font-extrabold mb-3 gradient-purple" 
+             style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
+-          ${t.tournament_title}
++          Organisation du Tournoi
+         </h1>
+-        <p class="text-slate-400 text-base tracking-wide">${t.tournament_bracket}</p>
++        <p class="text-slate-400 text-base tracking-wide">Tableau des matchs</p>
+       </div>
+       <div class="flex justify-center items-center gap-16 px-8">
+         <div class="flex flex-col gap-12">
+           <div class="text-left">
+-            <h3 class="text-sm text-slate-500 uppercase tracking-wider mb-4 text-center">${t.semi_finals}</h3>
++            <h3 class="text-sm text-slate-500 uppercase tracking-wider mb-4 text-center">Demi-Finales</h3>
+             <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-6 mb-8 min-w-[280px]">
+-              <div class="text-xs text-slate-500 uppercase tracking-wider mb-3">${t.match} 1</div>
++              <div class="text-xs text-slate-500 uppercase tracking-wider mb-3">Match 1</div>
+               <div class="space-y-3">
+                 <div class="flex items-center justify-between bg-slate-900/50 rounded-lg px-4 py-3 border border-purple-500/30">
+-                  <span id="match1-player1" class="text-purple-400 font-semibold">${t.player} 1</span>
++                  <span id="match1-player1" class="text-purple-400 font-semibold">Player 1</span>
+                 </div>
+                 <div class="flex items-center justify-between bg-slate-900/50 rounded-lg px-4 py-3 border border-cyan-500/30">
+-                  <span id="match1-player2" class="text-cyan-400 font-semibold">${t.player} 2</span>
++                  <span id="match1-player2" class="text-cyan-400 font-semibold">Player 2</span>
+                 </div>
+               </div>
+             </div>
+             <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-6 min-w-[280px]">
+-              <div class="text-xs text-slate-500 uppercase tracking-wider mb-3">${t.match} 2</div>
++              <div class="text-xs text-slate-500 uppercase tracking-wider mb-3">Match 2</div>
+               <div class="space-y-3">
+                 <div class="flex items-center justify-between bg-slate-900/50 rounded-lg px-4 py-3 border border-purple-500/30">
+-                  <span id="match2-player1" class="text-purple-400 font-semibold">${t.player} 3</span>
++                  <span id="match2-player1" class="text-purple-400 font-semibold">Player 3</span>
+                 </div>
+                 <div class="flex items-center justify-between bg-slate-900/50 rounded-lg px-4 py-3 border border-cyan-500/30">
+-                  <span id="match2-player2" class="text-cyan-400 font-semibold">${t.player} 4</span>
++                  <span id="match2-player2" class="text-cyan-400 font-semibold">Player 4</span>
+                 </div>
+               </div>
+             </div>
+@@ -53,16 +53,16 @@ export function render(): string {
+           <div class="text-3xl" style="filter: drop-shadow(0 0 10px rgba(168, 139, 250, 0.5))">→</div>
+         </div>
+         <div class="flex flex-col justify-center">
+-          <h3 class="text-sm text-slate-500 uppercase tracking-wider mb-4 text-center">${t.final}</h3>
++          <h3 class="text-sm text-slate-500 uppercase tracking-wider mb-4 text-center">Finale</h3>
+           <div class="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border-2 border-yellow-500/30 rounded-2xl p-8 min-w-[320px]">
+-            <div class="text-xs text-yellow-400 uppercase tracking-wider mb-4 text-center font-semibold">${t.final_match}</div>
++            <div class="text-xs text-yellow-400 uppercase tracking-wider mb-4 text-center font-semibold">Match Final</div>
+             <div class="space-y-4">
+               <div class="flex items-center justify-between bg-slate-900/70 rounded-xl px-5 py-4 border-2 border-purple-500/40">
+-                <span class="text-purple-300 font-semibold">${t.winner_match} 1</span>
++                <span class="text-purple-300 font-semibold">Gagnant Match 1</span>
+               </div>
+               <div class="text-center text-2xl font-bold text-yellow-400">VS</div>
+               <div class="flex items-center justify-between bg-slate-900/70 rounded-xl px-5 py-4 border-2 border-cyan-500/40">
+-                <span class="text-cyan-300 font-semibold">${t.winner_match} 2</span>
++                <span class="text-cyan-300 font-semibold">Gagnant Match 2</span>
+               </div>
+             </div>
+           </div>
+@@ -72,7 +72,7 @@ export function render(): string {
+         <button id="startTournament"
+                 class="font-semibold text-lg cursor-pointer px-12 py-5 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.start_tournament}
++          Commencer le Tournoi
+         </button>
+       </div>
+     </div>
+diff --git a/GAME/games/pong/components/tournamentMatchWinner.ts b/GAME/games/pong/components/tournamentMatchWinner.ts
+index 37ce719..97775a5 100644
+--- a/GAME/games/pong/components/tournamentMatchWinner.ts
++++ b/GAME/games/pong/components/tournamentMatchWinner.ts
+@@ -12,33 +12,33 @@ export function render(): string {
+       </div>
+ 
+       <div class="mb-8">
+-        <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2" 
++        <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple" 
+             style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))">
+-          ${t.match_winner_title}
++          Player 1 Wins!
+         </h1>
+-        <p class="text-2xl text-slate-400 tracking-wide">${t.good_luck}</p>
++        <p class="text-2xl text-slate-400 tracking-wide">Bon courage pour la suite</p>
+       </div>
+ 
+       <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 mb-8">
+-        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">${t.final_score}</div>
++        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">Score Final</div>
+         <div class="flex justify-center items-center gap-8">
+           <!-- Score joueur 1 -->
+           <div>
+-            <div id="player1Name" class="text-lg text-purple-400 mb-2">${t.player_1}</div>
++            <div id="player1Name" class="text-lg text-purple-400 mb-2">Player 1</div>
+             <div id="finalScore1" class="text-5xl font-extrabold gradient-purple">5</div>
+           </div>
+ 
+           <div class="text-3xl text-slate-600">-</div>
+ 
+           <div>
+-            <div id="player2Name" class="text-lg text-cyan-400 mb-2">${t.player_2}</div>
++            <div id="player2Name" class="text-lg text-cyan-400 mb-2">Player 2</div>
+             <div id="finalScore2" class="text-5xl font-extrabold gradient-cyan">0</div>
+           </div>
+         </div>
+       </div>
+ 
+       <div id="nextMatchInfo" class="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border-2 border-yellow-500/30 rounded-2xl p-6 mb-8">
+-        <div class="text-xs text-yellow-400 uppercase tracking-wider mb-4">${t.next_match}</div>
++        <div class="text-xs text-yellow-400 uppercase tracking-wider mb-4">Prochain Match</div>
+         <div class="flex justify-center items-center gap-4">
+           <div id="nextPlayer1" class="text-xl font-bold text-purple-300"></div>
+           <div class="text-2xl text-yellow-400 font-bold">VS</div>
+@@ -50,7 +50,7 @@ export function render(): string {
+         <button id="nextMatchBtn"
+                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.5)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.next_match}
++          Prochain Match
+         </button>
+       </div>
+     </div>
+@@ -63,13 +63,21 @@ export function onMount(): void {
+   const winner = urlParams.get('winner') || '1'; 
+   const score1 = urlParams.get('score1') || '5'; 
+   const score2 = urlParams.get('score2') || '0'; 
+-  const player1 = urlParams.get('player1') || t.player_1; 
+-  const player2 = urlParams.get('player2') || t.player_2; 
++  const player1 = urlParams.get('player1') || 'Player 1'; 
++  const player2 = urlParams.get('player2') || 'Player 2'; 
+ 
+   const winnerName = winner === '1' ? player1 : player2;
+ 
+   const winnerTitle = document.getElementById('winnerTitle')!;
+-  winnerTitle.textContent = `${winnerName} ${t.wins_suffix}`;
++  winnerTitle.textContent = `${winnerName} Wins!`;
++
++  if (winner === '1') {
++    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-purple';
++    winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))';
++  } else {
++    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-cyan';
++    winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))';
++  }
+ 
+   document.getElementById('player1Name')!.textContent = player1;
+   document.getElementById('player2Name')!.textContent = player2;
+@@ -86,10 +94,10 @@ export function onMount(): void {
+     const tournamentPlayers = JSON.parse(tournamentPlayersStr);
+ 
+     if (currentMatch === '1') {
+-      nextPlayer1Element.textContent = tournamentPlayers.player3 || t.player_3;
+-      nextPlayer2Element.textContent = tournamentPlayers.player4 || t.player_4;
++      nextPlayer1Element.textContent = tournamentPlayers.player3 || 'Player 3';
++      nextPlayer2Element.textContent = tournamentPlayers.player4 || 'Player 4';
+     } else if (currentMatch === '2') {
+-      const match1Winner = sessionStorage.getItem('match1Winner') || `${t.match_winner} 1`;
++      const match1Winner = sessionStorage.getItem('match1Winner') || 'Gagnant Match 1';
+       const match2Winner = winnerName; 
+       
+       nextPlayer1Element.textContent = match1Winner;
+diff --git a/GAME/games/pong/components/winner.ts b/GAME/games/pong/components/winner.ts
+index 904a777..58c0ae9 100644
+--- a/GAME/games/pong/components/winner.ts
++++ b/GAME/games/pong/components/winner.ts
+@@ -12,16 +12,15 @@ export function render(): string {
+       </div>
+ 
+       <div class="mb-8">
+-        <h1 id="winnerTitle"
+-        class="text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2"
+-        style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))"
+-        > ${t.match_winner_title}
++        <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple" 
++            style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))">
++          Player 1 Wins!
+         </h1>
+-        <p class="text-2xl text-slate-400 tracking-wide">${t.victory_congrats}</p>
++        <p class="text-2xl text-slate-400 tracking-wide">Félicitations pour cette victoire éclatante!</p>
+       </div>
+ 
+       <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 mb-8">
+-        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">${t.final_score}</div>
++        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">Score Final</div>
+         <div class="flex justify-center items-center gap-8">
+           <div>
+             <div id="player1Name" class="text-lg text-purple-400 mb-2">Player 1</div>
+@@ -41,12 +40,12 @@ export function render(): string {
+         <button id="replayBtn"
+                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.5)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.replay_1v1}
++          Rejouer en 1 vs 1
+         </button>
+         
+         <button id="menuBtn"
+                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl text-slate-300 transition-all duration-300 hover:border-purple-500/50 hover:text-white">
+-          ${t.back_to_menu}
++          Retour au Menu
+         </button>
+       </div>
+     </div>
+@@ -64,13 +63,13 @@ export function onMount(): void {
+   const winnerName = winner === '1' ? player1 : player2;
+ 
+   const winnerTitle = document.getElementById('winnerTitle')!;
+-  winnerTitle.textContent = `${winnerName} ${t.wins_suffix}`;
++  winnerTitle.textContent = `${winnerName} Gagne!`;
+ 
+   if (winner === '1') {
+-    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2';
++    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-purple';
+     winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))';
+   } else {
+-    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-cyan leading-tight pb-2';
++    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-cyan';
+     winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))';
+   }
+ 
+diff --git a/GAME/games/tictactoe/components/gameplay.ts b/GAME/games/tictactoe/components/gameplay.ts
+index 5c6dd55..2c474b5 100644
+--- a/GAME/games/tictactoe/components/gameplay.ts
++++ b/GAME/games/tictactoe/components/gameplay.ts
+@@ -10,19 +10,19 @@ export function render(): string {
+       <div id="topBar" class="flex justify-between items-center mb-6 px-10 py-[18px] bg-slate-800/40 rounded-xl backdrop-blur-xl border border-slate-400/10">
+         <div class="playerSection flex flex-col gap-1.5 relative">
+           <div id="player1Arrow" class="absolute -left-6 top-1/2 -translate-y-1/2 text-3xl gradient-purple opacity-0 transition-opacity duration-300">→</div>
+-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player_x}</div>
++          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Joueur X</div>
+           <div id="player1Name" class="text-lg font-semibold text-purple-400">Player 1</div>
+           <div id="player1Score" class="text-[32px] font-extrabold tracking-tight gradient-purple">0</div>
+         </div>
+         <div class="flex flex-col items-center">
+           <div id="drawScore" class="text-slate-400">
+-            <span class="text-sm">${t.draws}: </span>
++            <span class="text-sm">Nuls: </span>
+             <span id="drawCount" class="font-bold">0</span>
+           </div>
+         </div>
+         <div class="playerSection flex flex-col gap-1.5 relative">
+           <div id="player2Arrow" class="absolute -right-6 top-1/2 -translate-y-1/2 text-3xl gradient-cyan opacity-0 transition-opacity duration-300">←</div>
+-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player_o}</div>
++          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Joueur O</div>
+           <div id="player2Name" class="text-lg font-semibold text-cyan-400">Player 2</div>
+           <div id="player2Score" class="text-[32px] font-extrabold tracking-tight gradient-cyan">0</div>
+         </div>
+@@ -37,12 +37,12 @@ export function render(): string {
+         <button id="resetButton"
+                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
+-          ${t.restart}
++          Nouvelle partie
+         </button>
+         <button id="menuButton"
+                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
+-          ${t.back_to_menu}
++          Retour au menu
+         </button>
+       </div>
+     </div>
+@@ -130,10 +130,10 @@ export function onMount(): void {
+       return;
+     }
+ 
+-    const player1Name = String(me.user.username ?? t.player_1);
++    const player1Name = String(me.user.username ?? "Player 1");
+     localStorage.setItem("tictactoe_player1", player1Name);
+ 
+-    const player2Name = localStorage.getItem("tictactoe_pvpPlayer2") || t.guest;
++    const player2Name = localStorage.getItem("tictactoe_pvpPlayer2") || "Guest";
+ 
+     player1NameElement.textContent = player1Name;
+     player2NameElement.textContent = player2Name;
+diff --git a/GAME/games/tictactoe/components/mainPage.ts b/GAME/games/tictactoe/components/mainPage.ts
+index 7524e06..3a2584a 100644
+--- a/GAME/games/tictactoe/components/mainPage.ts
++++ b/GAME/games/tictactoe/components/mainPage.ts
+@@ -49,19 +49,19 @@ export function render(): string {
+           <button id="backBtn"
+              class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2 bg-transparent border-none cursor-pointer">
+             <span>←</span>
+-            <span>${t.back}</span>
++            <span>Retour</span>
+           </button>
+           <button id="customizeBtn" 
+                   class="flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-xl border border-slate-400/20 rounded-xl text-slate-300 hover:text-purple-400 hover:border-purple-500/50 transition-all duration-300"
+                   style="box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15)">
+-            <span class="text-sm font-medium">${t.customize}</span>
++            <span class="text-sm font-medium">Personnaliser</span>
+           </button>
+         </div>
+         <h1 class="text-7xl font-extrabold mb-4 gradient-purple" 
+             style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
+-          ${t.tictactoe_title}
++          TIC TAC TOE
+         </h1>
+-        <p class="text-slate-400 text-lg tracking-wide">${t.tictactoe_subtitle}</p>
++        <p class="text-slate-400 text-lg tracking-wide">Transcendence Edition</p>
+       </div>
+       
+       <div class="flex flex-col gap-6 px-8">
+@@ -70,17 +70,17 @@ export function render(): string {
+            style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
+           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+           <div class="relative text-center">
+-            <h2 class="text-3xl font-bold mb-2 gradient-purple">${t.pvp_title}</h2>
+-            <p class="text-slate-400">${t.match_1v1_desc}</p>
++            <h2 class="text-3xl font-bold mb-2 gradient-purple">Joueur vs Joueur</h2>
++            <p class="text-slate-400">Défiez un ami sur le même écran</p>
+             <div class="mt-4 text-sm text-slate-500">
+-              <span class="inline-block">${t.click_to_play}</span>
++              <span class="inline-block">Cliquez pour jouer</span>
+             </div>
+           </div>
+         </button>
+       </div>
+       
+       <div class="mt-12 text-slate-500 text-sm">
+-        <p>${t.tictactoe_rules}</p>
++        <p>Alignez 3 symboles pour gagner!</p>
+       </div>
+     </div>
+ 
+@@ -94,9 +94,9 @@ export function render(): string {
+         <div class="mb-6 text-center">
+           <h2 class="text-3xl font-extrabold mb-2 gradient-purple" 
+               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+-            ${t.customization_title}
++            Personnalisation
+           </h2>
+-          <p class="text-slate-400 text-sm">${t.customization_desc}</p>
++          <p class="text-slate-400 text-sm">Personnalisez votre expérience de jeu</p>
+         </div>
+ 
+         <div class="mb-6 flex justify-center">
+@@ -105,29 +105,29 @@ export function render(): string {
+         </div>
+ 
+         <div class="mb-6">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.map_style}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Style de carte</label>
+           <div class="grid grid-cols-5 gap-2" id="mapButtonsContainer"></div>
+         </div>
+ 
+         <div class="mb-5">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.symbol_x_color}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur X (Joueur 1)</label>
+           <div class="flex flex-wrap gap-2" id="xColorsContainer"></div>
+         </div>
+ 
+         <div class="mb-6">
+-          <label class="block text-sm font-medium text-slate-300 mb-3">${t.symbol_o_color}</label>
++          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur O (Joueur 2)</label>
+           <div class="flex flex-wrap gap-2" id="oColorsContainer"></div>
+         </div>
+ 
+         <div class="flex gap-4">
+           <button id="resetCustomization" 
+                   class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-slate-700/50 border border-slate-600/30 rounded-xl text-slate-300 transition-all duration-300 hover:bg-slate-600/50">
+-            ${t.reset}
++            Réinitialiser
+           </button> 
+           <button id="saveCustomization" 
+                   class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                   style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-            ${t.save}
++            Sauvegarder
+           </button>
+         </div>
+       </div>
+@@ -138,14 +138,14 @@ export function render(): string {
+         <div class="mb-8 text-center">
+           <h2 class="text-4xl font-extrabold flex justify-center mb-2 gradient-purple" 
+               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
+-            ${t.match_1v1}
++            Match 1 vs 1
+           </h2>
+-          <p class="text-slate-400 flex justify-center text-sm">${t.enter_player2}</p>
++          <p class="text-slate-400 flex justify-center text-sm">Entrez le pseudo du joueur 2</p>
+         </div>
+ 
+         <div class="space-y-4 mb-8">
+           <div class="relative">
+-            <input id="pvpPlayer2" type="text" placeholder="${t.player2_placeholder}" 
++            <input id="pvpPlayer2" type="text" placeholder="Pseudo joueur 2" 
+                    class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
+           </div>
+         </div>
+@@ -153,7 +153,7 @@ export function render(): string {
+         <button id="startPvpGame" 
+                 class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.start_match}
++          Commencer le match
+         </button>
+       </div>
+     </div>
+@@ -366,7 +366,7 @@ export function onMount(): void {
+   startPvpGame?.addEventListener('click', () => {
+     const player2Name = pvpPlayer2Input?.value.trim() || '';
+     if (player2Name === '') {
+-      alert(t.error_player2);
++      alert("Veuillez entrer un pseudo pour le joueur 2");
+       return;
+     }
+     localStorage.setItem('tictactoe_pvpPlayer2', player2Name);
+diff --git a/GAME/games/tictactoe/components/winner.ts b/GAME/games/tictactoe/components/winner.ts
+index f26dc3d..a7a2027 100644
+--- a/GAME/games/tictactoe/components/winner.ts
++++ b/GAME/games/tictactoe/components/winner.ts
+@@ -12,25 +12,25 @@ export function render(): string {
+       </div>
+ 
+       <div class="mb-8">
+-        <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2" 
++        <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple" 
+             style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))">
+-          <!-- Title will be set dynamically -->
++          Player 1 Wins!
+         </h1>
+-        <p class="text-2xl text-slate-400 tracking-wide">${t.tictactoe_winner_subtitle}</p>
++        <p class="text-2xl text-slate-400 tracking-wide">Félicitations pour cette victoire!</p>
+       </div>
+ 
+       <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 mb-8">
+-        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">${t.tictactoe_winner_final_score}</div>
++        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">Score Final</div>
+         <div class="flex justify-center items-center gap-8">
+           <div>
+-            <div id="player1Name" class="text-lg text-purple-400 mb-2">${t.player_x}</div>
++            <div id="player1Name" class="text-lg text-purple-400 mb-2">Player 1</div>
+             <div id="finalScore1" class="text-5xl font-extrabold gradient-purple">0</div>
+           </div>
+ 
+           <div class="text-3xl text-slate-600">-</div>
+ 
+           <div>
+-            <div id="player2Name" class="text-lg text-cyan-400 mb-2">${t.player_o}</div>
++            <div id="player2Name" class="text-lg text-cyan-400 mb-2">Player 2</div>
+             <div id="finalScore2" class="text-5xl font-extrabold gradient-cyan">0</div>
+           </div>
+         </div>
+@@ -40,12 +40,12 @@ export function render(): string {
+         <button id="replayBtn"
+                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.5)]"
+                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
+-          ${t.tictactoe_winner_replay}
++          Rejouer
+         </button>
+         
+         <button id="menuBtn"
+                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl text-slate-300 transition-all duration-300 hover:border-purple-500/50 hover:text-white">
+-          ${t.tictactoe_winner_back_menu}
++          Retour au Menu
+         </button>
+       </div>
+     </div>
+@@ -58,8 +58,8 @@ export function onMount(): void {
+   const winnerParam = urlParams.get("winner"); // expect: "1" | "2" | "draw"
+   const score1 = urlParams.get("score1") || "0";
+   const score2 = urlParams.get("score2") || "0";
+-  const player1 = urlParams.get("player1") || t.player_x;
+-  const player2 = urlParams.get("player2") || t.guest;
++  const player1 = urlParams.get("player1") || "Player 1";
++  const player2 = urlParams.get("player2") || "Guest";
+ 
+   const matchId =
+     urlParams.get("matchId") || sessionStorage.getItem("ttt_match_id") || "";
+@@ -68,21 +68,21 @@ export function onMount(): void {
+   const winnerName =
+     winnerParam === "1" ? player1 :
+     winnerParam === "2" ? player2 :
+-    t.tictactoe_winner_title_draw;
++    "Match nul";
+ 
+   const winnerTitle = document.getElementById("winnerTitle") as HTMLElement | null;
+   if (winnerTitle) {
+     winnerTitle.textContent =
+-      winnerParam === "draw" ? t.tictactoe_winner_title_draw : `${winnerName} ${t.tictactoe_winner_title_win}`;
++      winnerParam === "draw" ? "Match nul !" : `${winnerName} Gagne!`;
+ 
+     if (winnerParam === "1") {
+-      winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2";
++      winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-purple";
+       winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))";
+     } else if (winnerParam === "2") {
+-      winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-cyan leading-tight pb-2";
++      winnerTitle.className = "text-6xl font-extrabold mb-4 gradient-cyan";
+       winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))";
+     } else {
+-      winnerTitle.className = "text-6xl font-extrabold mb-4 text-yellow-300 leading-tight pb-2";
++      winnerTitle.className = "text-6xl font-extrabold mb-4 text-yellow-300";
+       winnerTitle.style.filter = "drop-shadow(0 0 25px rgba(251, 191, 36, 0.6))";
+     }
+   }
+diff --git a/GAME/i18n/translations_game.ts b/GAME/i18n/translations_game.ts
+index 9c2dd1b..68e4575 100644
+--- a/GAME/i18n/translations_game.ts
++++ b/GAME/i18n/translations_game.ts
+@@ -18,89 +18,7 @@ export const translations_game = {
+     pong_difficulty_medium: "Moyen",
+     pong_difficulty_impossible: "Impossible",
+     
+-    // Pong gameModeSelection
+-    customize: "Personnaliser",
+-    pvp_title: "Joueur vs Joueur",
+-    choose_mode: "Choisissez votre mode de jeu",
+-    match_1v1: "Match 1 vs 1",
+-    match_1v1_desc: "Un duel classique entre deux joueurs",
+-    tournament: "Tournoi",
+-    tournament_desc: "Organisez un tournoi avec 4 joueurs",
+-    customization_title: "Personnalisation",
+-    customization_desc: "Personnalisez votre expérience de jeu",
+-    map_style: "Style de carte",
+-    paddle_p1: "Couleur Paddle Joueur 1",
+-    paddle_p2: "Couleur Paddle Joueur 2",
+-    ball_color: "Couleur de la balle",
+-    reset: "Réinitialiser",
+-    save: "Sauvegarder",
+-    enter_player2: "Entrez le pseudo du joueur 2",
+-    player2_placeholder: "Pseudo joueur 2",
+-    start_match: "Commencer le match",
+-    tournament_config: "Configuration Tournoi",
+-    enter_players: "Entrez les pseudos des 4 joueurs",
+-    player_placeholder: "Pseudo joueur",
+-    confirm: "Valider",
+-    error_player2: "Veuillez entrer un pseudo pour le joueur 2",
+-    error_all_players: "Veuillez insérer un pseudo pour chaque joueur",
+-    error_unique_players: "Veuillez insérer chaque pseudo une seule fois",
+-
+-    // Pong gamePlay
+-    player: "Joueur",
+-    player_1: "Joueur 1",
+-    player_2: "Joueur 2",
+-    winner_1: "Vainqueur 1",
+-    winner_2: "Vainqueur 2",
+-    ai: "IA",
+-    restart: "Redémarrer",
+-    back_to_menu: "Retour au menu",
+-
+-    // tournamentBracket
+-    tournament_title: "Organisation du tournoi",
+-    tournament_bracket: "Tableau des matchs",
+-    semi_finals: "Demi-finales",
+-    match: "Match",
+-    final: "Finale",
+-    final_match: "Match final",
+-    winner_match: "Gagnant match",
+-    start_tournament: "Commencer le tournoi",
+-
+-    // tournamentMatchWinner
+-    match_winner_title: "Victoire !", 
+-    good_luck: "Bon courage pour la suite",
+-    final_score: "Score final",
+-    next_match: "Prochain match",
+-    wins_suffix: "a gagné !",
+-    player_3: "Joueur 3",
+-    player_4: "Joueur 4",
+-    match_winner: "Gagnant Match",
+-
+-    // Winner
+-    victory_congrats: "Félicitations pour cette victoire éclatante !",
+-    replay_1v1: "Rejouer en 1 vs 1",
+-
+-    // tictactoe mainPage
+-    tictactoe_title: "Tic Tac Toe",
+-    tictactoe_subtitle: "Alignez trois symboles pour gagner",
+-    tictactoe_rules: "Le premier joueur à aligner trois symboles gagne la partie",
+-    click_to_play: "Cliquez pour jouer",
+-    symbol_x_color: "Couleur du symbole X",
+-    symbol_o_color: "Couleur du symbole O",
+-
+-    //tictactoe gameplay
+-    player_x: "Joueur X",
+-    player_o: "Joueur O",
+-    draws: "Nuls",
+-    guest: "Invité",
+-
+-    // tictactoe winner
+-    tictactoe_winner_title_win: "a gagné !",
+-    tictactoe_winner_title_draw: "Match nul !",
+-    tictactoe_winner_subtitle: "Bien joué !",
+-    tictactoe_winner_final_score: "Score final",
+-    tictactoe_winner_replay: "Rejouer",
+-    tictactoe_winner_back_menu: "Retour au menu",
+-
++    // ... autres clés existantes
+   },
+   en: {
+     back: "Back",
+@@ -118,88 +36,6 @@ export const translations_game = {
+     pong_difficulty_easy: "Easy",
+     pong_difficulty_medium: "Medium",
+     pong_difficulty_impossible: "Impossible",
+-    
+-    // Pong gameModeSelection
+-    customize: "Customize",
+-    pvp_title: "Player vs Player",
+-    choose_mode: "Choose your game mode",
+-    match_1v1: "1v1 Match",
+-    match_1v1_desc: "A classic duel between two players",
+-    tournament: "Tournament",
+-    tournament_desc: "Organize a 4-player tournament",
+-    customization_title: "Customization",
+-    customization_desc: "Customize your game experience",
+-    map_style: "Map style",
+-    paddle_p1: "Player 1 paddle color",
+-    paddle_p2: "Player 2 paddle color",
+-    ball_color: "Ball color",
+-    reset: "Reset",
+-    save: "Save",
+-    enter_player2: "Enter player 2 username",
+-    player2_placeholder: "Player 2 username",
+-    start_match: "Start match",
+-    tournament_config: "Tournament setup",
+-    enter_players: "Enter the 4 players usernames",
+-    player_placeholder: "Player",
+-    confirm: "Confirm",
+-    error_player2: "Please enter a username for player 2",
+-    error_all_players: "Please enter a username for each player",
+-    error_unique_players: "Each username must be unique",
+-
+-    // Pong gamePlay
+-    player: "Player",
+-    player_1: "Player 1",
+-    player_2: "Player 2",
+-    winner_1: "Winner 1",
+-    winner_2: "Winner 2",
+-    ai: "AI",
+-    restart: "Restart",
+-    back_to_menu: "Back to menu",
+-
+-    // tournamentBracket
+-    tournament_title: "Tournament organization",
+-    tournament_bracket: "Match bracket",
+-    semi_finals: "Semi-finals",
+-    match: "Match",
+-    final: "Final",
+-    final_match: "Final match",
+-    winner_match: "Match winner",
+-    start_tournament: "Start tournament",
+-
+-    // tournamentMatchWinner
+-    match_winner_title: "Victory!",
+-    good_luck: "Good luck for the rest",
+-    final_score: "Final score",
+-    next_match: "Next match",
+-    wins_suffix: "wins!",
+-    player_3: "Player 3",
+-    player_4: "Player 4",
+-    match_winner: "Match winner",
+-
+-    // Winner
+-     victory_congrats: "Congratulations on this brilliant victory !",
+-    replay_1v1: "Replay 1v1",
+-
+-    // tictactoe mainPage
+-    tictactoe_title: "Tic Tac Toe",
+-    tictactoe_subtitle: "Align three symbols to win",
+-    tictactoe_rules: "The first player to align three symbols wins the game",
+-    click_to_play: "Click to play",
+-    symbol_x_color: "X symbol color",
+-    symbol_o_color: "O symbol color",
+-
+-    // tictactoe gameplay
+-    player_x: "Player X",
+-    player_o: "Player O",
+-    draws: "Draws",
+-    guest: "Guest",
+-
+-    // tictactoe winner
+-    tictactoe_winner_title_win: "won!",
+-    tictactoe_winner_title_draw: "Draw!",
+-    tictactoe_winner_subtitle: "Well played!",
+-    tictactoe_winner_final_score: "Final score",
+-    tictactoe_winner_replay: "Play again",
+-    tictactoe_winner_back_menu: "Back to menu",
++    // ... other existing keys
+   }
+ };
+\ No newline at end of file
+diff --git a/frontend/ft_front/src/i18n/translations.ts b/frontend/ft_front/src/i18n/translations.ts
+index b25235a..60d91d1 100644
+--- a/frontend/ft_front/src/i18n/translations.ts
++++ b/frontend/ft_front/src/i18n/translations.ts
+@@ -160,7 +160,7 @@ export const translations: Record<Language, Record<string, string>> = {
+     pong: "Pong",
+     tictactoe: "Tic Tac Toe",
+     online: "Online",
+-    lastSeen_prefix: "Offline",
++    lastSeen_prefix: "Last seen",
+     lastSeen_now: "just now",
+     lastSeen_minutes: "min ago",
+     lastSeen_hours: "h ago",
+diff --git a/frontend/ft_front/src/pages/dashboard.ts b/frontend/ft_front/src/pages/dashboard.ts
+index fc909ea..209908d 100644
+--- a/frontend/ft_front/src/pages/dashboard.ts
++++ b/frontend/ft_front/src/pages/dashboard.ts
+@@ -198,14 +198,8 @@ export function onMountDashboard(): void {
+   paintAvatars();
+ 
+   const API_BASE = "https://localhost:4999";
+-  const TOKEN_KEY = "access_token";
+-  const token = localStorage.getItem(TOKEN_KEY) || "";
+-  if (!token)
+-      return;
+ 
+   const myUsername = null;
+-  const authHeaders = { Authorization: `Bearer ${token}` };
+-  const jsonHeaders = { ...authHeaders, "Content-Type": "application/json" };
+ 
+ 
+   const switchButtons = document.querySelectorAll<HTMLButtonElement>(
+diff --git a/frontend/ft_front/src/pages/signup.ts b/frontend/ft_front/src/pages/signup.ts
+index 0f6073c..0c99b39 100644
+--- a/frontend/ft_front/src/pages/signup.ts
++++ b/frontend/ft_front/src/pages/signup.ts
+@@ -96,6 +96,7 @@ export function onMountSignup(): void {
+     try {
+       const res = await fetch("https://localhost:4999/auth/signup", {
+         method: "POST",
++        credentials: "include",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ username, email, password }),
+       });

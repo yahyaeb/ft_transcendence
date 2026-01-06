@@ -110,10 +110,9 @@ export async function loginController(req, reply) {
 
     reply.setCookie('access_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       path: '/',
-      domain: 'localhost',
       maxAge: 60 * 60,
     })
 
