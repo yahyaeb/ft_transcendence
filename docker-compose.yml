@@ -16,6 +16,7 @@ services:
       - .env
     environment:
       - NODE_ENV=development
+      - TZ=Europe/Paris
     networks:
       - transcendence_network
     restart: unless-stopped
@@ -32,6 +33,7 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - TZ=Europe/Paris
     networks:
       - transcendence_network
     depends_on:
@@ -51,6 +53,7 @@ services:
       - /app/backend
     environment:
       - NODE_ENV=development
+      - TZ=Europe/Paris
     networks:
       - transcendence_network
     depends_on:

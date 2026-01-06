@@ -75,11 +75,16 @@ export async function getMeProfile(req, reply){
     const userId = req.user.id
 
     const user = await db.get(
-        "SELECT id, email, username, avatar, two_factor_enabled, created_at FROM users WHERE id = ?",
-        [userId]
-    )
+      `SELECT
+        id, email, username, avatar, two_factor_enabled,
+        datetime(created_at, 'localtime') AS created_at_local
+      FROM users
+      WHERE id = ?`,
+      [userId]
+    );
+
     if(!user){
-        return reply.code(404).send({ error: "User not found" })
+        return reply.code(404).send({ error: "User not found" })  
     }
 
     return reply.code(200).send({
@@ -88,6 +93,7 @@ export async function getMeProfile(req, reply){
         username: user.username,
         email: user.email,
         avatar: user.avatar,
+        created_at: user.created_at_local,
         two_factor_authenticator: user.two_factor_enabled ? "enabled" : "disabled"
       }
     })
@@ -236,7 +242,7 @@ export async function getHistory(req, reply) {
       m.score_p1,
       m.score_p2,
       m.winner_id,
-      m.created_at
+      datetime(m.created_at, 'localtime') AS created_at
     FROM matches m
     JOIN users u1 ON u1.id = m.player1_id
     WHERE m.winner_id IS NOT NULL
@@ -300,11 +306,11 @@ export async function getTicHistory(req, reply) {
       id,
       player2_name,
       winner_id,
-      created_at
+      datetime(created_at, 'localtime') AS created_at_local
     FROM tictactoe_matches
     WHERE player1_id = ?
       AND status = 'finished'
-    ORDER BY created_at DESC
+    ORDER BY created_at_local DESC
     LIMIT 50
     `,
     [userId]
@@ -312,22 +318,18 @@ export async function getTicHistory(req, reply) {
 
   const matches = rows.map(m => {
     let outcome = 'draw';
-
-    if (m.winner_id === userId) {
-      outcome = 'win';
-    } else if (m.winner_id === 9999) {
-      outcome = 'loss';
-    }
+    if (m.winner_id === userId) outcome = 'win';
+    else if (m.winner_id === 9999) outcome = 'loss';
 
     return {
       id: m.id,
       opponent: m.player2_name || "Guest",
-      winner_id: m.winner_id,   // keep raw value if frontend needs it
-      outcome,                  // 'win' | 'loss' | 'draw'
-      played_at: m.created_at,
+      winner_id: m.winner_id,
+      outcome,
+      played_at: m.created_at_local,
     };
   });
 
-
   return reply.code(200).send({ matches });
 }
+
