@@ -1,4 +1,4 @@
-import { getLanguage } from "../state/language";
+import { getLanguage, setLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 import { getUser, logout } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
@@ -52,8 +52,12 @@ export function renderProfile() {
             <div>
               <h2 class="text-2xl font-bold text-white">${user.username}</h2>
               <p class="text-slate-400">${user.email ?? ""}</p>
-              <p class="text-sm text-slate-500 mt-1">
-                ${t.language ?? "Langue"} : ${lang.toUpperCase()}
+              <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                <span>${t.language ?? "Langue"} :</span>
+                <select id="language-select" class="bg-slate-800/70 border border-slate-400/30 text-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/20 transition">
+                  <option value="fr" ${lang === "fr" ? "selected" : ""}>FR</option>
+                  <option value="en" ${lang === "en" ? "selected" : ""}>EN</option>
+                </select>
               </p>
             </div>
           </div>
@@ -76,5 +80,12 @@ export function renderProfile() {
   logoutBtn?.addEventListener("click", () => {
     logout();
     window.location.hash = "#home";
+  });
+
+  const languageSelect = document.getElementById("language-select") as HTMLSelectElement | null;
+  languageSelect?.addEventListener("change", (e) => {
+    const newLang = (e.target as HTMLSelectElement).value;
+    setLanguage(newLang);
+    renderProfile();
   });
 }
