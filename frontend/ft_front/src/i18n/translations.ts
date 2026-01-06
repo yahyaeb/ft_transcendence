@@ -69,6 +69,12 @@ export const translations: Record<Language, Record<string, string>> = {
     confirmAdd: "Ajouter cet utilisateur à vos amis ?",
     confirmBlock: "Bloquer cet utilisateur ?",
     confirmUnblock: "Débloquer cet utilisateur ?",
+
+    // profil
+    preferred_language: "Langue préférée",
+    language_fr: "Français",
+    language_en: "Anglais",
+    language_it: "Italien",
     
     // settings page
     settings_title: "Paramètres",
@@ -185,6 +191,12 @@ export const translations: Record<Language, Record<string, string>> = {
     confirmBlock: "Block this user?",
     confirmUnblock: "Unblock this user?",
 
+    // Profile
+    preferred_language: "Preferred language",
+    language_fr: "French",
+    language_en: "English",
+    language_it: "Italian",
+
     // settings page
     settings_title: "Settings",
     settings_avatar: "Avatar",
@@ -299,6 +311,12 @@ it:
     confirmAdd: "Aggiungere questo utente agli amici?",
     confirmBlock: "Bloccare questo utente?",
     confirmUnblock: "Sbloccare questo utente?",
+
+    // Profile
+    preferred_language: "lingua preferita",
+    language_fr: "Francese",
+    language_en: "Inglese",
+    language_it: "Italiano",
 
     // settings page
     settings_title: "Impostazioni",
