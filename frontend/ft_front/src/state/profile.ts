@@ -1,9 +1,7 @@
 export type UserProfile = {
   username: string;
   avatar: string;
-  language: "fr" | "en";
-  age?: number;
-  gender?: string;
+  language: "fr" | "en" | "it";
 };
 
 const PROFILE_KEY = "user_profile";

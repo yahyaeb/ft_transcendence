@@ -1,10 +1,10 @@
-export type Language = "fr" | "en";
+export type Language = "fr" | "en" | "it";
 
 const STORAGE_KEY = "app_language";
 
 export function getLanguage(): Language {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "fr" || stored === "en") {
+  if (stored === "fr" || stored === "en" || stored === "it") {
     return stored;
   }
   return "fr";

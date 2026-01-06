@@ -1,4 +1,4 @@
-export type GameLanguage = "fr" | "en";
+export type GameLanguage = "fr" | "en" | "it";
 
 export const translations_game = {
   fr: {
@@ -201,5 +201,106 @@ export const translations_game = {
     tictactoe_winner_final_score: "Final score",
     tictactoe_winner_replay: "Play again",
     tictactoe_winner_back_menu: "Back to menu",
-  }
+  },
+  it:
+  {
+    back: "Indietro",
+    pong_title: "Pong",
+    pong_edition: "Edizione classica",
+    pong_pvp_title: "Giocatore contro Giocatore",
+    pong_pvp_description: "Sfida un altro giocatore in locale",
+    pong_ai_title: "Giocatore contro IA",
+    pong_ai_description: "Sfida un’intelligenza artificiale",
+    pong_controls_p1: "Giocatore 1: W/S",
+    pong_controls_p2: "Giocatore 2: ↑/↓",
+    pong_controls_help: "Usa la tastiera per controllare le racchette W/S o ↑/↓",
+    pong_ai_difficulty_title: "Scegli la difficoltà",
+    pong_ai_difficulty_subtitle: "Seleziona il livello dell’IA",
+    pong_difficulty_easy: "Facile",
+    pong_difficulty_medium: "Medio",
+    pong_difficulty_impossible: "Impossibile",
+
+    // Pong gameModeSelection
+    customize: "Personalizza",
+    pvp_title: "Giocatore vs Giocatore",
+    choose_mode: "Scegli la modalità di gioco",
+    match_1v1: "Partita 1 vs 1",
+    match_1v1_desc: "Un duello classico tra due giocatori",
+    tournament: "Torneo",
+    tournament_desc: "Organizza un torneo con 4 giocatori",
+    customization_title: "Personalizzazione",
+    customization_desc: "Personalizza la tua esperienza di gioco",
+    map_style: "Stile della mappa",
+    paddle_p1: "Colore Paddle Giocatore 1",
+    paddle_p2: "Colore Paddle Giocatore 2",
+    ball_color: "Colore della palla",
+    reset: "Ripristina",
+    save: "Salva",
+    enter_player2: "Inserisci il nickname del giocatore 2",
+    player2_placeholder: "Nickname giocatore 2",
+    start_match: "Inizia la partita",
+    tournament_config: "Configurazione Torneo",
+    enter_players: "Inserisci i nickname dei 4 giocatori",
+    player_placeholder: "Nickname giocatore",
+    confirm: "Conferma",
+    error_player2: "Inserisci un nickname per il giocatore 2",
+    error_all_players: "Inserisci un nickname per ogni giocatore",
+    error_unique_players: "Ogni nickname deve essere unico",
+
+    // Pong gamePlay
+    player: "Giocatore",
+    player_1: "Giocatore 1",
+    player_2: "Giocatore 2",
+    winner_1: "Vincitore 1",
+    winner_2: "Vincitore 2",
+    ai: "IA",
+    restart: "Riavvia",
+    back_to_menu: "Torna al menu",
+
+    // tournamentBracket
+    tournament_title: "Organizzazione del torneo",
+    tournament_bracket: "Tabellone delle partite",
+    semi_finals: "Semifinali",
+    match: "Partita",
+    final: "Finale",
+    final_match: "Partita finale",
+    winner_match: "Vincitore partita",
+    start_tournament: "Avvia il torneo",
+
+    // tournamentMatchWinner
+    match_winner_title: "Vittoria!",
+    good_luck: "Buona fortuna per il prossimo turno",
+    final_score: "Punteggio finale",
+    next_match: "Prossima partita",
+    wins_suffix: "ha vinto!",
+    player_3: "Giocatore 3",
+    player_4: "Giocatore 4",
+    match_winner: "Vincitore della partita",
+
+    // Winner
+    victory_congrats: "Congratulazioni per questa splendida vittoria!",
+    replay_1v1: "Rigioca 1 vs 1",
+
+    // tictactoe mainPage
+    tictactoe_title: "Tic Tac Toe",
+    tictactoe_subtitle: "Allinea tre simboli per vincere",
+    tictactoe_rules: "Il primo giocatore che allinea tre simboli vince la partita",
+    click_to_play: "Clicca per giocare",
+    symbol_x_color: "Colore del simbolo X",
+    symbol_o_color: "Colore del simbolo O",
+
+    // tictactoe gameplay
+    player_x: "Giocatore X",
+    player_o: "Giocatore O",
+    draws: "Pareggi",
+    guest: "Ospite",
+
+    // tictactoe winner
+    tictactoe_winner_title_win: "ha vinto!",
+    tictactoe_winner_title_draw: "Pareggio!",
+    tictactoe_winner_subtitle: "Ottimo gioco!",
+    tictactoe_winner_final_score: "Punteggio finale",
+    tictactoe_winner_replay: "Rigioca",
+    tictactoe_winner_back_menu: "Torna al menu",
+  },
 };

@@ -30,6 +30,7 @@ export function renderHome() {
           class="px-3 py-2 text-sm bg-slate-800/60 backdrop-blur-xl border border-slate-400/20 rounded-lg">
           <option value="fr" ${lang === "fr" ? "selected" : ""}>🇫🇷 FR</option>
           <option value="en" ${lang === "en" ? "selected" : ""}>🇬🇧 EN</option>
+          <option value="it" ${lang === "it" ? "selected" : ""}>🇮🇹 IT</option>
         </select>
 
         <a
@@ -85,7 +86,7 @@ export function renderHome() {
 
   const languageSelect = document.getElementById("language-select") as HTMLSelectElement;
   languageSelect?.addEventListener("change", () => {
-    setLanguage(languageSelect.value as "fr" | "en");
+    setLanguage(languageSelect.value as "fr" | "en" | "it");
     renderHome();
   });
 }

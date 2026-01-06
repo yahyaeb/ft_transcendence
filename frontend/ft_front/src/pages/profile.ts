@@ -57,6 +57,7 @@ export function renderProfile() {
                 <select id="language-select" class="bg-slate-800/70 border border-slate-400/30 text-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/20 transition">
                   <option value="fr" ${lang === "fr" ? "selected" : ""}>FR</option>
                   <option value="en" ${lang === "en" ? "selected" : ""}>EN</option>
+                  <option value="it" ${lang === "it" ? "selected" : ""}>IT</option>
                 </select>
               </p>
             </div>
