@@ -19,13 +19,13 @@ export function render(): string {
     <div id="gameContainer" class="text-center max-w-[1100px] w-full mx-auto">
       <div id="topBar" class="flex justify-between items-center mb-6 px-10 py-[18px] bg-slate-800/40 rounded-xl backdrop-blur-xl border border-slate-400/10">
         <div class="playerSection flex flex-col gap-1.5">
-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
-          <div id="player1Name" class="text-lg font-semibold text-purple-400">● Player 1</div>
+          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player}</div>
+          <div id="player1Name" class="text-lg font-semibold text-purple-400">● ${t.player_1}</div>
           <div id="leftScore" class="text-[44px] font-extrabold tracking-tight gradient-purple">0</div>
         </div>
         <div class="playerSection flex flex-col gap-1.5">
-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Player</div>
-          <div id="player2Name" class="text-lg font-semibold text-cyan-400">● Player 2</div>
+          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player}</div>
+          <div id="player2Name" class="text-lg font-semibold text-cyan-400">● ${t.player_2}</div>
           <div id="rightScore" class="text-[44px] font-extrabold tracking-tight gradient-cyan">0</div>
         </div>
       </div>
@@ -37,12 +37,12 @@ export function render(): string {
         <button id="resetButton"
                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
-          Redémarrer
+          ${t.restart}
         </button>
         <button id="menuButton"
                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
-          Retour au menu
+          ${t.back_to_menu}
         </button>
       </div>
     </div>
@@ -59,7 +59,7 @@ export function onMount(): void {
       return;
     }
 
-    let player1Name = me.user.username ?? "Player 1";
+    let player1Name = me.user.username ?? t.player_1;
     localStorage.setItem("player1", player1Name);
   if (cleanupFunction){
     cleanupFunction()
@@ -88,10 +88,10 @@ export function onMount(): void {
 
 
 
-  let player2Name = 'Player 2';
+  let player2Name = t.player_2;
 
   if (aiGame === 'isAi') {
-      player2Name = 'AI'
+      player2Name = t.ai;
   } else {
     const pvpPlayer2 = localStorage.getItem('pvpPlayer2');
     if (pvpPlayer2 && !tournamentMatch) {
@@ -109,8 +109,8 @@ export function onMount(): void {
         player1Name = data.players[2];
         player2Name = data.players[3];
       } else if (tournamentMatch === 'final') {
-        player1Name = sessionStorage.getItem('match1Winner') || 'Winner 1';
-        player2Name = sessionStorage.getItem('match2Winner') || 'Winner 2';
+        player1Name = sessionStorage.getItem('match1Winner') || t.winner_1;
+        player2Name = sessionStorage.getItem('match2Winner') || t.winner_2;
       }
     }
   }

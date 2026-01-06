@@ -62,19 +62,19 @@ export function render(): string {
           <a href="/pong" data-link 
              class="text-slate-400 hover:text-purple-400 transition-colors duration-200 flex items-center gap-2">
             <span>←</span>
-            <span>Retour</span>
+            <span>${t.back}</span>
           </a>
           <button id="customizeBtn" 
                   class="flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-xl border border-slate-400/20 rounded-xl text-slate-300 hover:text-purple-400 hover:border-purple-500/50 transition-all duration-300"
                   style="box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15)">
-            <span class="text-sm font-medium">Personnaliser</span>
+            <span class="text-sm font-medium">${t.customize}</span>
           </button>
         </div>
         <h1 class="text-5xl font-extrabold mb-3 gradient-purple" 
             style="filter: drop-shadow(0 0 20px rgba(168, 139, 250, 0.5))">
-          Joueur vs Joueur
+          ${t.pvp_title}
         </h1>
-        <p class="text-slate-400 text-base tracking-wide">Choisissez votre mode de jeu</p>
+        <p class="text-slate-400 text-base tracking-wide">${t.choose_mode}</p>
       </div>
 
       <div class="flex flex-col gap-6 px-8">
@@ -83,19 +83,18 @@ export function render(): string {
            style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="relative">
-            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">Match 1 vs 1</h2>
-            <p class="text-slate-400 flex justify-center">Un duel classique entre deux joueurs</p>
+            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">${t.match_1v1}</h2>
+            <p class="text-slate-400 flex justify-center">${t.match_1v1_desc}</p>
           </div>
         </button>
-
 
         <button id="tournamentBtn" 
                 class="group relative overflow-hidden bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-purple-500/50 cursor-pointer text-left"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2)">
           <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="relative">
-            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">Tournoi</h2>
-            <p class="text-slate-400">Organisez un tournoi avec 4 joueurs</p>
+            <h2 class="text-3xl flex justify-center font-bold mb-2 gradient-purple">${t.tournament}</h2>
+            <p class="text-slate-400">${t.tournament_desc}</p>
           </div>
         </button>
       </div>
@@ -111,9 +110,9 @@ export function render(): string {
         <div class="mb-6 text-center">
           <h2 class="text-3xl font-extrabold mb-2 gradient-purple" 
               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
-            Personnalisation
+            ${t.customization_title}
           </h2>
-          <p class="text-slate-400 text-sm">Personnalisez votre expérience de jeu</p>
+          <p class="text-slate-400 text-sm">${t.customization_desc}</p>
         </div>
 
         <div class="mb-6 flex justify-center">
@@ -122,34 +121,34 @@ export function render(): string {
         </div>
 
         <div class="mb-6">
-          <label class="block text-sm font-medium text-slate-300 mb-3">Style de carte</label>
+          <label class="block text-sm font-medium text-slate-300 mb-3">${t.map_style}</label>
           <div class="grid grid-cols-5 gap-2" id="mapButtonsContainer"></div>
         </div>
 
         <div class="mb-5">
-          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur Paddle Joueur 1</label>
+          <label class="block text-sm font-medium text-slate-300 mb-3">${t.paddle_p1}</label>
           <div class="flex flex-wrap gap-2" id="paddle1ColorsContainer"></div>
         </div>
 
         <div class="mb-5">
-          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur Paddle Joueur 2</label>
+          <label class="block text-sm font-medium text-slate-300 mb-3">${t.paddle_p2}</label>
           <div class="flex flex-wrap gap-2" id="paddle2ColorsContainer"></div>
         </div>
 
         <div class="mb-6">
-          <label class="block text-sm font-medium text-slate-300 mb-3">Couleur de la balle</label>
+          <label class="block text-sm font-medium text-slate-300 mb-3">${t.ball_color}</label>
           <div class="flex flex-wrap gap-2" id="ballColorsContainer"></div>
         </div>
 
         <div class="flex gap-4">
           <button id="resetCustomization" 
                   class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-slate-700/50 border border-slate-600/30 rounded-xl text-slate-300 transition-all duration-300 hover:bg-slate-600/50">
-            Réinitialiser
+            ${t.reset}
           </button> 
           <button id="saveCustomization" 
                   class="flex-1 font-semibold text-base cursor-pointer px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
                   style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
-            Sauvegarder
+            ${t.save}
           </button>
         </div>
       </div>
@@ -160,14 +159,14 @@ export function render(): string {
         <div class="mb-8 text-center">
           <h2 class="font-extrabold flex justify-center mb-2 gradient-purple" 
               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
-            Match 1 vs 1
+            ${t.match_1v1}
           </h2>
-          <p class="text-slate-400 flex justify-center text-sm">Entrez le pseudo du joueur 2</p>
+          <p class="text-slate-400 flex justify-center text-sm">${t.enter_player2}</p>
         </div>
 
         <div class="space-y-4 mb-8">
           <div class="relative">
-            <input id="pvpPlayer2" type="text" placeholder="Pseudo joueur 2" 
+            <input id="pvpPlayer2" type="text" placeholder="${t.player2_placeholder}" 
                    class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
           </div>
         </div>
@@ -175,7 +174,7 @@ export function render(): string {
         <button id="closePvpModal" 
                 class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
-          Commencer le match
+          ${t.start_match}
         </button>
       </div>
     </div>
@@ -185,15 +184,15 @@ export function render(): string {
         <div class="mb-8 text-center">
           <h2 class="text-4xl font-extrabold mb-2 gradient-purple" 
               style="filter: drop-shadow(0 0 15px rgba(168, 139, 250, 0.4))">
-            Configuration Tournoi
+            ${t.tournament_config}
           </h2>
-          <p class="text-slate-400 text-sm">Entrez les pseudos des 4 joueurs</p>
+          <p class="text-slate-400 text-sm">${t.enter_players}</p>
         </div>
 
         <div class="space-y-4 mb-8">
           ${[1, 2, 3, 4].map(num => `
             <div class="relative">
-              <input id="player${num}" type="text" placeholder="Pseudo joueur ${num}" 
+              <input id="player${num}" type="text" placeholder="${t.player_placeholder} ${num}" 
                      class="w-full px-5 py-4 bg-slate-900/50 border border-slate-600/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200" />
               <div class="absolute right-4 top-1/2 -translate-y-1/2 text-purple-400 font-bold">${num}</div>
             </div>
@@ -203,7 +202,7 @@ export function render(): string {
         <button id="closeModal" 
                 class="w-full font-semibold text-lg cursor-pointer px-9 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.6)]"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
-          Valider
+          ${t.confirm}
         </button>
       </div>
     </div>
@@ -446,7 +445,7 @@ export function onMount(): void {
   closePvpModalBtn?.addEventListener('click', () => {
     const player2Name = pvpPlayer2Input?.value.trim() || '';
     if (player2Name === '') {
-      alert("Veuillez entrer un pseudo pour le joueur 2");
+      alert(t.error_player2);
       return;
     }
     localStorage.setItem('pvpPlayer2', player2Name);
@@ -470,11 +469,11 @@ export function onMount(): void {
       (document.getElementById('player4') as HTMLInputElement)?.value.trim() || '',
     ];
     if (players.some(p => p === '')) {
-      alert("Veuillez inserer un pseudo pour chaque joueur");
+      alert(t.error_all_players);
       return; 
     }
     if (hasDuplicates(players)) {
-      alert("Veuillez inserer le pseudo une seule fois");
+      alert(t.error_unique_players);
       return; 
     }
     const tournamentData: TournamentData = { players };

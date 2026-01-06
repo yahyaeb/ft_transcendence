@@ -18,7 +18,89 @@ export const translations_game = {
     pong_difficulty_medium: "Moyen",
     pong_difficulty_impossible: "Impossible",
     
-    // ... autres clés existantes
+    // Pong gameModeSelection
+    customize: "Personnaliser",
+    pvp_title: "Joueur vs Joueur",
+    choose_mode: "Choisissez votre mode de jeu",
+    match_1v1: "Match 1 vs 1",
+    match_1v1_desc: "Un duel classique entre deux joueurs",
+    tournament: "Tournoi",
+    tournament_desc: "Organisez un tournoi avec 4 joueurs",
+    customization_title: "Personnalisation",
+    customization_desc: "Personnalisez votre expérience de jeu",
+    map_style: "Style de carte",
+    paddle_p1: "Couleur Paddle Joueur 1",
+    paddle_p2: "Couleur Paddle Joueur 2",
+    ball_color: "Couleur de la balle",
+    reset: "Réinitialiser",
+    save: "Sauvegarder",
+    enter_player2: "Entrez le pseudo du joueur 2",
+    player2_placeholder: "Pseudo joueur 2",
+    start_match: "Commencer le match",
+    tournament_config: "Configuration Tournoi",
+    enter_players: "Entrez les pseudos des 4 joueurs",
+    player_placeholder: "Pseudo joueur",
+    confirm: "Valider",
+    error_player2: "Veuillez entrer un pseudo pour le joueur 2",
+    error_all_players: "Veuillez insérer un pseudo pour chaque joueur",
+    error_unique_players: "Veuillez insérer chaque pseudo une seule fois",
+
+    // Pong gamePlay
+    player: "Joueur",
+    player_1: "Joueur 1",
+    player_2: "Joueur 2",
+    winner_1: "Vainqueur 1",
+    winner_2: "Vainqueur 2",
+    ai: "IA",
+    restart: "Redémarrer",
+    back_to_menu: "Retour au menu",
+
+    // tournamentBracket
+    tournament_title: "Organisation du tournoi",
+    tournament_bracket: "Tableau des matchs",
+    semi_finals: "Demi-finales",
+    match: "Match",
+    final: "Finale",
+    final_match: "Match final",
+    winner_match: "Gagnant match",
+    start_tournament: "Commencer le tournoi",
+
+    // tournamentMatchWinner
+    match_winner_title: "Victoire !", 
+    good_luck: "Bon courage pour la suite",
+    final_score: "Score final",
+    next_match: "Prochain match",
+    wins_suffix: "a gagné !",
+    player_3: "Joueur 3",
+    player_4: "Joueur 4",
+    match_winner: "Gagnant Match",
+
+    // Winner
+    victory_congrats: "Félicitations pour cette victoire éclatante !",
+    replay_1v1: "Rejouer en 1 vs 1",
+
+    // tictactoe mainPage
+    tictactoe_title: "Tic Tac Toe",
+    tictactoe_subtitle: "Alignez trois symboles pour gagner",
+    tictactoe_rules: "Le premier joueur à aligner trois symboles gagne la partie",
+    click_to_play: "Cliquez pour jouer",
+    symbol_x_color: "Couleur du symbole X",
+    symbol_o_color: "Couleur du symbole O",
+
+    //tictactoe gameplay
+    player_x: "Joueur X",
+    player_o: "Joueur O",
+    draws: "Nuls",
+    guest: "Invité",
+
+    // tictactoe winner
+    tictactoe_winner_title_win: "a gagné !",
+    tictactoe_winner_title_draw: "Match nul !",
+    tictactoe_winner_subtitle: "Bien joué !",
+    tictactoe_winner_final_score: "Score final",
+    tictactoe_winner_replay: "Rejouer",
+    tictactoe_winner_back_menu: "Retour au menu",
+
   },
   en: {
     back: "Back",
@@ -36,6 +118,88 @@ export const translations_game = {
     pong_difficulty_easy: "Easy",
     pong_difficulty_medium: "Medium",
     pong_difficulty_impossible: "Impossible",
-    // ... other existing keys
+    
+    // Pong gameModeSelection
+    customize: "Customize",
+    pvp_title: "Player vs Player",
+    choose_mode: "Choose your game mode",
+    match_1v1: "1v1 Match",
+    match_1v1_desc: "A classic duel between two players",
+    tournament: "Tournament",
+    tournament_desc: "Organize a 4-player tournament",
+    customization_title: "Customization",
+    customization_desc: "Customize your game experience",
+    map_style: "Map style",
+    paddle_p1: "Player 1 paddle color",
+    paddle_p2: "Player 2 paddle color",
+    ball_color: "Ball color",
+    reset: "Reset",
+    save: "Save",
+    enter_player2: "Enter player 2 username",
+    player2_placeholder: "Player 2 username",
+    start_match: "Start match",
+    tournament_config: "Tournament setup",
+    enter_players: "Enter the 4 players usernames",
+    player_placeholder: "Player",
+    confirm: "Confirm",
+    error_player2: "Please enter a username for player 2",
+    error_all_players: "Please enter a username for each player",
+    error_unique_players: "Each username must be unique",
+
+    // Pong gamePlay
+    player: "Player",
+    player_1: "Player 1",
+    player_2: "Player 2",
+    winner_1: "Winner 1",
+    winner_2: "Winner 2",
+    ai: "AI",
+    restart: "Restart",
+    back_to_menu: "Back to menu",
+
+    // tournamentBracket
+    tournament_title: "Tournament organization",
+    tournament_bracket: "Match bracket",
+    semi_finals: "Semi-finals",
+    match: "Match",
+    final: "Final",
+    final_match: "Final match",
+    winner_match: "Match winner",
+    start_tournament: "Start tournament",
+
+    // tournamentMatchWinner
+    match_winner_title: "Victory!",
+    good_luck: "Good luck for the rest",
+    final_score: "Final score",
+    next_match: "Next match",
+    wins_suffix: "wins!",
+    player_3: "Player 3",
+    player_4: "Player 4",
+    match_winner: "Match winner",
+
+    // Winner
+     victory_congrats: "Congratulations on this brilliant victory !",
+    replay_1v1: "Replay 1v1",
+
+    // tictactoe mainPage
+    tictactoe_title: "Tic Tac Toe",
+    tictactoe_subtitle: "Align three symbols to win",
+    tictactoe_rules: "The first player to align three symbols wins the game",
+    click_to_play: "Click to play",
+    symbol_x_color: "X symbol color",
+    symbol_o_color: "O symbol color",
+
+    // tictactoe gameplay
+    player_x: "Player X",
+    player_o: "Player O",
+    draws: "Draws",
+    guest: "Guest",
+
+    // tictactoe winner
+    tictactoe_winner_title_win: "won!",
+    tictactoe_winner_title_draw: "Draw!",
+    tictactoe_winner_subtitle: "Well played!",
+    tictactoe_winner_final_score: "Final score",
+    tictactoe_winner_replay: "Play again",
+    tictactoe_winner_back_menu: "Back to menu",
   }
 };

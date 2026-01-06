@@ -160,7 +160,7 @@ export const translations: Record<Language, Record<string, string>> = {
     pong: "Pong",
     tictactoe: "Tic Tac Toe",
     online: "Online",
-    lastSeen_prefix: "Last seen",
+    lastSeen_prefix: "Offline",
     lastSeen_now: "just now",
     lastSeen_minutes: "min ago",
     lastSeen_hours: "h ago",

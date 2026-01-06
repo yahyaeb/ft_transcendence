@@ -10,19 +10,19 @@ export function render(): string {
       <div id="topBar" class="flex justify-between items-center mb-6 px-10 py-[18px] bg-slate-800/40 rounded-xl backdrop-blur-xl border border-slate-400/10">
         <div class="playerSection flex flex-col gap-1.5 relative">
           <div id="player1Arrow" class="absolute -left-6 top-1/2 -translate-y-1/2 text-3xl gradient-purple opacity-0 transition-opacity duration-300">→</div>
-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Joueur X</div>
+          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player_x}</div>
           <div id="player1Name" class="text-lg font-semibold text-purple-400">Player 1</div>
           <div id="player1Score" class="text-[32px] font-extrabold tracking-tight gradient-purple">0</div>
         </div>
         <div class="flex flex-col items-center">
           <div id="drawScore" class="text-slate-400">
-            <span class="text-sm">Nuls: </span>
+            <span class="text-sm">${t.draws}: </span>
             <span id="drawCount" class="font-bold">0</span>
           </div>
         </div>
         <div class="playerSection flex flex-col gap-1.5 relative">
           <div id="player2Arrow" class="absolute -right-6 top-1/2 -translate-y-1/2 text-3xl gradient-cyan opacity-0 transition-opacity duration-300">←</div>
-          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">Joueur O</div>
+          <div class="text-[13px] text-slate-400 uppercase tracking-wider font-medium">${t.player_o}</div>
           <div id="player2Name" class="text-lg font-semibold text-cyan-400">Player 2</div>
           <div id="player2Score" class="text-[32px] font-extrabold tracking-tight gradient-cyan">0</div>
         </div>
@@ -37,12 +37,12 @@ export function render(): string {
         <button id="resetButton"
                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
-          Nouvelle partie
+          ${t.restart}
         </button>
         <button id="menuButton"
                 class="font-semibold text-[15px] cursor-pointer px-9 py-[11px] bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-[20px] text-white transition-all duration-250 hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] active:translate-y-0"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35)">
-          Retour au menu
+          ${t.back_to_menu}
         </button>
       </div>
     </div>
@@ -130,10 +130,10 @@ export function onMount(): void {
       return;
     }
 
-    const player1Name = String(me.user.username ?? "Player 1");
+    const player1Name = String(me.user.username ?? t.player_1);
     localStorage.setItem("tictactoe_player1", player1Name);
 
-    const player2Name = localStorage.getItem("tictactoe_pvpPlayer2") || "Guest";
+    const player2Name = localStorage.getItem("tictactoe_pvpPlayer2") || t.guest;
 
     player1NameElement.textContent = player1Name;
     player2NameElement.textContent = player2Name;

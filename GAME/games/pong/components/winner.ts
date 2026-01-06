@@ -12,15 +12,16 @@ export function render(): string {
       </div>
 
       <div class="mb-8">
-        <h1 id="winnerTitle" class="text-6xl font-extrabold mb-4 gradient-purple" 
-            style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))">
-          Player 1 Wins!
+        <h1 id="winnerTitle"
+        class="text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2"
+        style="filter: drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))"
+        > ${t.match_winner_title}
         </h1>
-        <p class="text-2xl text-slate-400 tracking-wide">Félicitations pour cette victoire éclatante!</p>
+        <p class="text-2xl text-slate-400 tracking-wide">${t.victory_congrats}</p>
       </div>
 
       <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl p-8 mb-8">
-        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">Score Final</div>
+        <div class="text-slate-400 text-sm uppercase tracking-wider mb-4">${t.final_score}</div>
         <div class="flex justify-center items-center gap-8">
           <div>
             <div id="player1Name" class="text-lg text-purple-400 mb-2">Player 1</div>
@@ -40,12 +41,12 @@ export function render(): string {
         <button id="replayBtn"
                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-2xl text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(99,102,241,0.5)]"
                 style="box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4)">
-          Rejouer en 1 vs 1
+          ${t.replay_1v1}
         </button>
         
         <button id="menuBtn"
                 class="font-semibold text-lg cursor-pointer px-8 py-4 bg-slate-800/40 backdrop-blur-xl border border-slate-400/10 rounded-2xl text-slate-300 transition-all duration-300 hover:border-purple-500/50 hover:text-white">
-          Retour au Menu
+          ${t.back_to_menu}
         </button>
       </div>
     </div>
@@ -63,13 +64,13 @@ export function onMount(): void {
   const winnerName = winner === '1' ? player1 : player2;
 
   const winnerTitle = document.getElementById('winnerTitle')!;
-  winnerTitle.textContent = `${winnerName} Gagne!`;
+  winnerTitle.textContent = `${winnerName} ${t.wins_suffix}`;
 
   if (winner === '1') {
-    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-purple';
+    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-purple leading-tight pb-2';
     winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(168, 139, 250, 0.6))';
   } else {
-    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-cyan';
+    winnerTitle.className = 'text-6xl font-extrabold mb-4 gradient-cyan leading-tight pb-2';
     winnerTitle.style.filter = 'drop-shadow(0 0 25px rgba(34, 211, 238, 0.6))';
   }
 
