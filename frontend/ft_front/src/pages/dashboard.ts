@@ -500,6 +500,13 @@ export function onMountDashboard(): void {
     const day = Math.floor(hr / 24);
     return `${day} ${t.lastSeen_days}`;
   }
+  function getStatusText(online: boolean, lastSeen?: number | null) {
+  if (online) return t.online;
+  if (typeof lastSeen === "number") {
+    return `${t.offline} ${t.when} ${formatLastSeen(lastSeen)}`;
+  }
+  return t.offline;
+}
 
 
   let friendsCache: Player[] = [];
@@ -519,7 +526,7 @@ export function onMountDashboard(): void {
       .map(f => {
         const online = isOnline(f.last_seen_at);
         const dotClass = online ? "bg-emerald-400" : "bg-slate-500";
-        const statusText = online ? t.online : `${t.lastSeen_prefix} ${formatLastSeen(f.last_seen_at)}`;
+        const statusText = getStatusText(online, f.last_seen_at);
         return `
           <li class="group flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 transition hover:bg-slate-900/35 hover:shadow-[0_0_0_1px_rgba(139,92,246,0.25)] hover:shadow-purple-500/20">
             <div class="flex items-center gap-3 min-w-0 flex-1">

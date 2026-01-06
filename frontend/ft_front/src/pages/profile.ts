@@ -1,10 +1,9 @@
-import { getLanguage } from "../state/language";
+import { getLanguage, setLanguage } from "../state/language";
 import { translations } from "../i18n/translations";
 import { getUser, logout } from "../state/auth";
 import { paintAvatars } from "../ui/avatar";
 
 export function renderProfile() {
-
   const app = document.getElementById("app");
   if (!app) return;
 
@@ -19,7 +18,6 @@ export function renderProfile() {
 
   app.innerHTML = `
     <div class="min-h-screen bg-gradient-to-br from-[#0b0f1f] to-[#1c2236] text-gray-200 px-6 py-12 flex justify-center">
-
       <div class="w-full max-w-3xl">
 
         <!-- Header -->
@@ -39,28 +37,31 @@ export function renderProfile() {
 
           <!-- User Info -->
           <div class="flex items-center gap-8 mb-10">
-
-            <!-- Avatar (backend-managed later) -->
             <div class="w-24 h-24 rounded-full bg-slate-700/60 border border-slate-400/30 overflow-hidden flex items-center justify-center text-3xl">
-              <img
-                data-avatar
-                alt="avatar"
-                class="w-full h-full object-cover"
-              />
+              <img data-avatar alt="avatar" class="w-full h-full object-cover" />
             </div>
 
             <div>
               <h2 class="text-2xl font-bold text-white">${user.username}</h2>
               <p class="text-slate-400">${user.email ?? ""}</p>
-              <p class="text-sm text-slate-500 mt-1">
-                ${t.language ?? "Langue"} : ${lang.toUpperCase()}
-              </p>
+            </div>
+          </div>
+
+          <!-- Preferred language -->
+          <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-4">
+              ${t.preferred_language}
+            </h3>
+
+            <div class="flex flex-col gap-3 w-56">
+              ${renderLangCard("fr", t.language_fr, lang)}
+              ${renderLangCard("en", t.language_en, lang)}
+              ${renderLangCard("it", t.language_it, lang)}
             </div>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end gap-4">
-
+          <div class="flex justify-end gap-4 mt-10">
             <button id="logout-btn"
               class="px-6 py-3 rounded-xl font-semibold bg-red-500/80 hover:bg-red-500 transition">
               ${t.logout}
@@ -71,10 +72,53 @@ export function renderProfile() {
       </div>
     </div>
   `;
+
   paintAvatars(true);
-  const logoutBtn = document.getElementById("logout-btn");
-  logoutBtn?.addEventListener("click", () => {
+
+  // Logout
+  document.getElementById("logout-btn")?.addEventListener("click", () => {
     logout();
     window.location.hash = "#home";
   });
+
+  // Language change (NO flash)
+  document.querySelectorAll<HTMLInputElement>('input[name="lang"]').forEach(radio => {
+    radio.addEventListener("change", (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.checked && target.value !== lang) {
+        setLanguage(target.value as "fr" | "en" | "it");
+        renderProfile(); // force re-render so UI unlocks
+      }
+    });
+  });
+}
+
+/* ---------- Helpers ---------- */
+
+function renderLangCard(
+  value: "fr" | "en" | "it",
+  label: string,
+  current: string
+): string {
+  const active = value === current;
+
+  return `
+    <label
+      class="relative flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer select-none transition
+        ${active
+          ? "bg-purple-500/20 border-purple-400 text-purple-300"
+          : "bg-slate-900/70 border-slate-700 hover:border-purple-500/50 text-slate-300"
+        }"
+    >
+      <span>${label}</span>
+      <input
+        type="radio"
+        name="lang"
+        value="${value}"
+        class="hidden"
+        ${active ? "checked" : ""}
+      />
+      ${active ? `<span class="text-purple-400 font-bold ml-2">✔</span>` : ""}
+    </label>
+  `;
 }

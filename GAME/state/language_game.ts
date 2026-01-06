@@ -1,11 +1,11 @@
 
 
-export type GameLanguage = "fr" | "en";
+export type GameLanguage = "fr" | "en" | "it";
 
 const DEFAULT_LANG: GameLanguage = "fr";
 
 function normalizeLang(value: string | null): GameLanguage {
-  if (value === "en" || value === "fr") return value;
+  if (value === "en" || value === "fr" || value === "it") return value;
   return DEFAULT_LANG;
 }
 
