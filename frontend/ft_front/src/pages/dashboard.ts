@@ -198,7 +198,6 @@ export function onMountDashboard(): void {
   paintAvatars();
 
   const API_BASE = "https://localhost:4999";
-  const TOKEN_KEY = "access_token";
 
   const myUsername = null;
 
