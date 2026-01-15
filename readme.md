@@ -82,24 +82,19 @@ docker-compose up --build
 Create a `.env` file in the root directory with required configuration:
 
 ```env
-# Database
-DATABASE_URL=sqlite:./db/transcendence.db
 
 # JWT Secret
 JWT_SECRET=your_secret_key
 
-# CORS & Frontend
-FRONTEND_URL=http://localhost:5173
-
-# Other configurations...
 ```
 
 ### Database Setup
 The database initializes automatically on first run. To reset:
 
 ```bash
-make clean-db
-make db-init
+cd GAME/backend
+rm database.db
+node db/init.js
 ```
 
 ## Architecture
@@ -111,9 +106,11 @@ make db-init
 └── Game/ 
     ├── backend/                 # Fastify API server
     │   ├── controllers/        # Request handlers
+    │   ├── db/       
     │   ├── routes/             # API endpoints
     │   ├── middleware/         # Auth, CORS, etc.
     │   ├── db/                 # Database & schema
+    |   ├── database.db 
     │   └── utils/              # Helpers (JWT, validation)
     ├── games/                  # Game services
     │   ├── pong/
