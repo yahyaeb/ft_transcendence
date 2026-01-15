@@ -40,10 +40,11 @@ The application is fully containerized and structured to resemble a real product
 - **Infrastructure**: Docker/Docker Compose for reproducible environment
 
 ### Cross-Team Collaboration
+
 - Worked closely with frontend developers
 - Defined API contracts and payload formats
 - Debugged frontend/backend integration issues
-- Ensured authentication, cookies, and session handling worked correctly in an SPA context
+- Ensured authentication, cookies, and session handling worked correctly
 
 ## 🛠 Tech Stack
 
